@@ -69,7 +69,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Fix event box spacing on mobile"], check=True)
+            subprocess.run(["git", "commit", "-m", "Resize Mobile Header Font & Spacing"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -322,7 +322,8 @@ def main():
             body {{ padding: 15px; }} 
             
             .header-wrapper {{ margin-bottom: 10px; }}
-            .main-title {{ font-size: 28px; margin-bottom: 15px; }} 
+            /* [수정] 대제목 폰트 확대 & 간격 확대 */
+            .main-title {{ font-size: 34px; margin-bottom: 25px; }} 
             .sub-title {{ font-size: 24px; }} 
             .nav-row {{ gap: 8px; }} 
             .nav-btn {{ width: 26px; height: 26px; font-size: 14px; }}
@@ -366,14 +367,9 @@ def main():
             td.day-inactive.sun .date-num {{ color: #ffc9c9; }}
             td.day-inactive.sat .date-num {{ color: #a5d8ff; }}
 
-            /* [수정] 모바일 박스 스타일: 불필요한 공백 제거 (height auto) */
             .event-box {{ 
-                font-size: 16px !important; 
-                padding: 12px; 
-                margin-bottom: 10px; 
-                border: 1px solid #ced4da;
-                height: auto !important; /* 높이 자동 조절 */
-                min-height: unset; /* 최소 높이 해제 */
+                font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
+                height: auto !important; min-height: unset;
             }}
             .box-line2 {{ 
                 display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
