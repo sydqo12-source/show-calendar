@@ -15,14 +15,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 10px; /* [수정] 연도월과 지역선택지 사이 간격 좁힘 */
+            margin-bottom: 10px;
         }
 
         .main-title { 
-            font-size: 38px; /* [수정] 대제목 키움 */
+            font-size: 38px; 
             font-weight: 800; 
             color: #343a40; 
-            margin-bottom: 25px; /* [수정] 대제목과 연도 사이 간격 늘림 */
+            margin-bottom: 25px; 
             word-break: keep-all;
             text-align: center;
         }
@@ -30,24 +30,24 @@
         .nav-row {
             display: flex;
             align-items: center;
-            gap: 10px; /* [수정] 화살표와 연도 사이 간격 좁힘 */
+            gap: 12px; /* 버튼과 텍스트 사이 간격 */
         }
 
         .sub-title { 
-            font-size: 28px; /* [수정] 연도월 폰트 줄임 (대제목보다 작게) */
+            font-size: 34px; /* [수정] PC 연도월 폰트 키움 (기존 28 -> 34) */
             font-weight: 800; 
             color: #495057; 
         }
 
-        /* [수정] 작고 네모난 화살표 버튼 */
+        /* [수정] 화살표 버튼: 아주 작고 심플하게 */
         .nav-btn {
-            width: 28px; /* [수정] 크기 줄임 */
-            height: 28px;
+            width: 24px;  /* 더 작게 */
+            height: 24px; 
             background-color: #fff;
             border: 1px solid #ced4da;
-            border-radius: 4px; /* 네모 모양 */
+            border-radius: 4px;
             color: #868e96;
-            font-size: 16px;
+            font-size: 14px; /* 아이콘 폰트 작게 */
             font-weight: 700;
             display: flex;
             justify-content: center;
@@ -95,14 +95,15 @@
         td { vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }
         td:hover { background-color: #fcfcfc; }
         
-        /* [수정] PC 날짜 숫자: 흐림 제거 (선명하게) */
+        /* [수정] PC 날짜: 흐림 제거, 색상 선명하게 */
         .date-num { 
             font-weight: 800; font-size: 14px; 
-            color: #212529; /* [수정] 진한 색상 유지 */
+            color: #212529; /* 진한 검정 */
             margin-bottom: 5px; display: block; 
         }
-        .sun .date-num { color: #ff8787; }
-        .sat .date-num { color: #74c0fc; }
+        /* [수정] 주말 날짜 색상도 진하게 */
+        .sun .date-num { color: #e03131; } /* 진한 빨강 */
+        .sat .date-num { color: #1971c2; } /* 진한 파랑 */
 
         /* 이벤트 박스 (PC) */
         .event-box { 
@@ -130,10 +131,10 @@
             
             /* [수정] 모바일 헤더 */
             .header-wrapper { margin-bottom: 10px; }
-            .main-title { font-size: 28px; margin-bottom: 15px; } /* 대제목 */
-            .sub-title { font-size: 24px; } /* 연도월 (더 작게) */
-            .nav-row { gap: 8px; } /* 화살표 간격 좁게 */
-            .nav-btn { width: 26px; height: 26px; font-size: 14px; }
+            .main-title { font-size: 32px; margin-bottom: 20px; } /* [수정] 대제목 키움 */
+            .sub-title { font-size: 28px; } /* [수정] 연도월 키움 */
+            .nav-row { gap: 8px; } 
+            .nav-btn { width: 24px; height: 24px; font-size: 12px; } /* [수정] 버튼은 작게 */
             
             .control-bar { padding-left: 0; gap: 15px; }
             .group-title { font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
@@ -152,27 +153,29 @@
             }
             td:empty { display: none; }
             
-            /* [수정] 모바일 날짜: 기본 상태 (공연이 없는 날) -> 초기 상태와 동일하게 유지 */
+            /* [수정] 모바일 날짜: 기본 폰트와 활성 폰트 */
             .date-num { 
                 display: inline-block; width: auto; 
                 font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da; /* 기본값: 흐린 회색 */
+                font-weight: 500; color: #ced4da; /* 기본값: 흐림 */
             }
             .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
             
-            .sun .date-num { color: #ffc9c9; } /* 주말 기본 (흐림) */
+            .sun .date-num { color: #ffc9c9; } 
             .sat .date-num { color: #a5d8ff; }
 
-            /* [수정] 활성 상태 (공연이 있는 날) -> 이때만 폰트 커짐 */
+            /* [수정] 활성 상태 (공연이 있는 날) - 이때만 폰트 커짐 */
             td.day-active .date-num {
                 font-size: 24px; margin-bottom: 12px; padding-bottom: 5px;
                 color: #212529; font-weight: 800;
             }
             td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
-            td.day-active.sun .date-num { color: #ff8787 !important; }
-            td.day-active.sat .date-num { color: #74c0fc !important; }
+            
+            /* 활성 상태일 때 주말 색상 (진하게) */
+            td.day-active.sun .date-num { color: #e03131 !important; } 
+            td.day-active.sat .date-num { color: #1971c2 !important; }
 
-            /* 비활성 상태 (선택됐지만 공연이 안 보이는 날) -> 기본 상태 유지 */
+            /* 비활성 상태 (선택됐지만 공연이 안 보이는 날) - 기본값 유지 (폰트 안 바뀜) */
             td.day-inactive .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; color: #ced4da; }
             td.day-inactive.sun .date-num { color: #ffc9c9; }
             td.day-inactive.sat .date-num { color: #a5d8ff; }
@@ -689,22 +692,8 @@
         let currentIndex = 0;
         const totalPages = pages.length;
 
-        function saveSettings() {
-            const settings = {
-                regions: Array.from(regionChks).filter(c => c.checked).map(c => c.value),
-                genres: Array.from(genreChks).filter(c => c.checked).map(c => c.value)
-            };
-            localStorage.setItem('calendarSettings', JSON.stringify(settings));
-        }
-
-        function loadSettings() {
-            const saved = localStorage.getItem('calendarSettings');
-            if (saved) {
-                const settings = JSON.parse(saved);
-                regionChks.forEach(c => c.checked = settings.regions.includes(c.value));
-                genreChks.forEach(c => c.checked = settings.genres.includes(c.value));
-            }
-        }
+        // [수정] 저장 기능 삭제 (새로고침 시 초기화 위함)
+        // function loadSettings() ... 제거됨
 
         function showPage(index) {
             pages.forEach((page, idx) => {
@@ -729,8 +718,6 @@
             const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
             const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
             
-            saveSettings();
-
             const visiblePage = pages[currentIndex];
             const tds = visiblePage.querySelectorAll('td');
 
@@ -800,7 +787,12 @@
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        loadSettings();
+        // [수정] 초기화 로직: 지역 해제, 장르 전체 선택
+        regionChks.forEach(c => c.checked = false);
+        genreChks.forEach(c => c.checked = true);
+        isAllChecked = true;
+        btnReset.innerText = "모두해제";
+
         if (totalPages > 0) {
             showPage(0);
         } else {
