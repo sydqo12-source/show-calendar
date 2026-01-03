@@ -106,10 +106,13 @@
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
         .modal-info { font-size: 14px; color: #868e96; margin-bottom: 15px; }
 
+        /* [수정] 버튼 그룹 스타일 (같은 크기) */
         .modal-btn-group { display: flex; gap: 8px; }
         .modal-btn {
-            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            flex: 1; /* 동일 너비 */
+            padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
+            display: flex; justify-content: center; align-items: center; /* 텍스트 수직 중앙 */
         }
         .btn-booking { background-color: #343a40; color: white; }
         .btn-calendar { background-color: #fa5252; color: white; } 
@@ -870,7 +873,7 @@
                 <div id="modalTitle" class="modal-title"></div>
                 <div id="modalInfo" class="modal-info"></div>
                 <div class="modal-btn-group">
-                    <a id="btnBooking" href="#" target="_blank" class="modal-btn btn-booking">예매 안내</a>
+                    <a id="btnBooking" href="#" target="_blank" class="modal-btn btn-booking">예매 안내 페이지</a>
                     <button onclick="addToNativeCalendar()" class="modal-btn btn-calendar">일정 추가</button>
                 </div>
             </div>
@@ -909,7 +912,8 @@
             };
 
             modalTitle.innerText = ds.title;
-            modalInfo.innerText = `${ds.date} | ${ds.place}`;
+            // [수정] 날짜/시간 제거 -> 장소만 표시
+            modalInfo.innerText = ds.place;
             
             if (ds.poster && ds.poster.trim() !== '') {
                 modalPoster.src = ds.poster;
@@ -922,8 +926,8 @@
 
             if (ds.link && ds.link.trim() !== '') {
                 btnBooking.href = ds.link;
-                btnBooking.style.display = 'block';
-                btnBooking.innerText = '예매 안내';
+                btnBooking.style.display = 'flex'; // flex로 변경하여 정렬 유지
+                // btnBooking.innerText = '예매 안내 페이지'; // HTML에 고정됨
             } else {
                 btnBooking.style.display = 'none'; 
             }
@@ -935,7 +939,7 @@
             modal.style.display = 'none';
         }
 
-        // [수정] 기본 캘린더 앱 연동 함수 (.ics 다운로드 방식)
+        // [기본 캘린더 앱 연동]
         function addToNativeCalendar() {
             const title = currentEventData.title || "공연 관람";
             const rawDate = currentEventData.date;
@@ -964,7 +968,6 @@
             const startStr = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(min)}00`;
             const endStr = `${year}${pad(month)}${pad(day)}T${pad(parseInt(hour)+2)}${pad(min)}00`; 
 
-            // ICS 파일 내용 생성
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -978,7 +981,6 @@ DESCRIPTION:예매처: ${link}
 END:VEVENT
 END:VCALENDAR`;
 
-            // 파일 다운로드 트리거 (모바일에서 자동으로 캘린더 앱 연결됨)
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             const linkElem = document.createElement('a');
             linkElem.href = window.URL.createObjectURL(blob);
