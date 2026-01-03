@@ -1,9 +1,7 @@
 import pandas as pd
 import os
-import webbrowser
 import subprocess
 import calendar
-import json
 import re 
 
 # ==========================================
@@ -26,8 +24,12 @@ def get_content_html(row_data):
     place = str(row_data['장소'])
     genre = str(row_data['장르'])
     
+    # [수정] 엑셀 컬럼명 변경 반영 ('예매처' -> '링크')
+    # 엑셀의 '포스터', '링크' 컬럼에서 데이터를 가져옵니다.
     poster_url = str(row_data.get('포스터', ''))
-    booking_url = str(row_data.get('예매처', ''))
+    booking_url = str(row_data.get('링크', ''))
+    
+    # 빈칸(nan) 처리
     if poster_url == 'nan': poster_url = ''
     if booking_url == 'nan': booking_url = ''
 
@@ -46,6 +48,7 @@ def get_content_html(row_data):
     if "(서울)" in region: r_group = "seoul"
     elif "(경기)" in region or "(인천)" in region: r_group = "gyeonggi"
 
+    # HTML 태그에 엑셀 데이터 심어두기 (data-poster, data-link)
     return f"""
     <div class="event-box" 
          data-region="{r_group}" 
@@ -69,7 +72,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Resize Mobile Header Font & Spacing"], check=True)
+            subprocess.run(["git", "commit", "-m", "Update Popup Position and Data Mapping"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -88,16 +91,18 @@ def main():
 
     try:
         # 1. 엑셀 로드
-        df = pd.read_excel(filename).fillna({'장르': '기타', '지역': '(기타)', '포스터': '', '예매처': ''})
+        df = pd.read_excel(filename).fillna({'장르': '기타', '지역': '(기타)', '포스터': '', '링크': ''})
         if '오픈일시' not in df.columns:
             print("오류: 엑셀에 '오픈일시' 컬럼이 없습니다.")
             return
 
         print("엑셀 데이터 로드 성공. 날짜 변환 중...")
 
-        # 2. 날짜 파싱
+        # 2. 날짜 파싱 (빈칸일 경우 처리 포함)
         def smart_parse_date(x):
             s = str(x).strip()
+            if not s or s == 'nan': return None, None, None # 날짜 없으면 패스
+            
             s = re.sub(r'\(.*?\)', '', s)
             
             match_full = re.search(r'(\d{4})[\.\-/](\d{1,2})[\.\-/](\d{1,2})', s)
@@ -113,6 +118,7 @@ def main():
         parsed_data = df['오픈일시'].apply(smart_parse_date)
         df['Year'], df['Month'], df['Day'] = zip(*parsed_data)
 
+        # 날짜 없는 데이터(내일 등)는 달력에 표시 불가하므로 제외
         df = df.dropna(subset=['Year', 'Month', 'Day'])
         df['Year'] = df['Year'].astype(int)
         df['Month'] = df['Month'].astype(int)
@@ -196,12 +202,8 @@ def main():
         
         body {{ font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }}
         
-        /* [PC] 헤더 스타일 */
         .header-wrapper {{ display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }}
-        .main-title {{ 
-            font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; 
-            word-break: keep-all; text-align: center;
-        }}
+        .main-title {{ font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }}
         .nav-row {{ display: flex; align-items: center; gap: 10px; }}
         .sub-title {{ font-size: 34px; font-weight: 800; color: #495057; }}
         .nav-btn {{
@@ -213,7 +215,6 @@ def main():
         .nav-btn:hover {{ background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }}
         .nav-btn.disabled {{ opacity: 0.3; pointer-events: none; }}
         
-        /* 컨트롤 바 */
         .control-bar {{ margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding-left: 12px; font-size: 13px; }}
         .filter-group {{ display: flex; align-items: baseline; gap: 0px; width: 100%; }}
         .group-title {{ font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; margin-top: 3px; }}
@@ -228,7 +229,6 @@ def main():
         }}
         .btn-reset:hover {{ background-color: #e9ecef; color: #212529; }}
 
-        /* 캘린더 (PC) */
         table {{ width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }}
         th {{ background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }}
         th:first-child {{ background-color: #fa5252; }}
@@ -240,7 +240,6 @@ def main():
         .sun .date-num {{ color: #e03131; }} 
         .sat .date-num {{ color: #1971c2; }} 
 
-        /* 이벤트 박스 */
         .event-box {{ 
             display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px; 
             background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
@@ -259,13 +258,15 @@ def main():
         .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
         .txt-black {{ color: #495057; font-weight: 500; }}
 
-        /* ------------------------------------------- */
-        /* [팝업 모달 & 확인창 디자인] */
-        /* ------------------------------------------- */
+        /* [수정] 팝업 모달 스타일 - 위치 조정 */
         .modal-overlay {{
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
-            justify-content: center; align-items: center; backdrop-filter: blur(3px);
+            justify-content: center; 
+            /* [변경] 기존 center에서 flex-start로 변경하고 padding-top으로 위치 조절 */
+            align-items: flex-start; 
+            padding-top: 15vh; /* 화면 위쪽에서 15% 정도 떨어진 곳에 위치 */
+            backdrop-filter: blur(3px);
         }}
         .modal-content {{
             background: white; width: 90%; max-width: 350px;
@@ -297,37 +298,28 @@ def main():
         .btn-calendar {{ background-color: #fa5252; color: white; }} 
         .btn-calendar:hover {{ background-color: #ff6b6b; }}
 
-        /* [커스텀 확인 팝업 스타일] */
         .confirm-content {{
             background: white; width: 85%; max-width: 320px;
             border-radius: 12px; padding: 20px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
+            /* 확인창은 중앙 정렬 유지 */
+            margin-top: 30vh; 
         }}
-        .confirm-text {{
-            font-size: 18px; font-weight: 700; color: #343a40; 
-            margin-bottom: 25px; line-height: 1.6; word-break: keep-all;
-        }}
+        .confirm-text {{ font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 25px; line-height: 1.6; word-break: keep-all; }}
         .confirm-btn-group {{ display: flex; gap: 10px; justify-content: center; }}
-        .confirm-btn {{
-            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
-            cursor: pointer; border: none;
-        }}
+        .confirm-btn {{ flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }}
         .btn-yes {{ background-color: #343a40; color: white; }}
         .btn-no {{ background-color: #f1f3f5; color: #495057; }}
 
 
-        /* 📱 모바일 최적화 */
         @media screen and (max-width: 768px) {{
             body {{ padding: 15px; }} 
-            
             .header-wrapper {{ margin-bottom: 10px; }}
-            /* [수정] 대제목 폰트 확대 & 간격 확대 */
             .main-title {{ font-size: 34px; margin-bottom: 25px; }} 
             .sub-title {{ font-size: 24px; }} 
             .nav-row {{ gap: 8px; }} 
             .nav-btn {{ width: 26px; height: 26px; font-size: 14px; }}
-            
             .control-bar {{ padding-left: 0; gap: 15px; }}
             .group-title {{ font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }}
             .chk-wrap {{ gap: 8px 12px; }} 
@@ -338,27 +330,15 @@ def main():
             table, thead, tbody, th, td, tr {{ display: block; }}
             thead {{ display: none; }}
             tr {{ margin-bottom: 0; }}
-            
-            td {{ 
-                height: auto !important; border: none; border-bottom: 1px solid #eee; 
-                position: relative; text-align: left !important; padding: 12px 5px !important; 
-            }}
+            td {{ height: auto !important; border: none; border-bottom: 1px solid #eee; position: relative; text-align: left !important; padding: 12px 5px !important; }}
             td:empty {{ display: none; }}
             
-            .date-num {{ 
-                display: inline-block; width: auto; 
-                font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da; 
-            }}
+            .date-num {{ display: inline-block; width: auto; font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }}
             .date-num::after {{ content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }}
-            
             .sun .date-num {{ color: #ffc9c9; }} 
             .sat .date-num {{ color: #a5d8ff; }}
 
-            td.day-active .date-num {{
-                font-size: 24px; margin-bottom: 12px; padding-bottom: 5px;
-                color: #212529; font-weight: 800;
-            }}
+            td.day-active .date-num {{ font-size: 24px; margin-bottom: 12px; padding-bottom: 5px; color: #212529; font-weight: 800; }}
             td.day-active .date-num::after {{ font-size: inherit; color: inherit; font-weight: inherit; }}
             td.day-active.sun .date-num {{ color: #e03131 !important; }} 
             td.day-active.sat .date-num {{ color: #1971c2 !important; }}
@@ -367,21 +347,11 @@ def main():
             td.day-inactive.sun .date-num {{ color: #ffc9c9; }}
             td.day-inactive.sat .date-num {{ color: #a5d8ff; }}
 
-            .event-box {{ 
-                font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
-                height: auto !important; min-height: unset;
-            }}
-            .box-line2 {{ 
-                display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
-                overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; 
-                white-space: normal; word-break: break-all; 
-            }}
+            .event-box {{ font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da; height: auto !important; min-height: unset; }}
+            .box-line2 {{ display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; white-space: normal; word-break: break-all; }}
 
             body.initial-mode td {{ border-bottom: 1px solid #f1f3f5; }}
-            body.initial-mode .date-num {{
-                font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da;
-            }}
+            body.initial-mode .date-num {{ font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }}
             body.initial-mode .sun .date-num {{ color: #ffc9c9; }}
             body.initial-mode .sat .date-num {{ color: #a5d8ff; }}
         }}
@@ -436,7 +406,7 @@ def main():
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 10000;" onclick="closeConfirmModal(event)">
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items:flex-start;" onclick="closeConfirmModal(event)">
         <div class="confirm-content" onclick="event.stopPropagation()">
             <div class="confirm-text">
                 다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
@@ -483,6 +453,7 @@ def main():
             modalTitle.innerText = ds.title;
             modalInfo.innerText = ds.place; 
             
+            // [수정] 포스터 연결
             if (ds.poster && ds.poster.trim() !== '') {{
                 modalPoster.src = ds.poster;
                 modalPoster.style.display = 'block';
@@ -492,6 +463,7 @@ def main():
                 noPosterText.style.display = 'block';
             }}
 
+            // [수정] 링크 연결
             if (ds.link && ds.link.trim() !== '') {{
                 btnBooking.href = ds.link;
                 btnBooking.style.display = 'flex'; 

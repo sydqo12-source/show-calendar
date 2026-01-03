@@ -10,12 +10,8 @@
         
         body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
         
-        /* [PC] 헤더 스타일 */
         .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
-        .main-title { 
-            font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; 
-            word-break: keep-all; text-align: center;
-        }
+        .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
         .nav-row { display: flex; align-items: center; gap: 10px; }
         .sub-title { font-size: 34px; font-weight: 800; color: #495057; }
         .nav-btn {
@@ -27,7 +23,6 @@
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
-        /* 컨트롤 바 */
         .control-bar { margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding-left: 12px; font-size: 13px; }
         .filter-group { display: flex; align-items: baseline; gap: 0px; width: 100%; }
         .group-title { font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; margin-top: 3px; }
@@ -42,7 +37,6 @@
         }
         .btn-reset:hover { background-color: #e9ecef; color: #212529; }
 
-        /* 캘린더 (PC) */
         table { width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }
         th { background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }
         th:first-child { background-color: #fa5252; }
@@ -54,7 +48,6 @@
         .sun .date-num { color: #e03131; } 
         .sat .date-num { color: #1971c2; } 
 
-        /* 이벤트 박스 */
         .event-box { 
             display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px; 
             background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
@@ -73,13 +66,15 @@
         .txt-blue { color: #1971c2; font-weight: 700; }
         .txt-black { color: #495057; font-weight: 500; }
 
-        /* ------------------------------------------- */
-        /* [팝업 모달 & 확인창 디자인] */
-        /* ------------------------------------------- */
+        /* [수정] 팝업 모달 스타일 - 위치 조정 */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
-            justify-content: center; align-items: center; backdrop-filter: blur(3px);
+            justify-content: center; 
+            /* [변경] 기존 center에서 flex-start로 변경하고 padding-top으로 위치 조절 */
+            align-items: flex-start; 
+            padding-top: 15vh; /* 화면 위쪽에서 15% 정도 떨어진 곳에 위치 */
+            backdrop-filter: blur(3px);
         }
         .modal-content {
             background: white; width: 90%; max-width: 350px;
@@ -111,37 +106,28 @@
         .btn-calendar { background-color: #fa5252; color: white; } 
         .btn-calendar:hover { background-color: #ff6b6b; }
 
-        /* [커스텀 확인 팝업 스타일] */
         .confirm-content {
             background: white; width: 85%; max-width: 320px;
             border-radius: 12px; padding: 20px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
+            /* 확인창은 중앙 정렬 유지 */
+            margin-top: 30vh; 
         }
-        .confirm-text {
-            font-size: 18px; font-weight: 700; color: #343a40; 
-            margin-bottom: 25px; line-height: 1.6; word-break: keep-all;
-        }
+        .confirm-text { font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 25px; line-height: 1.6; word-break: keep-all; }
         .confirm-btn-group { display: flex; gap: 10px; justify-content: center; }
-        .confirm-btn {
-            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
-            cursor: pointer; border: none;
-        }
+        .confirm-btn { flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
         .btn-yes { background-color: #343a40; color: white; }
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
 
-        /* 📱 모바일 최적화 */
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
-            
             .header-wrapper { margin-bottom: 10px; }
-            /* [수정] 대제목 폰트 확대 & 간격 확대 */
             .main-title { font-size: 34px; margin-bottom: 25px; } 
             .sub-title { font-size: 24px; } 
             .nav-row { gap: 8px; } 
             .nav-btn { width: 26px; height: 26px; font-size: 14px; }
-            
             .control-bar { padding-left: 0; gap: 15px; }
             .group-title { font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
             .chk-wrap { gap: 8px 12px; } 
@@ -152,27 +138,15 @@
             table, thead, tbody, th, td, tr { display: block; }
             thead { display: none; }
             tr { margin-bottom: 0; }
-            
-            td { 
-                height: auto !important; border: none; border-bottom: 1px solid #eee; 
-                position: relative; text-align: left !important; padding: 12px 5px !important; 
-            }
+            td { height: auto !important; border: none; border-bottom: 1px solid #eee; position: relative; text-align: left !important; padding: 12px 5px !important; }
             td:empty { display: none; }
             
-            .date-num { 
-                display: inline-block; width: auto; 
-                font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da; 
-            }
+            .date-num { display: inline-block; width: auto; font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
             .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
-            
             .sun .date-num { color: #ffc9c9; } 
             .sat .date-num { color: #a5d8ff; }
 
-            td.day-active .date-num {
-                font-size: 24px; margin-bottom: 12px; padding-bottom: 5px;
-                color: #212529; font-weight: 800;
-            }
+            td.day-active .date-num { font-size: 24px; margin-bottom: 12px; padding-bottom: 5px; color: #212529; font-weight: 800; }
             td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
             td.day-active.sun .date-num { color: #e03131 !important; } 
             td.day-active.sat .date-num { color: #1971c2 !important; }
@@ -181,21 +155,11 @@
             td.day-inactive.sun .date-num { color: #ffc9c9; }
             td.day-inactive.sat .date-num { color: #a5d8ff; }
 
-            .event-box { 
-                font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
-                height: auto !important; min-height: unset;
-            }
-            .box-line2 { 
-                display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
-                overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; 
-                white-space: normal; word-break: break-all; 
-            }
+            .event-box { font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da; height: auto !important; min-height: unset; }
+            .box-line2 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; white-space: normal; word-break: break-all; }
 
             body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
-            body.initial-mode .date-num {
-                font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da;
-            }
+            body.initial-mode .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
             body.initial-mode .sun .date-num { color: #ffc9c9; }
             body.initial-mode .sat .date-num { color: #a5d8ff; }
         }
@@ -243,7 +207,7 @@
          data-date="01.05(월) 10:00"
          data-place="용인시문예회관 처인홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12223"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
@@ -259,7 +223,7 @@
          data-date="01.05(월) 14:00"
          data-place="구미문화예술회관"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12218"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -275,7 +239,7 @@
          data-date="01.05(월) 14:00"
          data-place="링크아트센터 벅스홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12223"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -291,7 +255,7 @@
          data-date="01.05(월) 20:00"
          data-place="명화라이브홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12196"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
@@ -307,7 +271,7 @@
          data-date="01.05(월) 20:00"
          data-place="청주 CJB미디어센터"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12213"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
@@ -323,7 +287,7 @@
          data-date="01.06(화) 10:00"
          data-place="안양아트센터 관악홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12214"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
@@ -339,7 +303,7 @@
          data-date="01.06(화) 10:00"
          data-place="부산영화의전당 하늘연극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12234"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
@@ -355,7 +319,7 @@
          data-date="01.06(화) 10:00"
          data-place="부산영화의전당 하늘연극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12235"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
@@ -371,7 +335,7 @@
          data-date="01.06(화) 11:00"
          data-place="예술의전당 CJ 토월극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12200"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
@@ -387,7 +351,7 @@
          data-date="01.06(화) 13:00"
          data-place="국립정동극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12221"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">13:00</span></div>
@@ -403,7 +367,7 @@
          data-date="01.06(화) 14:00"
          data-place="당진문예의전당 대공연장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12224"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -419,7 +383,7 @@
          data-date="01.06(화) 14:00"
          data-place="덕스 (DUEX) 부산"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12227"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -435,7 +399,7 @@
          data-date="01.06(화) 14:00"
          data-place="대학로 자유극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12228"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -451,7 +415,7 @@
          data-date="01.06(화) 14:00"
          data-place="한전아트센터"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12231"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -467,7 +431,7 @@
          data-date="01.06(화) 14:00"
          data-place="의정부예술의전당 대극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12248"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -483,7 +447,7 @@
          data-date="01.06(화) 14:00"
          data-place="예술의전당 오페라극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12252"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -499,7 +463,7 @@
          data-date="01.06(화) 15:00"
          data-place="영남대학교 천마아트센터 그랜드홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12249"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">15:00</span></div>
@@ -515,7 +479,7 @@
          data-date="01.06(화) 16:00"
          data-place="예술의전당 콘서트홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12246"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">16:00</span></div>
@@ -531,7 +495,7 @@
          data-date="01.06(화) 16:00"
          data-place="부산 벡스코 오디토리움"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12250"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">16:00</span></div>
@@ -547,7 +511,7 @@
          data-date="01.07(수) 11:00"
          data-place="안산문화예술의전당 해돋이극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12232"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
@@ -563,7 +527,7 @@
          data-date="01.07(수) 11:00"
          data-place="서울숲 씨어터 2관"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12238"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
@@ -579,7 +543,7 @@
          data-date="01.07(수) 12:00"
          data-place="강남씨어터"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12226"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">12:00</span></div>
@@ -595,7 +559,7 @@
          data-date="01.07(수) 13:00"
          data-place="예술의전당 콘서트홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12245"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">13:00</span></div>
@@ -611,7 +575,7 @@
          data-date="01.07(수) 14:00"
          data-place="대학로극장 쿼드"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12219"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -627,7 +591,7 @@
          data-date="01.07(수) 14:00"
          data-place="코델아트홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12247"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -643,7 +607,7 @@
          data-date="01.07(수) 16:00"
          data-place="링크아트센터드림 드림1관"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12230"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">16:00</span></div>
@@ -659,7 +623,7 @@
          data-date="01.07(수) 19:00"
          data-place="YES24 LIVE HALL"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12251"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">19:00</span></div>
@@ -675,7 +639,7 @@
          data-date="01.07(수) 20:00"
          data-place="01.05 20:00"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12136"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
@@ -691,7 +655,7 @@
          data-date="01.08(목) 09:00"
          data-place="울산중구문화의전당 함월홀(2층)"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12253"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">09:00</span></div>
@@ -707,7 +671,7 @@
          data-date="01.08(목) 12:00"
          data-place="킨텍스 제2전시장 9홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12138"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">12:00</span></div>
@@ -723,7 +687,7 @@
          data-date="01.08(목) 14:00"
          data-place="울산문화예술회관 대공연장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12236"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -739,7 +703,7 @@
          data-date="01.08(목) 14:00"
          data-place="부천시민회관 대공연장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12237"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -755,7 +719,7 @@
          data-date="01.08(목) 14:00"
          data-place="홍익대 대학로 아트센터 소극장"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12241"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -771,7 +735,7 @@
          data-date="01.08(목) 20:00"
          data-place="호텔인터불고 대구 컨벤션홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12244"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
@@ -787,7 +751,7 @@
          data-date="01.09(금) 11:00"
          data-place="플러스씨어터"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12222"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
@@ -803,7 +767,7 @@
          data-date="01.09(금) 14:00"
          data-place="샤롯데씨어터"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12242"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -819,7 +783,7 @@
          data-date="01.09(금) 14:00"
          data-place="안양아트센터 관악홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12243"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -835,7 +799,7 @@
          data-date="01.09(금) 15:00"
          data-place="블루스퀘어 우리WON뱅킹홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12239"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">15:00</span></div>
@@ -860,7 +824,7 @@
          data-date="02.11(수) 20:00"
          data-place="충남대학교 정심화홀"
          data-poster=""
-         data-link=""
+         data-link="https://tickets.interpark.com/contents/notice/detail/12137"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
@@ -892,7 +856,7 @@
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 10000;" onclick="closeConfirmModal(event)">
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items:flex-start;" onclick="closeConfirmModal(event)">
         <div class="confirm-content" onclick="event.stopPropagation()">
             <div class="confirm-text">
                 다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
@@ -939,6 +903,7 @@
             modalTitle.innerText = ds.title;
             modalInfo.innerText = ds.place; 
             
+            // [수정] 포스터 연결
             if (ds.poster && ds.poster.trim() !== '') {
                 modalPoster.src = ds.poster;
                 modalPoster.style.display = 'block';
@@ -948,6 +913,7 @@
                 noPosterText.style.display = 'block';
             }
 
+            // [수정] 링크 연결
             if (ds.link && ds.link.trim() !== '') {
                 btnBooking.href = ds.link;
                 btnBooking.style.display = 'flex'; 
