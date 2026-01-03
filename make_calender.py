@@ -46,8 +46,6 @@ def get_content_html(row_data):
     if "(서울)" in region: r_group = "seoul"
     elif "(경기)" in region or "(인천)" in region: r_group = "gyeonggi"
 
-    tooltip = f"[{region}] {title}\n장소: {place}\n장르: {genre}\n시간: {raw_time}"
-
     return f"""
     <div class="event-box" 
          data-region="{r_group}" 
@@ -71,7 +69,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Add Back Button Support & Confirm Dialog"], check=True)
+            subprocess.run(["git", "commit", "-m", "Update Mobile Popup & ICS Format"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -198,14 +196,9 @@ def main():
         
         body {{ font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }}
         
-        /* [PC] 헤더 스타일 */
-        .header-wrapper {{
-            display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;
-        }}
-        .main-title {{ 
-            font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; 
-            word-break: keep-all; text-align: center;
-        }}
+        /* [PC] 헤더 */
+        .header-wrapper {{ display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }}
+        .main-title {{ font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }}
         .nav-row {{ display: flex; align-items: center; gap: 10px; }}
         .sub-title {{ font-size: 34px; font-weight: 800; color: #495057; }}
         .nav-btn {{
@@ -218,10 +211,7 @@ def main():
         .nav-btn.disabled {{ opacity: 0.3; pointer-events: none; }}
         
         /* 컨트롤 바 */
-        .control-bar {{ 
-            margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; 
-            padding-left: 12px; font-size: 13px;
-        }}
+        .control-bar {{ margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding-left: 12px; font-size: 13px; }}
         .filter-group {{ display: flex; align-items: baseline; gap: 0px; width: 100%; }}
         .group-title {{ font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; margin-top: 3px; }}
         .chk-wrap {{ display: flex; flex-wrap: wrap; align-items: center; gap: 0px; flex: 1; }}
@@ -243,13 +233,11 @@ def main():
         td {{ vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }}
         td:hover {{ background-color: #fcfcfc; }}
         
-        .date-num {{ 
-            font-weight: 800; font-size: 14px; color: #212529; margin-bottom: 5px; display: block; 
-        }}
+        .date-num {{ font-weight: 800; font-size: 14px; color: #212529; margin-bottom: 5px; display: block; }}
         .sun .date-num {{ color: #e03131; }} 
         .sat .date-num {{ color: #1971c2; }} 
 
-        /* 이벤트 박스 (PC) */
+        /* 이벤트 박스 */
         .event-box {{ 
             display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px; 
             background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
@@ -268,7 +256,9 @@ def main():
         .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
         .txt-black {{ color: #495057; font-weight: 500; }}
 
-        /* [팝업 모달] */
+        /* ------------------------------------------- */
+        /* [팝업 모달 & 확인창 디자인] */
+        /* ------------------------------------------- */
         .modal-overlay {{
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
@@ -294,7 +284,6 @@ def main():
         .modal-title {{ font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }}
         .modal-info {{ font-size: 14px; color: #868e96; margin-bottom: 15px; }}
 
-        /* 버튼 그룹 (5:5 비율) */
         .modal-btn-group {{ display: flex; gap: 8px; }}
         .modal-btn {{
             flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
@@ -304,6 +293,25 @@ def main():
         .btn-booking {{ background-color: #343a40; color: white; }}
         .btn-calendar {{ background-color: #fa5252; color: white; }} 
         .btn-calendar:hover {{ background-color: #ff6b6b; }}
+
+        /* [추가] 커스텀 확인 팝업 스타일 */
+        .confirm-content {{
+            background: white; width: 85%; max-width: 320px;
+            border-radius: 12px; padding: 20px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.2s ease-out;
+        }}
+        .confirm-text {{
+            font-size: 17px; font-weight: 600; color: #343a40; 
+            margin-bottom: 20px; line-height: 1.5; word-break: keep-all;
+        }}
+        .confirm-btn-group {{ display: flex; gap: 10px; justify-content: center; }}
+        .confirm-btn {{
+            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            cursor: pointer; border: none;
+        }}
+        .btn-yes {{ background-color: #343a40; color: white; }}
+        .btn-no {{ background-color: #f1f3f5; color: #495057; }}
 
 
         /* 📱 모바일 최적화 */
@@ -348,7 +356,6 @@ def main():
                 color: #212529; font-weight: 800;
             }}
             td.day-active .date-num::after {{ font-size: inherit; color: inherit; font-weight: inherit; }}
-            
             td.day-active.sun .date-num {{ color: #e03131 !important; }} 
             td.day-active.sat .date-num {{ color: #1971c2 !important; }}
 
@@ -419,8 +426,20 @@ def main():
                 <div id="modalInfo" class="modal-info"></div>
                 <div class="modal-btn-group">
                     <a id="btnBooking" href="#" target="_blank" class="modal-btn btn-booking">예매 안내 페이지</a>
-                    <button onclick="addToNativeCalendar()" class="modal-btn btn-calendar">일정 추가</button>
+                    <button onclick="openConfirmModal()" class="modal-btn btn-calendar">일정 추가</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000;" onclick="closeConfirmModal(event)">
+        <div class="confirm-content" onclick="event.stopPropagation()">
+            <div class="confirm-text">
+                다운로드 되는 ics 파일을 열면 캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
+            </div>
+            <div class="confirm-btn-group">
+                <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
+                <button onclick="realDownload()" class="confirm-btn btn-yes">확인</button>
             </div>
         </div>
     </div>
@@ -437,17 +456,18 @@ def main():
         let currentIndex = 0;
         const totalPages = pages.length;
 
-        // [팝업 관련 변수]
+        // [팝업 변수]
         const modal = document.getElementById('eventModal');
+        const confirmModal = document.getElementById('confirmModal'); // 추가
         const modalPoster = document.getElementById('modalPoster');
         const noPosterText = document.getElementById('noPosterText');
         const modalTitle = document.getElementById('modalTitle');
         const modalInfo = document.getElementById('modalInfo');
         const btnBooking = document.getElementById('btnBooking');
         let currentEventData = {{}}; 
-        let isModalOpen = false; // 플래그
+        let isModalOpen = false; 
 
-        // --- 팝업 함수 (History API 적용) ---
+        // --- 메인 팝업 열기 (History API) ---
         function openModal(element) {{
             const ds = element.dataset;
             currentEventData = {{
@@ -458,7 +478,8 @@ def main():
             }};
 
             modalTitle.innerText = ds.title;
-            modalInfo.innerText = ds.place;
+            // 날짜 제외, 장소만
+            modalInfo.innerText = ds.place; 
             
             if (ds.poster && ds.poster.trim() !== '') {{
                 modalPoster.src = ds.poster;
@@ -478,35 +499,40 @@ def main():
 
             modal.style.display = 'flex';
             isModalOpen = true;
-            // [중요] 뒤로가기 처리를 위해 히스토리 추가
+            // 뒤로가기 처리를 위한 상태 푸시
             history.pushState({{popup: true}}, '', window.location.pathname + '#popup');
+        }}
+
+        // --- 확인 팝업 열기 ---
+        function openConfirmModal() {{
+            confirmModal.style.display = 'flex';
+        }}
+        function closeConfirmModal() {{
+            confirmModal.style.display = 'none';
         }}
 
         // 하드웨어 뒤로가기 감지
         window.onpopstate = function(event) {{
-            // 뒤로가기를 누르면 이 함수가 실행됨 -> 팝업 닫기만 수행
+            // 팝업이 떠있으면 닫기
             modal.style.display = 'none';
+            confirmModal.style.display = 'none'; // 확인창도 닫음
             isModalOpen = false;
         }};
 
-        // 배경 클릭으로 닫을 때 (UI Close)
         function closeModal(e) {{
             if (isModalOpen) {{
-                // UI로 닫을 때는 history.back()을 호출하여 popstate를 트리거함
-                history.back();
+                history.back(); // 뒤로가기 실행 -> onpopstate 트리거
             }}
         }}
 
-        // [일정 추가 - 컨펌 창 포함]
-        function addToNativeCalendar() {{
-            if (!confirm("다운로드 되는 ics 파일을 여시면 캘린더 앱에 일정 추가가 가능합니다.\\n다운로드하시겠습니까?")) {{
-                return; // 취소 누르면 종료
-            }}
+        // --- 실제 다운로드 함수 ---
+        function realDownload() {{
+            closeConfirmModal(); // 확인창 닫기
 
-            const title = currentEventData.title || "공연 관람";
+            // 제목에 ' 예매' 추가
+            const title = (currentEventData.title || "공연 관람") + " 예매";
             const rawDate = currentEventData.date;
-            const place = currentEventData.place || "";
-            const link = currentEventData.link || "";
+            // 장소, 링크 정보는 ICS에서 제외
             
             const nums = rawDate.match(/\d+/g); 
             
@@ -530,6 +556,7 @@ def main():
             const startStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(hour)}}${{pad(min)}}00`;
             const endStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(parseInt(hour)+2)}}${{pad(min)}}00`; 
 
+            // 정보 간소화된 ICS
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -538,8 +565,6 @@ BEGIN:VEVENT
 SUMMARY:${{title}}
 DTSTART:${{startStr}}
 DTEND:${{endStr}}
-LOCATION:${{place}}
-DESCRIPTION:예매처: ${{link}}
 END:VEVENT
 END:VCALENDAR`;
 
