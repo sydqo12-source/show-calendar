@@ -69,7 +69,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Update Mobile Popup & ICS Format"], check=True)
+            subprocess.run(["git", "commit", "-m", "Improve Mobile Navigation & Popup UI"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -196,9 +196,12 @@ def main():
         
         body {{ font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }}
         
-        /* [PC] 헤더 */
+        /* [PC] 헤더 스타일 */
         .header-wrapper {{ display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }}
-        .main-title {{ font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }}
+        .main-title {{ 
+            font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; 
+            word-break: keep-all; text-align: center;
+        }}
         .nav-row {{ display: flex; align-items: center; gap: 10px; }}
         .sub-title {{ font-size: 34px; font-weight: 800; color: #495057; }}
         .nav-btn {{
@@ -294,22 +297,24 @@ def main():
         .btn-calendar {{ background-color: #fa5252; color: white; }} 
         .btn-calendar:hover {{ background-color: #ff6b6b; }}
 
-        /* [추가] 커스텀 확인 팝업 스타일 */
+        /* [커스텀 확인 팝업 스타일] */
         .confirm-content {{
             background: white; width: 85%; max-width: 320px;
             border-radius: 12px; padding: 20px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
         }}
+        /* [수정] 폰트 크기 확대 및 줄바꿈 처리 */
         .confirm-text {{
-            font-size: 17px; font-weight: 600; color: #343a40; 
-            margin-bottom: 20px; line-height: 1.5; word-break: keep-all;
+            font-size: 18px; font-weight: 700; color: #343a40; 
+            margin-bottom: 25px; line-height: 1.6; word-break: keep-all;
         }}
         .confirm-btn-group {{ display: flex; gap: 10px; justify-content: center; }}
         .confirm-btn {{
-            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
             cursor: pointer; border: none;
         }}
+        /* [수정] 확인(Yes) 왼쪽, 취소(No) 오른쪽 */
         .btn-yes {{ background-color: #343a40; color: white; }}
         .btn-no {{ background-color: #f1f3f5; color: #495057; }}
 
@@ -435,11 +440,11 @@ def main():
     <div id="confirmModal" class="modal-overlay" style="z-index: 10000;" onclick="closeConfirmModal(event)">
         <div class="confirm-content" onclick="event.stopPropagation()">
             <div class="confirm-text">
-                다운로드 되는 ics 파일을 열면 캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
+                다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
             </div>
             <div class="confirm-btn-group">
-                <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
                 <button onclick="realDownload()" class="confirm-btn btn-yes">확인</button>
+                <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
             </div>
         </div>
     </div>
@@ -456,18 +461,17 @@ def main():
         let currentIndex = 0;
         const totalPages = pages.length;
 
-        // [팝업 변수]
         const modal = document.getElementById('eventModal');
-        const confirmModal = document.getElementById('confirmModal'); // 추가
+        const confirmModal = document.getElementById('confirmModal'); 
         const modalPoster = document.getElementById('modalPoster');
         const noPosterText = document.getElementById('noPosterText');
         const modalTitle = document.getElementById('modalTitle');
         const modalInfo = document.getElementById('modalInfo');
         const btnBooking = document.getElementById('btnBooking');
         let currentEventData = {{}}; 
-        let isModalOpen = false; 
+        // 팝업 상태 추적용 플래그 X -> history.state 사용
 
-        // --- 메인 팝업 열기 (History API) ---
+        // --- 메인 팝업 열기 (history stack: step 1) ---
         function openModal(element) {{
             const ds = element.dataset;
             currentEventData = {{
@@ -478,7 +482,6 @@ def main():
             }};
 
             modalTitle.innerText = ds.title;
-            // 날짜 제외, 장소만
             modalInfo.innerText = ds.place; 
             
             if (ds.poster && ds.poster.trim() !== '') {{
@@ -498,41 +501,51 @@ def main():
             }}
 
             modal.style.display = 'flex';
-            isModalOpen = true;
-            // 뒤로가기 처리를 위한 상태 푸시
-            history.pushState({{popup: true}}, '', window.location.pathname + '#popup');
+            history.pushState({{view: 'modal'}}, '', '#modal');
         }}
 
-        // --- 확인 팝업 열기 ---
+        // --- 확인 팝업 열기 (history stack: step 2) ---
         function openConfirmModal() {{
             confirmModal.style.display = 'flex';
-        }}
-        function closeConfirmModal() {{
-            confirmModal.style.display = 'none';
+            history.pushState({{view: 'confirm'}}, '', '#confirm');
         }}
 
-        // 하드웨어 뒤로가기 감지
+        // --- 뒤로가기 버튼(History) 감지 ---
         window.onpopstate = function(event) {{
-            // 팝업이 떠있으면 닫기
-            modal.style.display = 'none';
-            confirmModal.style.display = 'none'; // 확인창도 닫음
-            isModalOpen = false;
+            // 현재 상태가 'modal'이면 -> confirm 닫힘, modal 열림
+            if (event.state && event.state.view === 'modal') {{
+                confirmModal.style.display = 'none';
+                modal.style.display = 'flex';
+            }} 
+            // state가 없거나 다른거면 -> 모두 닫힘
+            else {{
+                confirmModal.style.display = 'none';
+                modal.style.display = 'none';
+            }}
         }};
 
-        function closeModal(e) {{
-            if (isModalOpen) {{
-                history.back(); // 뒤로가기 실행 -> onpopstate 트리거
+        // --- 취소/닫기 버튼 (History Back 트리거) ---
+        function closeConfirmModal() {{
+            // 확인창은 현재 최상위 history state이므로 back() 호출하면 닫힘
+            if (confirmModal.style.display === 'flex') {{
+                history.back();
             }}
         }}
 
-        // --- 실제 다운로드 함수 ---
-        function realDownload() {{
-            closeConfirmModal(); // 확인창 닫기
+        function closeModal(e) {{
+            // 메인모달이 열려있을 때 닫기 요청
+            if (modal.style.display === 'flex') {{
+                history.back();
+            }}
+        }}
 
-            // 제목에 ' 예매' 추가
+        // --- 다운로드 (확인 버튼) ---
+        function realDownload() {{
+            // 팝업 닫기 (뒤로가기 트리거)
+            history.back(); 
+
             const title = (currentEventData.title || "공연 관람") + " 예매";
             const rawDate = currentEventData.date;
-            // 장소, 링크 정보는 ICS에서 제외
             
             const nums = rawDate.match(/\d+/g); 
             
@@ -556,7 +569,7 @@ def main():
             const startStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(hour)}}${{pad(min)}}00`;
             const endStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(parseInt(hour)+2)}}${{pad(min)}}00`; 
 
-            // 정보 간소화된 ICS
+            // 간소화된 ICS (제목, 시간만)
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
