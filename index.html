@@ -12,55 +12,21 @@
         
         /* [PC] 헤더 스타일 */
         .header-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 10px;
+            display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;
         }
-
         .main-title { 
-            font-size: 38px; 
-            font-weight: 800; 
-            color: #343a40; 
-            margin-bottom: 25px; 
-            word-break: keep-all;
-            text-align: center;
+            font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; 
+            word-break: keep-all; text-align: center;
         }
-
-        .nav-row {
-            display: flex;
-            align-items: center;
-            gap: 12px; /* 버튼과 텍스트 사이 간격 */
-        }
-
-        .sub-title { 
-            font-size: 34px; /* [수정] PC 연도월 폰트 키움 (기존 28 -> 34) */
-            font-weight: 800; 
-            color: #495057; 
-        }
-
-        /* [수정] 화살표 버튼: 아주 작고 심플하게 */
+        .nav-row { display: flex; align-items: center; gap: 10px; }
+        .sub-title { font-size: 34px; font-weight: 800; color: #495057; }
         .nav-btn {
-            width: 24px;  /* 더 작게 */
-            height: 24px; 
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            color: #868e96;
-            font-size: 14px; /* 아이콘 폰트 작게 */
-            font-weight: 700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
+            width: 24px; height: 24px; background-color: #fff; border: 1px solid #ced4da;
+            border-radius: 4px; color: #868e96; font-size: 14px; font-weight: 700;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: all 0.2s; user-select: none;
         }
-        .nav-btn:hover { 
-            background-color: #f1f3f5; 
-            color: #343a40; 
-            border-color: #adb5bd;
-        }
+        .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
         /* 컨트롤 바 */
@@ -71,15 +37,9 @@
         .filter-group { display: flex; align-items: baseline; gap: 0px; width: 100%; }
         .group-title { font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; margin-top: 3px; }
         .chk-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0px; flex: 1; }
-        
-        label { 
-            cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        label { cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; -webkit-tap-highlight-color: transparent; }
         label:hover { opacity: 1; } 
-        
         input[type="checkbox"] { accent-color: #343a40; width: 14px; height: 14px; cursor: pointer; }
-        
         .btn-reset {
             margin-left: 4px; background-color: transparent; border: 1px solid #ced4da;
             border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; 
@@ -95,15 +55,11 @@
         td { vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }
         td:hover { background-color: #fcfcfc; }
         
-        /* [수정] PC 날짜: 흐림 제거, 색상 선명하게 */
         .date-num { 
-            font-weight: 800; font-size: 14px; 
-            color: #212529; /* 진한 검정 */
-            margin-bottom: 5px; display: block; 
+            font-weight: 800; font-size: 14px; color: #212529; margin-bottom: 5px; display: block; 
         }
-        /* [수정] 주말 날짜 색상도 진하게 */
-        .sun .date-num { color: #e03131; } /* 진한 빨강 */
-        .sat .date-num { color: #1971c2; } /* 진한 파랑 */
+        .sun .date-num { color: #e03131; } 
+        .sat .date-num { color: #1971c2; } 
 
         /* 이벤트 박스 (PC) */
         .event-box { 
@@ -112,7 +68,6 @@
             cursor: pointer; font-size: 11px; overflow: hidden; 
         }
         .event-box:hover { transform: translateY(-1px); border-color: #adb5bd; z-index: 5; position: relative; }
-        
         .event-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
         .box-line2 { 
             display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
@@ -125,16 +80,51 @@
         .txt-blue { color: #1971c2; font-weight: 700; }
         .txt-black { color: #495057; font-weight: 500; }
 
+        /* [팝업 모달] */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
+            justify-content: center; align-items: center; backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 350px;
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.2s ease-out;
+        }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-poster-area {
+            width: 100%; height: 400px; background-color: #f8f9fa;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; border-bottom: 1px solid #eee;
+        }
+        .modal-poster-area img { width: 100%; height: 100%; object-fit: cover; }
+        .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
+
+        .modal-body { padding: 15px; text-align: center; }
+        .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
+        .modal-info { font-size: 14px; color: #868e96; margin-bottom: 15px; }
+
+        .modal-btn-group { display: flex; gap: 8px; }
+        .modal-btn {
+            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            text-align: center; cursor: pointer; text-decoration: none; border: none;
+        }
+        .btn-booking { background-color: #343a40; color: white; }
+        .btn-calendar { background-color: #fa5252; color: white; } 
+        .btn-calendar:hover { background-color: #ff6b6b; }
+
+
         /* 📱 모바일 최적화 */
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
             
-            /* [수정] 모바일 헤더 */
             .header-wrapper { margin-bottom: 10px; }
-            .main-title { font-size: 32px; margin-bottom: 20px; } /* [수정] 대제목 키움 */
-            .sub-title { font-size: 28px; } /* [수정] 연도월 키움 */
+            .main-title { font-size: 28px; margin-bottom: 15px; } 
+            .sub-title { font-size: 24px; } 
             .nav-row { gap: 8px; } 
-            .nav-btn { width: 24px; height: 24px; font-size: 12px; } /* [수정] 버튼은 작게 */
+            .nav-btn { width: 26px; height: 26px; font-size: 14px; }
             
             .control-bar { padding-left: 0; gap: 15px; }
             .group-title { font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
@@ -153,29 +143,25 @@
             }
             td:empty { display: none; }
             
-            /* [수정] 모바일 날짜: 기본 폰트와 활성 폰트 */
             .date-num { 
                 display: inline-block; width: auto; 
                 font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da; /* 기본값: 흐림 */
+                font-weight: 500; color: #ced4da; 
             }
             .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
             
             .sun .date-num { color: #ffc9c9; } 
             .sat .date-num { color: #a5d8ff; }
 
-            /* [수정] 활성 상태 (공연이 있는 날) - 이때만 폰트 커짐 */
             td.day-active .date-num {
                 font-size: 24px; margin-bottom: 12px; padding-bottom: 5px;
                 color: #212529; font-weight: 800;
             }
             td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
             
-            /* 활성 상태일 때 주말 색상 (진하게) */
             td.day-active.sun .date-num { color: #e03131 !important; } 
             td.day-active.sat .date-num { color: #1971c2 !important; }
 
-            /* 비활성 상태 (선택됐지만 공연이 안 보이는 날) - 기본값 유지 (폰트 안 바뀜) */
             td.day-inactive .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; color: #ced4da; }
             td.day-inactive.sun .date-num { color: #ffc9c9; }
             td.day-inactive.sat .date-num { color: #a5d8ff; }
@@ -191,7 +177,6 @@
             }
 
             body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
-            /* 초기 모드 폰트 (기본과 동일) */
             body.initial-mode .date-num {
                 font-size: 16px; margin-bottom: 0; border-bottom: none;
                 font-weight: 500; color: #ced4da;
@@ -236,10 +221,15 @@
                     <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
                     <tbody>
             <tr><td class='sun no-event'></td><td class=' no-event'></td><td class=' no-event'></td><td class=' no-event'></td><td class=' no-event'><span class='date-num' data-dayname='목'>1</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>2</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>3</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>4</span></td><td class=' has-event'><span class='date-num' data-dayname='월'>5</span>
-    <div class="event-box" data-region="gyeonggi" data-genre="가족" title="[(경기)] 뮤지컬 집사TV 〈대저택 문의 비밀〉 : part.1 - 용인
-장소: 용인시문예회관 처인홀
-장르: 가족
-시간: 01.05(월) 11:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="가족" 
+         data-title="뮤지컬 집사TV 〈대저택 문의 비밀〉 : part.1 - 용인"
+         data-date="01.05(월) 11:00"
+         data-place="용인시문예회관 처인홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -247,10 +237,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 집사TV 〈대저택 문의 비밀〉 : part.1 - 용인</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="클래식" title="[(경북)] WDR쾰른방송오케스트라 내한 공연
-장소: 구미문화예술회관
-장르: 클래식
-시간: 01.05(월) 14:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="클래식" 
+         data-title="WDR쾰른방송오케스트라 내한 공연"
+         data-date="01.05(월) 14:00"
+         data-place="구미문화예술회관"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(경북)</span></div>
@@ -258,10 +253,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">WDR쾰른방송오케스트라 내한 공연</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 뮤지컬 〈트레이스 유〉
-장소: 링크아트센터 벅스홀
-장르: 뮤지컬
-시간: 01.05(월) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="뮤지컬 〈트레이스 유〉"
+         data-date="01.05(월) 14:00"
+         data-place="링크아트센터 벅스홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -269,10 +269,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈트레이스 유〉</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="콘서트" title="[(서울)] 2025-26 강승윤(KANGSEUNGYOON) : PASSAGE ＃2 CONCERT TOUR IN SEOUL
-장소: 명화라이브홀
-장르: 콘서트
-시간: 01.05(월) 20:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="콘서트" 
+         data-title="2025-26 강승윤(KANGSEUNGYOON) : PASSAGE ＃2 CONCERT TOUR IN SEOUL"
+         data-date="01.05(월) 20:00"
+         data-place="명화라이브홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -280,10 +285,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 강승윤(KANGSEUNGYOON) : PASSAGE ＃2 CONCERT TOUR IN SEOUL</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(충북)] 2026 KickFlip FAN-CON 〈From KickFlip, To WeFlip〉 in 청주
-장소: 청주 CJB미디어센터
-장르: 콘서트
-시간: 01.05(월) 20:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="2026 KickFlip FAN-CON 〈From KickFlip, To WeFlip〉 in 청주"
+         data-date="01.05(월) 20:00"
+         data-place="청주 CJB미디어센터"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(충북)</span></div>
@@ -291,10 +301,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 KickFlip FAN-CON 〈From KickFlip, To WeFlip〉 in 청주</span></span>
     </div>
     </td><td class=' has-event'><span class='date-num' data-dayname='화'>6</span>
-    <div class="event-box" data-region="gyeonggi" data-genre="가족" title="[(경기)] 뮤지컬 〈설민석의 한국사 대모험 : 안중근〉 - 안양
-장소: 안양아트센터 관악홀
-장르: 가족
-시간: 01.06(화) 10:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="가족" 
+         data-title="뮤지컬 〈설민석의 한국사 대모험 : 안중근〉 - 안양"
+         data-date="01.06(화) 10:00"
+         data-place="안양아트센터 관악홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -302,10 +317,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈설민석의 한국사 대모험 : 안중근〉 - 안양</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(부산)] [데뷔 60주년 기념공연] 2026 남진 전국투어 콘서트 - 부산
-장소: 부산영화의전당 하늘연극장
-장르: 콘서트
-시간: 01.06(화) 10:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="[데뷔 60주년 기념공연] 2026 남진 전국투어 콘서트 - 부산"
+         data-date="01.06(화) 10:00"
+         data-place="부산영화의전당 하늘연극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
@@ -313,10 +333,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">[데뷔 60주년 기념공연] 2026 남진 전국투어 콘서트 - 부산</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(부산)] 조항조 전국투어 콘서트 : 생각 - 부산
-장소: 부산영화의전당 하늘연극장
-장르: 콘서트
-시간: 01.06(화) 10:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="조항조 전국투어 콘서트 : 생각 - 부산"
+         data-date="01.06(화) 10:00"
+         data-place="부산영화의전당 하늘연극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">10:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
@@ -324,10 +349,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">조항조 전국투어 콘서트 : 생각 - 부산</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 뮤지컬 〈팬레터〉 10주년 기념 공연
-장소: 예술의전당 CJ 토월극장
-장르: 뮤지컬
-시간: 01.06(화) 11:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="뮤지컬 〈팬레터〉 10주년 기념 공연"
+         data-date="01.06(화) 11:00"
+         data-place="예술의전당 CJ 토월극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -335,10 +365,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈팬레터〉 10주년 기념 공연</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="연극" title="[(서울)] 연극 〈살아있는 자를 수선하기〉
-장소: 국립정동극장
-장르: 연극
-시간: 01.06(화) 13:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="연극" 
+         data-title="연극 〈살아있는 자를 수선하기〉"
+         data-date="01.06(화) 13:00"
+         data-place="국립정동극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">13:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -346,10 +381,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">연극 〈살아있는 자를 수선하기〉</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="행사(전시)" title="[(부산)] TV애니메이션 체인소 맨 展
-장소: 덕스 (DUEX) 부산
-장르: 행사(전시)
-시간: 01.06(화) 14:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="행사(전시)" 
+         data-title="TV애니메이션 체인소 맨 展"
+         data-date="01.06(화) 14:00"
+         data-place="덕스 (DUEX) 부산"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
@@ -357,10 +397,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">TV애니메이션 체인소 맨 展</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 뮤지컬 〈앤ANNE〉 10th Anniversary
-장소: 대학로 자유극장
-장르: 뮤지컬
-시간: 01.06(화) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="뮤지컬 〈앤ANNE〉 10th Anniversary"
+         data-date="01.06(화) 14:00"
+         data-place="대학로 자유극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -368,10 +413,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈앤ANNE〉 10th Anniversary</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 뮤지컬 슈가 〈SUGAR〉
-장소: 한전아트센터
-장르: 뮤지컬
-시간: 01.06(화) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="뮤지컬 슈가 〈SUGAR〉"
+         data-date="01.06(화) 14:00"
+         data-place="한전아트센터"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -379,10 +429,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 슈가 〈SUGAR〉</span></span>
     </div>
     
-    <div class="event-box" data-region="gyeonggi" data-genre="뮤지컬" title="[(경기)] 이은결 〈META〉- 의정부
-장소: 의정부예술의전당 대극장
-장르: 뮤지컬
-시간: 01.06(화) 14:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="뮤지컬" 
+         data-title="이은결 〈META〉- 의정부"
+         data-date="01.06(화) 14:00"
+         data-place="의정부예술의전당 대극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -390,10 +445,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">이은결 〈META〉- 의정부</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="가족" title="[(충남)] 쇼뮤지컬〈프린세스 캐치! 티니핑〉- 당진
-장소: 당진문예의전당 대공연장
-장르: 가족
-시간: 01.06(화) 14:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="가족" 
+         data-title="쇼뮤지컬〈프린세스 캐치! 티니핑〉- 당진"
+         data-date="01.06(화) 14:00"
+         data-place="당진문예의전당 대공연장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(충남)</span></div>
@@ -401,10 +461,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">쇼뮤지컬〈프린세스 캐치! 티니핑〉- 당진</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 〈센과 치히로의 행방불명〉오리지널 투어 (SPIRITED AWAY)
-장소: 예술의전당 오페라극장
-장르: 뮤지컬
-시간: 01.06(화) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="〈센과 치히로의 행방불명〉오리지널 투어 (SPIRITED AWAY)"
+         data-date="01.06(화) 14:00"
+         data-place="예술의전당 오페라극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -412,10 +477,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">〈센과 치히로의 행방불명〉오리지널 투어 (SPIRITED AWAY)</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="가족" title="[(대구)] 쇼뮤지컬〈프린세스 캐치! 티니핑〉- 대구
-장소: 영남대학교 천마아트센터 그랜드홀
-장르: 가족
-시간: 01.06(화) 15:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="가족" 
+         data-title="쇼뮤지컬〈프린세스 캐치! 티니핑〉- 대구"
+         data-date="01.06(화) 15:00"
+         data-place="영남대학교 천마아트센터 그랜드홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">15:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(대구)</span></div>
@@ -423,10 +493,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">쇼뮤지컬〈프린세스 캐치! 티니핑〉- 대구</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="클래식" title="[(서울)] 드미트리 시쉬킨 피아노 리사이틀
-장소: 예술의전당 콘서트홀
-장르: 클래식
-시간: 01.06(화) 16:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="클래식" 
+         data-title="드미트리 시쉬킨 피아노 리사이틀"
+         data-date="01.06(화) 16:00"
+         data-place="예술의전당 콘서트홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">16:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -434,10 +509,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">드미트리 시쉬킨 피아노 리사이틀</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="가족" title="[(부산)] 쇼뮤지컬〈프린세스 캐치! 티니핑〉- 부산
-장소: 부산 벡스코 오디토리움
-장르: 가족
-시간: 01.06(화) 16:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="가족" 
+         data-title="쇼뮤지컬〈프린세스 캐치! 티니핑〉- 부산"
+         data-date="01.06(화) 16:00"
+         data-place="부산 벡스코 오디토리움"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">16:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
@@ -445,10 +525,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">쇼뮤지컬〈프린세스 캐치! 티니핑〉- 부산</span></span>
     </div>
     </td><td class=' has-event'><span class='date-num' data-dayname='수'>7</span>
-    <div class="event-box" data-region="seoul" data-genre="가족" title="[(서울)] 뮤지컬 〈장수탕 선녀님〉 - 서울숲
-장소: 서울숲 씨어터 2관
-장르: 가족
-시간: 01.07(수) 11:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="가족" 
+         data-title="뮤지컬 〈장수탕 선녀님〉 - 서울숲"
+         data-date="01.07(수) 11:00"
+         data-place="서울숲 씨어터 2관"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -456,10 +541,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈장수탕 선녀님〉 - 서울숲</span></span>
     </div>
     
-    <div class="event-box" data-region="gyeonggi" data-genre="가족" title="[(경기)] 뮤지컬 한글용사 아이야 새로운 이야기〈달라도 친구야!〉
-장소: 안산문화예술의전당 해돋이극장
-장르: 가족
-시간: 01.07(수) 11:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="가족" 
+         data-title="뮤지컬 한글용사 아이야 새로운 이야기〈달라도 친구야!〉"
+         data-date="01.07(수) 11:00"
+         data-place="안산문화예술의전당 해돋이극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -467,10 +557,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 한글용사 아이야 새로운 이야기〈달라도 친구야!〉</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="연극" title="[(서울)] 앙드레와 도린 (Andre ＆ Dorine)
-장소: 강남씨어터
-장르: 연극
-시간: 01.07(수) 12:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="연극" 
+         data-title="앙드레와 도린 (Andre ＆ Dorine)"
+         data-date="01.07(수) 12:00"
+         data-place="강남씨어터"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">12:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -478,10 +573,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">앙드레와 도린 (Andre ＆ Dorine)</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="클래식" title="[(서울)] 히사이시 조 영화음악 콘서트 2026_Chamber Edition(예술의전당)
-장소: 예술의전당 콘서트홀
-장르: 클래식
-시간: 01.07(수) 13:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="클래식" 
+         data-title="히사이시 조 영화음악 콘서트 2026_Chamber Edition(예술의전당)"
+         data-date="01.07(수) 13:00"
+         data-place="예술의전당 콘서트홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">13:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -489,10 +589,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">히사이시 조 영화음악 콘서트 2026_Chamber Edition(예술의전당)</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="연극" title="[(서울)] 2026 쿼드기획:〈함수 도미노〉
-장소: 대학로극장 쿼드
-장르: 연극
-시간: 01.07(수) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="연극" 
+         data-title="2026 쿼드기획:〈함수 도미노〉"
+         data-date="01.07(수) 14:00"
+         data-place="대학로극장 쿼드"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -500,10 +605,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 쿼드기획:〈함수 도미노〉</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="연극" title="[(서울)] 그레잇코미디추리극 〈히든퍼즐〉
-장소: 코델아트홀
-장르: 연극
-시간: 01.07(수) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="연극" 
+         data-title="그레잇코미디추리극 〈히든퍼즐〉"
+         data-date="01.07(수) 14:00"
+         data-place="코델아트홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -511,10 +621,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">그레잇코미디추리극 〈히든퍼즐〉</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 뮤지컬 〈긴긴밤〉
-장소: 링크아트센터드림 드림1관
-장르: 뮤지컬
-시간: 01.07(수) 16:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="뮤지컬 〈긴긴밤〉"
+         data-date="01.07(수) 16:00"
+         data-place="링크아트센터드림 드림1관"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">16:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -522,10 +637,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈긴긴밤〉</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="콘서트" title="[(서울)] 오월오일 단독 콘서트 〈AQUA〉
-장소: YES24 LIVE HALL
-장르: 콘서트
-시간: 01.07(수) 19:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="콘서트" 
+         data-title="오월오일 단독 콘서트 〈AQUA〉"
+         data-date="01.07(수) 19:00"
+         data-place="YES24 LIVE HALL"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">19:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -533,10 +653,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">오월오일 단독 콘서트 〈AQUA〉</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(부산)] 2026 10CM Asia Tour <To 10CM: Chapter 1> in Busan
-장소: BEXCO 오디토리움
-장르: 콘서트
-시간: 01.07(수) 20:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="2026 10CM Asia Tour <To 10CM: Chapter 1> in Busan"
+         data-date="01.07(수) 20:00"
+         data-place="BEXCO 오디토리움"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
@@ -544,10 +669,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 10CM Asia Tour <To 10CM: Chapter 1> in Busan</span></span>
     </div>
     </td><td class=' has-event'><span class='date-num' data-dayname='목'>8</span>
-    <div class="event-box" data-region="others" data-genre="가족" title="[(울산)] K-히어로 뮤지컬 〈똥볶이 할멈 : 정의의 맛〉 - 울산
-장소: 울산중구문화의전당 함월홀(2층)
-장르: 가족
-시간: 01.08(목) 09:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="가족" 
+         data-title="K-히어로 뮤지컬 〈똥볶이 할멈 : 정의의 맛〉 - 울산"
+         data-date="01.08(목) 09:00"
+         data-place="울산중구문화의전당 함월홀(2층)"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">09:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(울산)</span></div>
@@ -555,10 +685,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">K-히어로 뮤지컬 〈똥볶이 할멈 : 정의의 맛〉 - 울산</span></span>
     </div>
     
-    <div class="event-box" data-region="gyeonggi" data-genre="콘서트" title="[(경기)] 센트럴 씨 첫 단독 내한공연 (CAN’T RUSH GREATNESS WORLD TOUR - Asia 2026)
-장소: 킨텍스 제2전시장 9홀
-장르: 콘서트
-시간: 01.08(목) 12:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="콘서트" 
+         data-title="센트럴 씨 첫 단독 내한공연 (CAN’T RUSH GREATNESS WORLD TOUR - Asia 2026)"
+         data-date="01.08(목) 12:00"
+         data-place="킨텍스 제2전시장 9홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">12:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -566,10 +701,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">센트럴 씨 첫 단독 내한공연 (CAN’T RUSH GREATNESS WORLD TOUR - Asia 2026)</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(울산)] 2025-26 김창옥 토크콘서트 시즌5 - 울산
-장소: 울산문화예술회관 대공연장
-장르: 콘서트
-시간: 01.08(목) 14:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="2025-26 김창옥 토크콘서트 시즌5 - 울산"
+         data-date="01.08(목) 14:00"
+         data-place="울산문화예술회관 대공연장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(울산)</span></div>
@@ -577,10 +717,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 김창옥 토크콘서트 시즌5 - 울산</span></span>
     </div>
     
-    <div class="event-box" data-region="gyeonggi" data-genre="콘서트" title="[(경기)] 2025-26 김창옥 토크콘서트 시즌5 - 부천
-장소: 부천시민회관 대공연장
-장르: 콘서트
-시간: 01.08(목) 14:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="콘서트" 
+         data-title="2025-26 김창옥 토크콘서트 시즌5 - 부천"
+         data-date="01.08(목) 14:00"
+         data-place="부천시민회관 대공연장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -588,10 +733,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 김창옥 토크콘서트 시즌5 - 부천</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="연극" title="[(서울)] 연극 〈벙커 트릴로지〉
-장소: 홍익대 대학로 아트센터 소극장
-장르: 연극
-시간: 01.08(목) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="연극" 
+         data-title="연극 〈벙커 트릴로지〉"
+         data-date="01.08(목) 14:00"
+         data-place="홍익대 대학로 아트센터 소극장"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -599,10 +749,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">연극 〈벙커 트릴로지〉</span></span>
     </div>
     
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(대구)] 에녹 2026년 새해맞이 디너쇼 - 대구
-장소: 호텔인터불고 대구 컨벤션홀
-장르: 콘서트
-시간: 01.08(목) 20:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="에녹 2026년 새해맞이 디너쇼 - 대구"
+         data-date="01.08(목) 20:00"
+         data-place="호텔인터불고 대구 컨벤션홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(대구)</span></div>
@@ -610,10 +765,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">에녹 2026년 새해맞이 디너쇼 - 대구</span></span>
     </div>
     </td><td class=' has-event'><span class='date-num' data-dayname='금'>9</span>
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 어른이 뮤지컬 〈난쟁이들〉
-장소: 플러스씨어터
-장르: 뮤지컬
-시간: 01.09(금) 11:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="어른이 뮤지컬 〈난쟁이들〉"
+         data-date="01.09(금) 11:00"
+         data-place="플러스씨어터"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">11:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -621,10 +781,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">어른이 뮤지컬 〈난쟁이들〉</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="뮤지컬" title="[(서울)] 뮤지컬 〈킹키부츠〉
-장소: 샤롯데씨어터
-장르: 뮤지컬
-시간: 01.09(금) 14:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="뮤지컬" 
+         data-title="뮤지컬 〈킹키부츠〉"
+         data-date="01.09(금) 14:00"
+         data-place="샤롯데씨어터"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -632,10 +797,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈킹키부츠〉</span></span>
     </div>
     
-    <div class="event-box" data-region="gyeonggi" data-genre="콘서트" title="[(경기)] 2026 최백호 50주년 콘서트 "낭만의 50년, 시간의 흔적을 노래하다"
-장소: 안양아트센터 관악홀
-장르: 콘서트
-시간: 01.09(금) 14:00">
+    <div class="event-box" 
+         data-region="gyeonggi" 
+         data-genre="콘서트" 
+         data-title="2026 최백호 50주년 콘서트 "낭만의 50년, 시간의 흔적을 노래하다""
+         data-date="01.09(금) 14:00"
+         data-place="안양아트센터 관악홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
@@ -643,10 +813,15 @@
         <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 최백호 50주년 콘서트 "낭만의 50년, 시간의 흔적을 노래하다"</span></span>
     </div>
     
-    <div class="event-box" data-region="seoul" data-genre="콘서트" title="[(서울)] 2026 [황가람 콘서트 : 나는] - 서울공연
-장소: 블루스퀘어 우리WON뱅킹홀
-장르: 콘서트
-시간: 01.09(금) 15:00">
+    <div class="event-box" 
+         data-region="seoul" 
+         data-genre="콘서트" 
+         data-title="2026 [황가람 콘서트 : 나는] - 서울공연"
+         data-date="01.09(금) 15:00"
+         data-place="블루스퀘어 우리WON뱅킹홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">15:00</span></div>
             <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
@@ -663,10 +838,15 @@
                     <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
                     <tbody>
             <tr><td class='sun no-event'><span class='date-num' data-dayname='일'>1</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>2</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>3</span></td><td class=' no-event'><span class='date-num' data-dayname='수'>4</span></td><td class=' no-event'><span class='date-num' data-dayname='목'>5</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>6</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>7</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>8</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>9</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>10</span></td><td class=' has-event'><span class='date-num' data-dayname='수'>11</span>
-    <div class="event-box" data-region="others" data-genre="콘서트" title="[(대전)] 2026 10CM Asia Tour <To 10CM: Chapter 1> in Daejeon
-장소: 충남대학교 정심화홀
-장르: 콘서트
-시간: 02.11(수) 20:00">
+    <div class="event-box" 
+         data-region="others" 
+         data-genre="콘서트" 
+         data-title="2026 10CM Asia Tour <To 10CM: Chapter 1> in Daejeon"
+         data-date="02.11(수) 20:00"
+         data-place="충남대학교 정심화홀"
+         data-poster=""
+         data-link=""
+         onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">20:00</span></div>
             <div><span style="color:#1971c2; font-weight:800;">(대전)</span></div>
@@ -678,6 +858,23 @@
                 </table>
             </div>
             
+    </div>
+
+    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-poster-area">
+                <img id="modalPoster" src="" alt="공연 포스터" style="display:none;">
+                <span id="noPosterText" class="no-poster-text" style="display:none;">이미지 없음</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalTitle" class="modal-title"></div>
+                <div id="modalInfo" class="modal-info"></div>
+                <div class="modal-btn-group">
+                    <a id="btnBooking" href="#" target="_blank" class="modal-btn btn-booking">예매 안내</a>
+                    <button onclick="addToNativeCalendar()" class="modal-btn btn-calendar">일정 추가</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -692,9 +889,106 @@
         let currentIndex = 0;
         const totalPages = pages.length;
 
-        // [수정] 저장 기능 삭제 (새로고침 시 초기화 위함)
-        // function loadSettings() ... 제거됨
+        // [팝업 관련 변수]
+        const modal = document.getElementById('eventModal');
+        const modalPoster = document.getElementById('modalPoster');
+        const noPosterText = document.getElementById('noPosterText');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalInfo = document.getElementById('modalInfo');
+        const btnBooking = document.getElementById('btnBooking');
+        let currentEventData = {}; 
 
+        // --- 팝업 함수 ---
+        function openModal(element) {
+            const ds = element.dataset;
+            currentEventData = {
+                title: ds.title,
+                date: ds.date,
+                place: ds.place,
+                link: ds.link
+            };
+
+            modalTitle.innerText = ds.title;
+            modalInfo.innerText = `${ds.date} | ${ds.place}`;
+            
+            if (ds.poster && ds.poster.trim() !== '') {
+                modalPoster.src = ds.poster;
+                modalPoster.style.display = 'block';
+                noPosterText.style.display = 'none';
+            } else {
+                modalPoster.style.display = 'none';
+                noPosterText.style.display = 'block';
+            }
+
+            if (ds.link && ds.link.trim() !== '') {
+                btnBooking.href = ds.link;
+                btnBooking.style.display = 'block';
+                btnBooking.innerText = '예매 안내';
+            } else {
+                btnBooking.style.display = 'none'; 
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            modal.style.display = 'none';
+        }
+
+        // [수정] 기본 캘린더 앱 연동 함수 (.ics 다운로드 방식)
+        function addToNativeCalendar() {
+            const title = currentEventData.title || "공연 관람";
+            const rawDate = currentEventData.date;
+            const place = currentEventData.place || "";
+            const link = currentEventData.link || "";
+            
+            const nums = rawDate.match(/\d+/g); 
+            
+            let year = 2026;
+            let month = '01';
+            let day = '01';
+            let hour = '12';
+            let min = '00';
+
+            if (nums) {
+                if (nums[0].length === 4) { 
+                    year = nums[0]; month = nums[1]; day = nums[2];
+                    if(nums.length >= 5) { hour = nums[3]; min = nums[4]; }
+                } else { 
+                    month = nums[0]; day = nums[1];
+                    if(nums.length >= 4) { hour = nums[2]; min = nums[3]; }
+                }
+            }
+            
+            const pad = (n) => n.toString().padStart(2, '0');
+            const startStr = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(min)}00`;
+            const endStr = `${year}${pad(month)}${pad(day)}T${pad(parseInt(hour)+2)}${pad(min)}00`; 
+
+            // ICS 파일 내용 생성
+            const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Show Calendar//KR
+BEGIN:VEVENT
+SUMMARY:${title}
+DTSTART:${startStr}
+DTEND:${endStr}
+LOCATION:${place}
+DESCRIPTION:예매처: ${link}
+END:VEVENT
+END:VCALENDAR`;
+
+            // 파일 다운로드 트리거 (모바일에서 자동으로 캘린더 앱 연결됨)
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const linkElem = document.createElement('a');
+            linkElem.href = window.URL.createObjectURL(blob);
+            linkElem.setAttribute('download', `${title}.ics`);
+            document.body.appendChild(linkElem);
+            linkElem.click();
+            document.body.removeChild(linkElem);
+        }
+
+        // --- 기존 달력 로직 ---
         function showPage(index) {
             pages.forEach((page, idx) => {
                 if (idx === index) {
@@ -787,7 +1081,7 @@
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        // [수정] 초기화 로직: 지역 해제, 장르 전체 선택
+        // [초기화 로직] 지역: 모두 해제, 장르: 모두 선택
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
         isAllChecked = true;

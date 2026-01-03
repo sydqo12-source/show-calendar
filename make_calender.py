@@ -26,6 +26,12 @@ def get_content_html(row_data):
     place = str(row_data['장소'])
     genre = str(row_data['장르'])
     
+    # 엑셀 데이터 가져오기
+    poster_url = str(row_data.get('포스터', ''))
+    booking_url = str(row_data.get('예매처', ''))
+    if poster_url == 'nan': poster_url = ''
+    if booking_url == 'nan': booking_url = ''
+
     raw_time = str(row_data['오픈일시'])
     time_txt = raw_time.split(' ')[-1] if ' ' in raw_time else ''
 
@@ -44,7 +50,15 @@ def get_content_html(row_data):
     tooltip = f"[{region}] {title}\n장소: {place}\n장르: {genre}\n시간: {raw_time}"
 
     return f"""
-    <div class="event-box" data-region="{r_group}" data-genre="{genre}" title="{tooltip}">
+    <div class="event-box" 
+         data-region="{r_group}" 
+         data-genre="{genre}" 
+         data-title="{title}"
+         data-date="{raw_time}"
+         data-place="{place}"
+         data-poster="{poster_url}"
+         data-link="{booking_url}"
+         onclick="openModal(this)">
         <div class="event-header">
             <div>{html_left}</div>
             <div>{html_right}</div>
@@ -58,7 +72,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Final design adjustments"], check=True)
+            subprocess.run(["git", "commit", "-m", "Switch to Native Calendar App"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -77,7 +91,7 @@ def main():
 
     try:
         # 1. 엑셀 로드
-        df = pd.read_excel(filename).fillna({'장르': '기타', '지역': '(기타)'})
+        df = pd.read_excel(filename).fillna({'장르': '기타', '지역': '(기타)', '포스터': '', '예매처': ''})
         if '오픈일시' not in df.columns:
             print("오류: 엑셀에 '오픈일시' 컬럼이 없습니다.")
             return
@@ -187,55 +201,21 @@ def main():
         
         /* [PC] 헤더 스타일 */
         .header-wrapper {{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 10px;
+            display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;
         }}
-
         .main-title {{ 
-            font-size: 38px; 
-            font-weight: 800; 
-            color: #343a40; 
-            margin-bottom: 25px; 
-            word-break: keep-all;
-            text-align: center;
+            font-size: 38px; font-weight: 800; color: #343a40; margin-bottom: 25px; 
+            word-break: keep-all; text-align: center;
         }}
-
-        .nav-row {{
-            display: flex;
-            align-items: center;
-            gap: 12px; /* 버튼과 텍스트 사이 간격 */
-        }}
-
-        .sub-title {{ 
-            font-size: 34px; /* [수정] PC 연도월 폰트 키움 (기존 28 -> 34) */
-            font-weight: 800; 
-            color: #495057; 
-        }}
-
-        /* [수정] 화살표 버튼: 아주 작고 심플하게 */
+        .nav-row {{ display: flex; align-items: center; gap: 10px; }}
+        .sub-title {{ font-size: 34px; font-weight: 800; color: #495057; }}
         .nav-btn {{
-            width: 24px;  /* 더 작게 */
-            height: 24px; 
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            color: #868e96;
-            font-size: 14px; /* 아이콘 폰트 작게 */
-            font-weight: 700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
+            width: 24px; height: 24px; background-color: #fff; border: 1px solid #ced4da;
+            border-radius: 4px; color: #868e96; font-size: 14px; font-weight: 700;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: all 0.2s; user-select: none;
         }}
-        .nav-btn:hover {{ 
-            background-color: #f1f3f5; 
-            color: #343a40; 
-            border-color: #adb5bd;
-        }}
+        .nav-btn:hover {{ background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }}
         .nav-btn.disabled {{ opacity: 0.3; pointer-events: none; }}
         
         /* 컨트롤 바 */
@@ -246,15 +226,9 @@ def main():
         .filter-group {{ display: flex; align-items: baseline; gap: 0px; width: 100%; }}
         .group-title {{ font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; margin-top: 3px; }}
         .chk-wrap {{ display: flex; flex-wrap: wrap; align-items: center; gap: 0px; flex: 1; }}
-        
-        label {{ 
-            cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; 
-            -webkit-tap-highlight-color: transparent; 
-        }}
+        label {{ cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; -webkit-tap-highlight-color: transparent; }}
         label:hover {{ opacity: 1; }} 
-        
         input[type="checkbox"] {{ accent-color: #343a40; width: 14px; height: 14px; cursor: pointer; }}
-        
         .btn-reset {{
             margin-left: 4px; background-color: transparent; border: 1px solid #ced4da;
             border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; 
@@ -270,15 +244,11 @@ def main():
         td {{ vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }}
         td:hover {{ background-color: #fcfcfc; }}
         
-        /* [수정] PC 날짜: 흐림 제거, 색상 선명하게 */
         .date-num {{ 
-            font-weight: 800; font-size: 14px; 
-            color: #212529; /* 진한 검정 */
-            margin-bottom: 5px; display: block; 
+            font-weight: 800; font-size: 14px; color: #212529; margin-bottom: 5px; display: block; 
         }}
-        /* [수정] 주말 날짜 색상도 진하게 */
-        .sun .date-num {{ color: #e03131; }} /* 진한 빨강 */
-        .sat .date-num {{ color: #1971c2; }} /* 진한 파랑 */
+        .sun .date-num {{ color: #e03131; }} 
+        .sat .date-num {{ color: #1971c2; }} 
 
         /* 이벤트 박스 (PC) */
         .event-box {{ 
@@ -287,7 +257,6 @@ def main():
             cursor: pointer; font-size: {FONT_SIZE}px; overflow: hidden; 
         }}
         .event-box:hover {{ transform: translateY(-1px); border-color: #adb5bd; z-index: 5; position: relative; }}
-        
         .event-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }}
         .box-line2 {{ 
             display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
@@ -300,16 +269,51 @@ def main():
         .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
         .txt-black {{ color: #495057; font-weight: 500; }}
 
+        /* [팝업 모달] */
+        .modal-overlay {{
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
+            justify-content: center; align-items: center; backdrop-filter: blur(3px);
+        }}
+        .modal-content {{
+            background: white; width: 90%; max-width: 350px;
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.2s ease-out;
+        }}
+        @keyframes popUp {{ from {{ transform: scale(0.9); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
+        
+        .modal-poster-area {{
+            width: 100%; height: 400px; background-color: #f8f9fa;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; border-bottom: 1px solid #eee;
+        }}
+        .modal-poster-area img {{ width: 100%; height: 100%; object-fit: cover; }}
+        .no-poster-text {{ color: #adb5bd; font-weight: 600; font-size: 14px; }}
+
+        .modal-body {{ padding: 15px; text-align: center; }}
+        .modal-title {{ font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }}
+        .modal-info {{ font-size: 14px; color: #868e96; margin-bottom: 15px; }}
+
+        .modal-btn-group {{ display: flex; gap: 8px; }}
+        .modal-btn {{
+            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            text-align: center; cursor: pointer; text-decoration: none; border: none;
+        }}
+        .btn-booking {{ background-color: #343a40; color: white; }}
+        .btn-calendar {{ background-color: #fa5252; color: white; }} 
+        .btn-calendar:hover {{ background-color: #ff6b6b; }}
+
+
         /* 📱 모바일 최적화 */
         @media screen and (max-width: 768px) {{
             body {{ padding: 15px; }} 
             
-            /* [수정] 모바일 헤더 */
             .header-wrapper {{ margin-bottom: 10px; }}
-            .main-title {{ font-size: 32px; margin-bottom: 20px; }} /* [수정] 대제목 키움 */
-            .sub-title {{ font-size: 28px; }} /* [수정] 연도월 키움 */
+            .main-title {{ font-size: 28px; margin-bottom: 15px; }} 
+            .sub-title {{ font-size: 24px; }} 
             .nav-row {{ gap: 8px; }} 
-            .nav-btn {{ width: 24px; height: 24px; font-size: 12px; }} /* [수정] 버튼은 작게 */
+            .nav-btn {{ width: 26px; height: 26px; font-size: 14px; }}
             
             .control-bar {{ padding-left: 0; gap: 15px; }}
             .group-title {{ font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }}
@@ -328,29 +332,25 @@ def main():
             }}
             td:empty {{ display: none; }}
             
-            /* [수정] 모바일 날짜: 기본 폰트와 활성 폰트 */
             .date-num {{ 
                 display: inline-block; width: auto; 
                 font-size: 16px; margin-bottom: 0; border-bottom: none;
-                font-weight: 500; color: #ced4da; /* 기본값: 흐림 */
+                font-weight: 500; color: #ced4da; 
             }}
             .date-num::after {{ content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }}
             
             .sun .date-num {{ color: #ffc9c9; }} 
             .sat .date-num {{ color: #a5d8ff; }}
 
-            /* [수정] 활성 상태 (공연이 있는 날) - 이때만 폰트 커짐 */
             td.day-active .date-num {{
                 font-size: 24px; margin-bottom: 12px; padding-bottom: 5px;
                 color: #212529; font-weight: 800;
             }}
             td.day-active .date-num::after {{ font-size: inherit; color: inherit; font-weight: inherit; }}
             
-            /* 활성 상태일 때 주말 색상 (진하게) */
             td.day-active.sun .date-num {{ color: #e03131 !important; }} 
             td.day-active.sat .date-num {{ color: #1971c2 !important; }}
 
-            /* 비활성 상태 (선택됐지만 공연이 안 보이는 날) - 기본값 유지 (폰트 안 바뀜) */
             td.day-inactive .date-num {{ font-size: 16px; margin-bottom: 0; border-bottom: none; color: #ced4da; }}
             td.day-inactive.sun .date-num {{ color: #ffc9c9; }}
             td.day-inactive.sat .date-num {{ color: #a5d8ff; }}
@@ -366,7 +366,6 @@ def main():
             }}
 
             body.initial-mode td {{ border-bottom: 1px solid #f1f3f5; }}
-            /* 초기 모드 폰트 (기본과 동일) */
             body.initial-mode .date-num {{
                 font-size: 16px; margin-bottom: 0; border-bottom: none;
                 font-weight: 500; color: #ced4da;
@@ -408,6 +407,23 @@ def main():
         {all_calendars_html}
     </div>
 
+    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-poster-area">
+                <img id="modalPoster" src="" alt="공연 포스터" style="display:none;">
+                <span id="noPosterText" class="no-poster-text" style="display:none;">이미지 없음</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalTitle" class="modal-title"></div>
+                <div id="modalInfo" class="modal-info"></div>
+                <div class="modal-btn-group">
+                    <a id="btnBooking" href="#" target="_blank" class="modal-btn btn-booking">예매 안내</a>
+                    <button onclick="addToNativeCalendar()" class="modal-btn btn-calendar">일정 추가</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const regionChks = document.querySelectorAll('.region-chk');
         const genreChks = document.querySelectorAll('.genre-chk');
@@ -420,9 +436,106 @@ def main():
         let currentIndex = 0;
         const totalPages = pages.length;
 
-        // [수정] 저장 기능 삭제 (새로고침 시 초기화 위함)
-        // function loadSettings() ... 제거됨
+        // [팝업 관련 변수]
+        const modal = document.getElementById('eventModal');
+        const modalPoster = document.getElementById('modalPoster');
+        const noPosterText = document.getElementById('noPosterText');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalInfo = document.getElementById('modalInfo');
+        const btnBooking = document.getElementById('btnBooking');
+        let currentEventData = {{}}; 
 
+        // --- 팝업 함수 ---
+        function openModal(element) {{
+            const ds = element.dataset;
+            currentEventData = {{
+                title: ds.title,
+                date: ds.date,
+                place: ds.place,
+                link: ds.link
+            }};
+
+            modalTitle.innerText = ds.title;
+            modalInfo.innerText = `${{ds.date}} | ${{ds.place}}`;
+            
+            if (ds.poster && ds.poster.trim() !== '') {{
+                modalPoster.src = ds.poster;
+                modalPoster.style.display = 'block';
+                noPosterText.style.display = 'none';
+            }} else {{
+                modalPoster.style.display = 'none';
+                noPosterText.style.display = 'block';
+            }}
+
+            if (ds.link && ds.link.trim() !== '') {{
+                btnBooking.href = ds.link;
+                btnBooking.style.display = 'block';
+                btnBooking.innerText = '예매 안내';
+            }} else {{
+                btnBooking.style.display = 'none'; 
+            }}
+
+            modal.style.display = 'flex';
+        }}
+
+        function closeModal(e) {{
+            modal.style.display = 'none';
+        }}
+
+        // [수정] 기본 캘린더 앱 연동 함수 (.ics 다운로드 방식)
+        function addToNativeCalendar() {{
+            const title = currentEventData.title || "공연 관람";
+            const rawDate = currentEventData.date;
+            const place = currentEventData.place || "";
+            const link = currentEventData.link || "";
+            
+            const nums = rawDate.match(/\d+/g); 
+            
+            let year = {DEFAULT_YEAR};
+            let month = '01';
+            let day = '01';
+            let hour = '12';
+            let min = '00';
+
+            if (nums) {{
+                if (nums[0].length === 4) {{ 
+                    year = nums[0]; month = nums[1]; day = nums[2];
+                    if(nums.length >= 5) {{ hour = nums[3]; min = nums[4]; }}
+                }} else {{ 
+                    month = nums[0]; day = nums[1];
+                    if(nums.length >= 4) {{ hour = nums[2]; min = nums[3]; }}
+                }}
+            }}
+            
+            const pad = (n) => n.toString().padStart(2, '0');
+            const startStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(hour)}}${{pad(min)}}00`;
+            const endStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(parseInt(hour)+2)}}${{pad(min)}}00`; 
+
+            // ICS 파일 내용 생성
+            const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Show Calendar//KR
+BEGIN:VEVENT
+SUMMARY:${{title}}
+DTSTART:${{startStr}}
+DTEND:${{endStr}}
+LOCATION:${{place}}
+DESCRIPTION:예매처: ${{link}}
+END:VEVENT
+END:VCALENDAR`;
+
+            // 파일 다운로드 트리거 (모바일에서 자동으로 캘린더 앱 연결됨)
+            const blob = new Blob([icsContent], {{ type: 'text/calendar;charset=utf-8' }});
+            const linkElem = document.createElement('a');
+            linkElem.href = window.URL.createObjectURL(blob);
+            linkElem.setAttribute('download', `${{title}}.ics`);
+            document.body.appendChild(linkElem);
+            linkElem.click();
+            document.body.removeChild(linkElem);
+        }}
+
+        // --- 기존 달력 로직 ---
         function showPage(index) {{
             pages.forEach((page, idx) => {{
                 if (idx === index) {{
@@ -515,7 +628,7 @@ def main():
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        // [수정] 초기화 로직: 지역 해제, 장르 전체 선택
+        // [초기화 로직] 지역: 모두 해제, 장르: 모두 선택
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
         isAllChecked = true;
