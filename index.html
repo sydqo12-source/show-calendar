@@ -25,10 +25,7 @@
                 padding-left: 12px; font-size: 13px;
             }
             .filter-group { 
-                display: flex; 
-                align-items: baseline; 
-                gap: 0px; 
-                width: 100%; 
+                display: flex; align-items: baseline; gap: 0px; width: 100%; 
             }
             
             .group-title { 
@@ -108,86 +105,70 @@
                 thead { display: none; }
                 tr { margin-bottom: 0; }
                 
-                /* [핵심] 모바일 정렬: text-align left, 고정 패딩 */
+                /* [수정] 왼쪽 여백을 5px로 줄여서 더 왼쪽으로 붙임 */
                 td { 
                     height: auto !important; border: none; border-bottom: 1px solid #eee; 
                     position: relative; 
-                    text-align: left !important;  /* 무조건 왼쪽 정렬 */
-                    padding: 12px 15px !important; /* 상하 12px, 좌우 15px (여백 통일) */
+                    text-align: left !important;
+                    padding: 12px 5px !important; /* 좌우 패딩 5px */
                 }
                 td:empty { display: none; }
                 
-                /* 날짜 숫자 */
-                .date-num { 
-                    display: inline-block; width: auto; /* auto로 변경하여 텍스트 길이에 맞춤 */
-                }
-                
+                .date-num { display: inline-block; width: auto; }
                 .date-num::after {
                     content: "(" attr(data-dayname) ")";
                     font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0;
                 }
                 
-                /* 주말 색상 */
-                .sun .date-num { color: #ff8787 !important; }
-                .sat .date-num { color: #74c0fc !important; }
-                
+                /* 기본 주말 색상 (흐림) - 초기상태 및 비활성상태 */
+                .sun .date-num { color: #ffc9c9; }
+                .sat .date-num { color: #a5d8ff; }
+
                 /* ------------------------------------------------------------------
-                   [상태 1] 공연(이벤트)이 나타났을 때 (지역 선택 후)
+                   [상태] 활성화된 날짜 (선택된 지역의 공연이 보이는 날) - JS가 'day-active' 클래스 부여
                    ------------------------------------------------------------------ */
-                td.has-event .date-num {
+                td.day-active .date-num {
                     font-size: 24px; margin-bottom: 12px; 
-                    border-bottom: 2px solid #343a40; padding-bottom: 5px;
-                    color: #212529; 
+                    /* [수정] 언더바 제거 */
+                    border-bottom: none; 
+                    padding-bottom: 5px;
+                    color: #212529; /* 진한 검정 */
+                    font-weight: 800;
                 }
-                td.has-event .date-num::after { 
+                /* 요일도 날짜와 동일한 스타일 */
+                td.day-active .date-num::after { 
                     font-size: inherit; color: inherit; font-weight: inherit;
                 }
+                
+                /* 활성 상태일 때의 주말 색상 (선명하게) */
+                td.day-active.sun .date-num { color: #ff8787 !important; }
+                td.day-active.sat .date-num { color: #74c0fc !important; }
+                td.day-active.sun .date-num::after { color: #ff8787 !important; }
+                td.day-active.sat .date-num::after { color: #74c0fc !important; }
 
-                /* 일정이 없는 날 (no-event) */
-                td.no-event {
-                    border-bottom: 1px solid #f1f3f5;
-                }
-                td.no-event .date-num {
+
+                /* ------------------------------------------------------------------
+                   [상태] 비활성 날짜 (공연이 없거나, 선택된 지역의 공연이 없는 날)
+                   ------------------------------------------------------------------ */
+                /* 기본 .date-num 스타일을 그대로 따르므로 흐릿한 회색 */
+                td.day-inactive .date-num {
                     font-size: 15px; margin-bottom: 0; border-bottom: none; 
-                    color: #ced4da; /* 흐리게 */
+                    color: #ced4da; 
                 }
-                td.no-event.sun .date-num { color: #ffc9c9 !important; }
-                td.no-event.sat .date-num { color: #a5d8ff !important; }
+                /* 비활성 상태 주말 색상 (흐림) */
+                td.day-inactive.sun .date-num { color: #ffc9c9 !important; }
+                td.day-inactive.sat .date-num { color: #a5d8ff !important; }
 
                 .event-box {
                     font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
                 }
                 .box-line2 { -webkit-line-clamp: 10; line-height: 1.5; }
-            
-                /* ------------------------------------------------------------------
-                   [상태 2] 초기 상태 (지역 미선택) - 모두 흐리게 & 정렬
-                   ------------------------------------------------------------------ */
-                body.initial-mode td {
-                    border-bottom: 1px solid #f1f3f5;
-                    /* padding은 위에서 정의한 15px가 적용됨 */
-                }
-
-                body.initial-mode .date-num {
-                    font-size: 16px !important; 
-                    margin-bottom: 0 !important;
-                    border-bottom: none !important;
-                    font-weight: 500 !important;
-                    color: #ced4da !important; /* [수정] 다시 흐리게 변경 */
-                }
-                
-                body.initial-mode .date-num::after {
-                    font-size: inherit; color: inherit; font-weight: inherit;
-                }
-                
-                /* 초기상태 주말 (흐리게) */
-                body.initial-mode .sun .date-num { color: #ffc9c9 !important; }
-                body.initial-mode .sat .date-num { color: #a5d8ff !important; }
             }
         </style>
     </head>
     <body class="initial-mode">
         <div class="header-container">
-            <div class="main-title"><span class="emoji-font">📅</span> 공연 예매일정 캘린더</div>
+            <div class="main-title"><span class="emoji-font">📌</span> 공연 예매일정 캘린더</div>
             <div class="sub-title">2026년 1월</div>
         </div>
         
@@ -533,27 +514,54 @@
         <script>
             const regionChks = document.querySelectorAll('.region-chk');
             const genreChks = document.querySelectorAll('.genre-chk');
-            const events = document.querySelectorAll('.event-box');
             const table = document.querySelector('table');
             const btnReset = document.getElementById('btn-reset');
+            // 모든 날짜 td를 가져옵니다.
+            const allDays = document.querySelectorAll('#calendar-container td');
 
             function updateCalendar() {
                 const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
                 const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
-                let visibleCount = 0;
                 
-                events.forEach(el => {
-                    if (selectedRegions.includes(el.dataset.region) && selectedGenres.includes(el.dataset.genre)) {
-                        el.style.display = 'block'; visibleCount++;
-                    } else { el.style.display = 'none'; }
-                });
-                
-                // [초기 상태 감지] 지역 선택이 하나도 없으면 'initial-mode'
+                // 1. 초기 상태 감지 (지역 선택 없음)
                 if (selectedRegions.length === 0) {
-                    document.body.classList.add('initial-mode'); 
+                    document.body.classList.add('initial-mode');
+                    // 모든 박스 숨김
+                    document.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
+                    // 모든 날짜 비활성 스타일
+                    allDays.forEach(td => {
+                        td.classList.remove('day-active');
+                        td.classList.add('day-inactive');
+                    });
+                    return; // 초기 상태면 여기서 끝냄
                 } else {
-                    document.body.classList.remove('initial-mode'); 
+                    document.body.classList.remove('initial-mode');
                 }
+
+                // 2. 지역 선택이 있을 때 -> 각 날짜별로 '보이는 이벤트'가 있는지 확인
+                allDays.forEach(td => {
+                    const boxes = td.querySelectorAll('.event-box');
+                    let hasVisibleEvents = false;
+                    
+                    boxes.forEach(box => {
+                        if (selectedRegions.includes(box.dataset.region) && selectedGenres.includes(box.dataset.genre)) {
+                            box.style.display = 'block';
+                            hasVisibleEvents = true;
+                        } else {
+                            box.style.display = 'none';
+                        }
+                    });
+
+                    // 보이는 이벤트가 하나라도 있으면 -> active 스타일 (검정색)
+                    // 없으면 -> inactive 스타일 (흐린 회색)
+                    if (hasVisibleEvents) {
+                        td.classList.add('day-active');
+                        td.classList.remove('day-inactive');
+                    } else {
+                        td.classList.remove('day-active');
+                        td.classList.add('day-inactive');
+                    }
+                });
             }
 
             let isAllChecked = true;
