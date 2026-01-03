@@ -24,12 +24,10 @@ def get_content_html(row_data):
     place = str(row_data['장소'])
     genre = str(row_data['장르'])
     
-    # [수정] 엑셀 컬럼명 변경 반영 ('예매처' -> '링크')
-    # 엑셀의 '포스터', '링크' 컬럼에서 데이터를 가져옵니다.
+    # 엑셀의 '포스터', '링크' 컬럼 매핑
     poster_url = str(row_data.get('포스터', ''))
     booking_url = str(row_data.get('링크', ''))
     
-    # 빈칸(nan) 처리
     if poster_url == 'nan': poster_url = ''
     if booking_url == 'nan': booking_url = ''
 
@@ -48,7 +46,6 @@ def get_content_html(row_data):
     if "(서울)" in region: r_group = "seoul"
     elif "(경기)" in region or "(인천)" in region: r_group = "gyeonggi"
 
-    # HTML 태그에 엑셀 데이터 심어두기 (data-poster, data-link)
     return f"""
     <div class="event-box" 
          data-region="{r_group}" 
@@ -72,7 +69,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Update Popup Position and Data Mapping"], check=True)
+            subprocess.run(["git", "commit", "-m", "Move popup position higher"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -98,11 +95,10 @@ def main():
 
         print("엑셀 데이터 로드 성공. 날짜 변환 중...")
 
-        # 2. 날짜 파싱 (빈칸일 경우 처리 포함)
+        # 2. 날짜 파싱
         def smart_parse_date(x):
             s = str(x).strip()
-            if not s or s == 'nan': return None, None, None # 날짜 없으면 패스
-            
+            if not s or s == 'nan': return None, None, None
             s = re.sub(r'\(.*?\)', '', s)
             
             match_full = re.search(r'(\d{4})[\.\-/](\d{1,2})[\.\-/](\d{1,2})', s)
@@ -118,7 +114,6 @@ def main():
         parsed_data = df['오픈일시'].apply(smart_parse_date)
         df['Year'], df['Month'], df['Day'] = zip(*parsed_data)
 
-        # 날짜 없는 데이터(내일 등)는 달력에 표시 불가하므로 제외
         df = df.dropna(subset=['Year', 'Month', 'Day'])
         df['Year'] = df['Year'].astype(int)
         df['Month'] = df['Month'].astype(int)
@@ -258,21 +253,23 @@ def main():
         .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
         .txt-black {{ color: #495057; font-weight: 500; }}
 
-        /* [수정] 팝업 모달 스타일 - 위치 조정 */
+        /* [수정] 팝업 모달 위치 위로 올림 */
         .modal-overlay {{
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
             justify-content: center; 
-            /* [변경] 기존 center에서 flex-start로 변경하고 padding-top으로 위치 조절 */
-            align-items: flex-start; 
-            padding-top: 15vh; /* 화면 위쪽에서 15% 정도 떨어진 곳에 위치 */
+            align-items: flex-start; /* 상단 정렬 */
+            padding-top: 5vh; /* [중요] 화면 맨 위에서 5% 지점부터 시작 (더 위로) */
+            padding-bottom: 50px; /* 아래쪽 여백 확보 */
             backdrop-filter: blur(3px);
+            overflow-y: auto; /* 내용이 길면 팝업 전체 스크롤 */
         }}
         .modal-content {{
             background: white; width: 90%; max-width: 350px;
             border-radius: 12px; overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
+            margin-bottom: 30px; /* 끝부분 여백 */
         }}
         @keyframes popUp {{ from {{ transform: scale(0.9); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
         
@@ -303,8 +300,7 @@ def main():
             border-radius: 12px; padding: 20px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
-            /* 확인창은 중앙 정렬 유지 */
-            margin-top: 30vh; 
+            margin-top: 20vh; /* 확인창은 조금 아래에 */
         }}
         .confirm-text {{ font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 25px; line-height: 1.6; word-break: keep-all; }}
         .confirm-btn-group {{ display: flex; gap: 10px; justify-content: center; }}
@@ -406,7 +402,7 @@ def main():
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items:flex-start;" onclick="closeConfirmModal(event)">
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: flex-start;" onclick="closeConfirmModal(event)">
         <div class="confirm-content" onclick="event.stopPropagation()">
             <div class="confirm-text">
                 다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
@@ -453,7 +449,7 @@ def main():
             modalTitle.innerText = ds.title;
             modalInfo.innerText = ds.place; 
             
-            // [수정] 포스터 연결
+            // [포스터 연결]
             if (ds.poster && ds.poster.trim() !== '') {{
                 modalPoster.src = ds.poster;
                 modalPoster.style.display = 'block';
@@ -463,7 +459,7 @@ def main():
                 noPosterText.style.display = 'block';
             }}
 
-            // [수정] 링크 연결
+            // [링크 연결]
             if (ds.link && ds.link.trim() !== '') {{
                 btnBooking.href = ds.link;
                 btnBooking.style.display = 'flex'; 

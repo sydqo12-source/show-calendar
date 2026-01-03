@@ -66,21 +66,23 @@
         .txt-blue { color: #1971c2; font-weight: 700; }
         .txt-black { color: #495057; font-weight: 500; }
 
-        /* [수정] 팝업 모달 스타일 - 위치 조정 */
+        /* [수정] 팝업 모달 위치 위로 올림 */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
             justify-content: center; 
-            /* [변경] 기존 center에서 flex-start로 변경하고 padding-top으로 위치 조절 */
-            align-items: flex-start; 
-            padding-top: 15vh; /* 화면 위쪽에서 15% 정도 떨어진 곳에 위치 */
+            align-items: flex-start; /* 상단 정렬 */
+            padding-top: 5vh; /* [중요] 화면 맨 위에서 5% 지점부터 시작 (더 위로) */
+            padding-bottom: 50px; /* 아래쪽 여백 확보 */
             backdrop-filter: blur(3px);
+            overflow-y: auto; /* 내용이 길면 팝업 전체 스크롤 */
         }
         .modal-content {
             background: white; width: 90%; max-width: 350px;
             border-radius: 12px; overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
+            margin-bottom: 30px; /* 끝부분 여백 */
         }
         @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
@@ -111,8 +113,7 @@
             border-radius: 12px; padding: 20px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
-            /* 확인창은 중앙 정렬 유지 */
-            margin-top: 30vh; 
+            margin-top: 20vh; /* 확인창은 조금 아래에 */
         }
         .confirm-text { font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 25px; line-height: 1.6; word-break: keep-all; }
         .confirm-btn-group { display: flex; gap: 10px; justify-content: center; }
@@ -239,7 +240,7 @@
          data-date="01.05(월) 14:00"
          data-place="링크아트센터 벅스홀"
          data-poster=""
-         data-link="https://tickets.interpark.com/contents/notice/detail/12223"
+         data-link="https://tickets.interpark.com/contents/notice/detail/12229"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -367,7 +368,7 @@
          data-date="01.06(화) 14:00"
          data-place="당진문예의전당 대공연장"
          data-poster=""
-         data-link="https://tickets.interpark.com/contents/notice/detail/12224"
+         data-link="https://tickets.interpark.com/contents/notice/detail/12248"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -383,7 +384,7 @@
          data-date="01.06(화) 14:00"
          data-place="덕스 (DUEX) 부산"
          data-poster=""
-         data-link="https://tickets.interpark.com/contents/notice/detail/12227"
+         data-link="https://tickets.interpark.com/contents/notice/detail/12224"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -399,7 +400,7 @@
          data-date="01.06(화) 14:00"
          data-place="대학로 자유극장"
          data-poster=""
-         data-link="https://tickets.interpark.com/contents/notice/detail/12228"
+         data-link="https://tickets.interpark.com/contents/notice/detail/12227"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -415,7 +416,7 @@
          data-date="01.06(화) 14:00"
          data-place="한전아트센터"
          data-poster=""
-         data-link="https://tickets.interpark.com/contents/notice/detail/12231"
+         data-link="https://tickets.interpark.com/contents/notice/detail/12228"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -431,7 +432,7 @@
          data-date="01.06(화) 14:00"
          data-place="의정부예술의전당 대극장"
          data-poster=""
-         data-link="https://tickets.interpark.com/contents/notice/detail/12248"
+         data-link="https://tickets.interpark.com/contents/notice/detail/12231"
          onclick="openModal(this)">
         <div class="event-header">
             <div><span style="color:#212529; font-weight:800;">14:00</span></div>
@@ -526,7 +527,7 @@
          data-title="뮤지컬 〈장수탕 선녀님〉 - 서울숲"
          data-date="01.07(수) 11:00"
          data-place="서울숲 씨어터 2관"
-         data-poster=""
+         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25001460_p.gif"
          data-link="https://tickets.interpark.com/contents/notice/detail/12238"
          onclick="openModal(this)">
         <div class="event-header">
@@ -542,7 +543,7 @@
          data-title="앙드레와 도린 (Andre ＆ Dorine)"
          data-date="01.07(수) 12:00"
          data-place="강남씨어터"
-         data-poster=""
+         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018682_p.gif"
          data-link="https://tickets.interpark.com/contents/notice/detail/12226"
          onclick="openModal(this)">
         <div class="event-header">
@@ -558,7 +559,7 @@
          data-title="히사이시 조 영화음악 콘서트 2026_Chamber Edition(예술의전당)"
          data-date="01.07(수) 13:00"
          data-place="예술의전당 콘서트홀"
-         data-poster=""
+         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123017244212.jpg"
          data-link="https://tickets.interpark.com/contents/notice/detail/12245"
          onclick="openModal(this)">
         <div class="event-header">
@@ -574,7 +575,7 @@
          data-title="2026 쿼드기획:〈함수 도미노〉"
          data-date="01.07(수) 14:00"
          data-place="대학로극장 쿼드"
-         data-poster=""
+         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018629_p.gif"
          data-link="https://tickets.interpark.com/contents/notice/detail/12219"
          onclick="openModal(this)">
         <div class="event-header">
@@ -856,7 +857,7 @@
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items:flex-start;" onclick="closeConfirmModal(event)">
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: flex-start;" onclick="closeConfirmModal(event)">
         <div class="confirm-content" onclick="event.stopPropagation()">
             <div class="confirm-text">
                 다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
@@ -903,7 +904,7 @@
             modalTitle.innerText = ds.title;
             modalInfo.innerText = ds.place; 
             
-            // [수정] 포스터 연결
+            // [포스터 연결]
             if (ds.poster && ds.poster.trim() !== '') {
                 modalPoster.src = ds.poster;
                 modalPoster.style.display = 'block';
@@ -913,7 +914,7 @@
                 noPosterText.style.display = 'block';
             }
 
-            // [수정] 링크 연결
+            // [링크 연결]
             if (ds.link && ds.link.trim() !== '') {
                 btnBooking.href = ds.link;
                 btnBooking.style.display = 'flex'; 
