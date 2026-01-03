@@ -117,7 +117,6 @@ def main():
             .main-title {{ font-size: 30px; font-weight: 800; color: #343a40; margin-bottom: 30px; }}
             .sub-title {{ font-size: 29px; font-weight: 700; color: #495057; }}
             
-            /* [PC] 컨트롤 바 */
             .control-bar {{ 
                 margin-bottom: 20px; 
                 display: flex; flex-direction: column; align-items: flex-start; gap: 2px; 
@@ -125,7 +124,7 @@ def main():
             }}
             .filter-group {{ 
                 display: flex; 
-                align-items: flex-start; /* 상단 정렬 후 margin으로 높이 조절 */
+                align-items: baseline; 
                 gap: 0px; 
                 width: 100%; 
             }}
@@ -150,7 +149,6 @@ def main():
             }}
             .btn-reset:hover {{ background-color: #e9ecef; color: #212529; }}
 
-            /* [PC] 캘린더 */
             table {{ width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }}
             th {{ background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }}
             th:first-child {{ background-color: #fa5252; }}
@@ -192,16 +190,8 @@ def main():
                 
                 .control-bar {{ padding-left: 0; gap: 15px; }}
                 
-                /* [수정] 컨트롤 바 줄 맞춤: 제목과 선택지 수직 정렬 */
-                .filter-group {{ 
-                    align-items: baseline; /* 텍스트 베이스라인 기준 정렬 */
-                }}
                 .group-title {{ 
-                    font-size: 17px; 
-                    min-width: 50px; 
-                    /* margin-top 등을 제거하고 baseline 정렬에 맡김 */
-                    margin-top: 0;
-                    transform: translateY(2px); /* 미세 조정 */
+                    font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px);
                 }}
                 
                 .chk-wrap {{ gap: 8px 12px; }} 
@@ -216,16 +206,18 @@ def main():
                 thead {{ display: none; }}
                 tr {{ margin-bottom: 0; }}
                 
+                /* [핵심] 모바일 정렬: text-align left, 고정 패딩 */
                 td {{ 
                     height: auto !important; border: none; border-bottom: 1px solid #eee; 
                     position: relative; 
-                    /* [수정] 여백 통일: 1일부터 31일까지 왼쪽 라인이 일직선이 되도록 함 */
-                    padding: 15px 5px !important; 
+                    text-align: left !important;  /* 무조건 왼쪽 정렬 */
+                    padding: 12px 15px !important; /* 상하 12px, 좌우 15px (여백 통일) */
                 }}
                 td:empty {{ display: none; }}
                 
+                /* 날짜 숫자 */
                 .date-num {{ 
-                    display: inline-block; width: 100%;
+                    display: inline-block; width: auto; /* auto로 변경하여 텍스트 길이에 맞춤 */
                 }}
                 
                 .date-num::after {{
@@ -233,7 +225,7 @@ def main():
                     font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0;
                 }}
                 
-                /* [수정] 주말 색상: 요일도 똑같이 적용 */
+                /* 주말 색상 */
                 .sun .date-num {{ color: #ff8787 !important; }}
                 .sat .date-num {{ color: #74c0fc !important; }}
                 
@@ -245,65 +237,55 @@ def main():
                     border-bottom: 2px solid #343a40; padding-bottom: 5px;
                     color: #212529; 
                 }}
-                /* 요일도 날짜와 동일한 스타일(inherit) */
                 td.has-event .date-num::after {{ 
                     font-size: inherit; color: inherit; font-weight: inherit;
                 }}
 
                 /* 일정이 없는 날 (no-event) */
                 td.no-event {{
-                    padding: 10px 5px !important; 
                     border-bottom: 1px solid #f1f3f5;
                 }}
                 td.no-event .date-num {{
-                    font-size: 15px; 
-                    margin-bottom: 0;
-                    border-bottom: none; 
-                    color: #ced4da; 
+                    font-size: 15px; margin-bottom: 0; border-bottom: none; 
+                    color: #ced4da; /* 흐리게 */
                 }}
-                /* 흐리게 하되 색상은 유지 */
                 td.no-event.sun .date-num {{ color: #ffc9c9 !important; }}
                 td.no-event.sat .date-num {{ color: #a5d8ff !important; }}
 
                 .event-box {{
-                    font-size: 16px !important;
-                    padding: 12px;
-                    margin-bottom: 10px;
-                    border: 1px solid #ced4da;
+                    font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
                 }}
                 .box-line2 {{ -webkit-line-clamp: 10; line-height: 1.5; }}
             
                 /* ------------------------------------------------------------------
-                   [상태 2] 초기 상태 (지역 미선택) - 모든 날짜 동일하게 정렬
+                   [상태 2] 초기 상태 (지역 미선택) - 모두 흐리게 & 정렬
                    ------------------------------------------------------------------ */
-                /* 모든 td(has-event 포함)를 평범한 리스트 스타일로 강제 통일 */
                 body.initial-mode td {{
-                    padding: 15px 5px !important; /* 위아래 간격 일정하게 */
                     border-bottom: 1px solid #f1f3f5;
+                    /* padding은 위에서 정의한 15px가 적용됨 */
                 }}
 
                 body.initial-mode .date-num {{
-                    font-size: 16px !important; /* 폰트 크기 통일 */
+                    font-size: 16px !important; 
                     margin-bottom: 0 !important;
                     border-bottom: none !important;
                     font-weight: 500 !important;
-                    color: #495057; /* 기본 평일 색상 */
+                    color: #ced4da !important; /* [수정] 다시 흐리게 변경 */
                 }}
                 
-                /* 초기상태 주말 색상 (선명하게 유지) */
-                body.initial-mode .sun .date-num {{ color: #e03131 !important; }}
-                body.initial-mode .sat .date-num {{ color: #1c7ed6 !important; }}
-
-                /* 요일 부분도 본체와 똑같이 */
                 body.initial-mode .date-num::after {{
                     font-size: inherit; color: inherit; font-weight: inherit;
                 }}
+                
+                /* 초기상태 주말 (흐리게) */
+                body.initial-mode .sun .date-num {{ color: #ffc9c9 !important; }}
+                body.initial-mode .sat .date-num {{ color: #a5d8ff !important; }}
             }}
         </style>
     </head>
     <body class="initial-mode">
         <div class="header-container">
-            <div class="main-title"><span class="emoji-font">📆</span> 공연 예매일정 캘린더</div>
+            <div class="main-title"><span class="emoji-font">📅</span> 공연 예매일정 캘린더</div>
             <div class="sub-title">{YEAR}년 {MONTH}월</div>
         </div>
         
