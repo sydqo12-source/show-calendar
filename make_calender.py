@@ -24,7 +24,6 @@ def get_content_html(row_data):
     place = str(row_data['장소'])
     genre = str(row_data['장르'])
     
-    # 엑셀의 '포스터', '링크' 컬럼 매핑
     poster_url = str(row_data.get('포스터', ''))
     booking_url = str(row_data.get('링크', ''))
     
@@ -69,7 +68,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Move popup position higher"], check=True)
+            subprocess.run(["git", "commit", "-m", "Fix poster fit and modal centering"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -87,7 +86,6 @@ def main():
         return
 
     try:
-        # 1. 엑셀 로드
         df = pd.read_excel(filename).fillna({'장르': '기타', '지역': '(기타)', '포스터': '', '링크': ''})
         if '오픈일시' not in df.columns:
             print("오류: 엑셀에 '오픈일시' 컬럼이 없습니다.")
@@ -95,7 +93,6 @@ def main():
 
         print("엑셀 데이터 로드 성공. 날짜 변환 중...")
 
-        # 2. 날짜 파싱
         def smart_parse_date(x):
             s = str(x).strip()
             if not s or s == 'nan': return None, None, None
@@ -119,7 +116,6 @@ def main():
         df['Month'] = df['Month'].astype(int)
         df['Day'] = df['Day'].astype(int)
 
-        # 3. 장르 목록
         raw_genres = set(df['장르'].astype(str).unique())
         if '선택' in raw_genres: raw_genres.remove('선택')
         unique_genres = sorted(list(raw_genres))
@@ -132,7 +128,6 @@ def main():
         sorted_genres.extend(unique_genres)
         unique_genres = sorted_genres
 
-        # 4. 월 목록
         all_yms = sorted(list(df[['Year', 'Month']].drop_duplicates().itertuples(index=False, name=None)))
         
         if not all_yms:
@@ -141,7 +136,6 @@ def main():
 
         print(f"📅 생성할 달력: {all_yms}")
 
-        # 5. HTML 생성
         all_calendars_html = ""
         
         for idx, (year, month) in enumerate(all_yms):
@@ -184,7 +178,6 @@ def main():
             all_calendars_html += table_html
 
 
-        # 6. 최종 HTML 조립
         full_html = f"""
 <!DOCTYPE html>
 <html lang="ko">
@@ -253,23 +246,23 @@ def main():
         .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
         .txt-black {{ color: #495057; font-weight: 500; }}
 
-        /* [수정] 팝업 모달 위치 위로 올림 */
+        /* [수정] 메인 팝업 (위쪽 배치) */
         .modal-overlay {{
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
             justify-content: center; 
-            align-items: flex-start; /* 상단 정렬 */
-            padding-top: 5vh; /* [중요] 화면 맨 위에서 5% 지점부터 시작 (더 위로) */
-            padding-bottom: 50px; /* 아래쪽 여백 확보 */
+            align-items: flex-start; /* 위쪽 정렬 */
+            padding-top: 5vh; /* 화면 상단 5% 지점 */
+            padding-bottom: 50px; 
             backdrop-filter: blur(3px);
-            overflow-y: auto; /* 내용이 길면 팝업 전체 스크롤 */
+            overflow-y: auto; 
         }}
         .modal-content {{
             background: white; width: 90%; max-width: 350px;
             border-radius: 12px; overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
-            margin-bottom: 30px; /* 끝부분 여백 */
+            margin-bottom: 30px; 
         }}
         @keyframes popUp {{ from {{ transform: scale(0.9); opacity: 0; }} to {{ transform: scale(1); opacity: 1; }} }}
         
@@ -278,7 +271,8 @@ def main():
             display: flex; justify-content: center; align-items: center;
             overflow: hidden; border-bottom: 1px solid #eee;
         }}
-        .modal-poster-area img {{ width: 100%; height: 100%; object-fit: cover; }}
+        /* [수정] 이미지가 잘리지 않고 위아래가 딱 맞게 (contain) */
+        .modal-poster-area img {{ width: 100%; height: 100%; object-fit: contain; }}
         .no-poster-text {{ color: #adb5bd; font-weight: 600; font-size: 14px; }}
 
         .modal-body {{ padding: 15px; text-align: center; }}
@@ -295,12 +289,13 @@ def main():
         .btn-calendar {{ background-color: #fa5252; color: white; }} 
         .btn-calendar:hover {{ background-color: #ff6b6b; }}
 
+        /* [수정] 확인 팝업 (화면 정중앙) */
         .confirm-content {{
             background: white; width: 85%; max-width: 320px;
             border-radius: 12px; padding: 20px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
-            margin-top: 20vh; /* 확인창은 조금 아래에 */
+            margin: 0; /* 마진 초기화 */
         }}
         .confirm-text {{ font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 25px; line-height: 1.6; word-break: keep-all; }}
         .confirm-btn-group {{ display: flex; gap: 10px; justify-content: center; }}
@@ -402,7 +397,7 @@ def main():
         </div>
     </div>
 
-    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: flex-start;" onclick="closeConfirmModal(event)">
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: center; padding-top: 0;" onclick="closeConfirmModal(event)">
         <div class="confirm-content" onclick="event.stopPropagation()">
             <div class="confirm-text">
                 다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
@@ -449,7 +444,6 @@ def main():
             modalTitle.innerText = ds.title;
             modalInfo.innerText = ds.place; 
             
-            // [포스터 연결]
             if (ds.poster && ds.poster.trim() !== '') {{
                 modalPoster.src = ds.poster;
                 modalPoster.style.display = 'block';
@@ -459,7 +453,6 @@ def main():
                 noPosterText.style.display = 'block';
             }}
 
-            // [링크 연결]
             if (ds.link && ds.link.trim() !== '') {{
                 btnBooking.href = ds.link;
                 btnBooking.style.display = 'flex'; 
@@ -489,7 +482,7 @@ def main():
             }}
         }};
 
-        // --- 취소/닫기 (History Back) ---
+        // --- 취소/닫기 ---
         function closeConfirmModal() {{
             if (confirmModal.style.display === 'flex') {{
                 history.back();

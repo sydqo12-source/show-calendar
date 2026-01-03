@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002F404","\u002FfacePass\u002Fagreement","\u002Fguide\u002Fmanual","\u002Flogout"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
