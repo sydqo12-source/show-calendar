@@ -10,46 +10,44 @@
         
         body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
         
-        /* [수정] 헤더 전체 래퍼 */
+        /* [PC] 헤더 스타일 */
         .header-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px; /* [수정] 연도월과 지역선택지 사이 간격 좁힘 */
         }
 
-        /* [수정] 대제목 스타일 (수정 전 크기 유지) */
         .main-title { 
-            font-size: 32px; 
+            font-size: 38px; /* [수정] 대제목 키움 */
             font-weight: 800; 
             color: #343a40; 
-            margin-bottom: 10px; /* 연도와의 간격 */
+            margin-bottom: 25px; /* [수정] 대제목과 연도 사이 간격 늘림 */
             word-break: keep-all;
             text-align: center;
         }
 
-        /* [수정] 연도/월 네비게이션 행 */
         .nav-row {
             display: flex;
             align-items: center;
-            gap: 15px; /* 버튼과 텍스트 사이 간격 */
+            gap: 10px; /* [수정] 화살표와 연도 사이 간격 좁힘 */
         }
 
         .sub-title { 
-            font-size: 36px; /* 크기 유지 */
+            font-size: 28px; /* [수정] 연도월 폰트 줄임 (대제목보다 작게) */
             font-weight: 800; 
             color: #495057; 
         }
 
-        /* [수정] 네모난 화살표 버튼 */
+        /* [수정] 작고 네모난 화살표 버튼 */
         .nav-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px; /* [수정] 크기 줄임 */
+            height: 28px;
             background-color: #fff;
             border: 1px solid #ced4da;
-            border-radius: 6px; /* 약간 둥근 사각형 */
+            border-radius: 4px; /* 네모 모양 */
             color: #868e96;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             display: flex;
             justify-content: center;
@@ -78,7 +76,6 @@
             cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; 
             -webkit-tap-highlight-color: transparent; 
         }
-        /* [수정] PC에서도 선택지 폰트 항상 선명하게 */
         label:hover { opacity: 1; } 
         
         input[type="checkbox"] { accent-color: #343a40; width: 14px; height: 14px; cursor: pointer; }
@@ -98,10 +95,10 @@
         td { vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }
         td:hover { background-color: #fcfcfc; }
         
-        /* [수정] PC 날짜 숫자: 항상 선명한 색상 유지 (흐림 제거) */
+        /* [수정] PC 날짜 숫자: 흐림 제거 (선명하게) */
         .date-num { 
             font-weight: 800; font-size: 14px; 
-            color: #868e96; /* adb5bd보다 진한 회색으로 변경하여 잘 보이게 함 */
+            color: #212529; /* [수정] 진한 색상 유지 */
             margin-bottom: 5px; display: block; 
         }
         .sun .date-num { color: #ff8787; }
@@ -131,12 +128,12 @@
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
             
-            /* [수정] 모바일 헤더 간격 */
-            .header-wrapper { margin-bottom: 25px; gap: 0; }
-            .main-title { font-size: 30px; margin-bottom: 15px; } /* 모바일 사이즈 조정 */
-            .nav-row { gap: 15px; }
-            .nav-btn { width: 36px; height: 36px; font-size: 20px; }
-            .sub-title { font-size: 32px; }
+            /* [수정] 모바일 헤더 */
+            .header-wrapper { margin-bottom: 10px; }
+            .main-title { font-size: 28px; margin-bottom: 15px; } /* 대제목 */
+            .sub-title { font-size: 24px; } /* 연도월 (더 작게) */
+            .nav-row { gap: 8px; } /* 화살표 간격 좁게 */
+            .nav-btn { width: 26px; height: 26px; font-size: 14px; }
             
             .control-bar { padding-left: 0; gap: 15px; }
             .group-title { font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
@@ -155,23 +152,30 @@
             }
             td:empty { display: none; }
             
-            .date-num { display: inline-block; width: auto; }
+            /* [수정] 모바일 날짜: 기본 상태 (공연이 없는 날) -> 초기 상태와 동일하게 유지 */
+            .date-num { 
+                display: inline-block; width: auto; 
+                font-size: 16px; margin-bottom: 0; border-bottom: none;
+                font-weight: 500; color: #ced4da; /* 기본값: 흐린 회색 */
+            }
             .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
             
-            .sun .date-num { color: #ffc9c9; }
+            .sun .date-num { color: #ffc9c9; } /* 주말 기본 (흐림) */
             .sat .date-num { color: #a5d8ff; }
 
+            /* [수정] 활성 상태 (공연이 있는 날) -> 이때만 폰트 커짐 */
             td.day-active .date-num {
-                font-size: 24px; margin-bottom: 12px; border-bottom: none; padding-bottom: 5px;
+                font-size: 24px; margin-bottom: 12px; padding-bottom: 5px;
                 color: #212529; font-weight: 800;
             }
             td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
             td.day-active.sun .date-num { color: #ff8787 !important; }
             td.day-active.sat .date-num { color: #74c0fc !important; }
 
-            td.day-inactive .date-num { font-size: 15px; margin-bottom: 0; border-bottom: none; color: #ced4da; }
-            td.day-inactive.sun .date-num { color: #ffc9c9 !important; }
-            td.day-inactive.sat .date-num { color: #a5d8ff !important; }
+            /* 비활성 상태 (선택됐지만 공연이 안 보이는 날) -> 기본 상태 유지 */
+            td.day-inactive .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; color: #ced4da; }
+            td.day-inactive.sun .date-num { color: #ffc9c9; }
+            td.day-inactive.sat .date-num { color: #a5d8ff; }
 
             .event-box { 
                 font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
@@ -184,19 +188,19 @@
             }
 
             body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
+            /* 초기 모드 폰트 (기본과 동일) */
             body.initial-mode .date-num {
-                font-size: 16px !important; margin-bottom: 0 !important; border-bottom: none !important;
-                font-weight: 500 !important; color: #ced4da !important;
+                font-size: 16px; margin-bottom: 0; border-bottom: none;
+                font-weight: 500; color: #ced4da;
             }
-            body.initial-mode .sun .date-num { color: #ffc9c9 !important; }
-            body.initial-mode .sat .date-num { color: #a5d8ff !important; }
+            body.initial-mode .sun .date-num { color: #ffc9c9; }
+            body.initial-mode .sat .date-num { color: #a5d8ff; }
         }
     </style>
 </head>
 <body class="initial-mode">
     <div class="header-wrapper">
         <div class="main-title">📌공연 예매일정 캘린더</div>
-        
         <div class="nav-row">
             <div class="nav-btn" id="prev-btn">&lt;</div>
             <div class="sub-title" id="calendar-title">Loading...</div>
