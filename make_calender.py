@@ -7,6 +7,8 @@ import json
 # ==========================================
 # [설정]
 # ==========================================
+# 엑셀 데이터에 있는 날짜를 기준으로 자동 설정되므로 연도/월 설정 삭제
+
 GENRE_ORDER = ["콘서트", "뮤지컬", "연극", "클래식", "행사(전시)", "가족"]
 
 COLOR_SEOUL = "#e03131"
@@ -29,7 +31,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Update calendar (Emoji Change)"], check=True)
+            subprocess.run(["git", "commit", "-m", "Update calendar (Single Page)"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -54,6 +56,7 @@ def main():
         # 2. 날짜 파싱 (년, 월, 일 추출)
         def parse_date(x):
             try:
+                # 2026.01.20(화) 형식 가정
                 date_part = str(x).split('(')[0]
                 parts = date_part.split('.')
                 return int(parts[0]), int(parts[1]), int(parts[2])
@@ -67,7 +70,10 @@ def main():
         df['Day'] = df['Day'].astype(int)
 
         # 3. 데이터 가공 (JavaScript로 넘길 데이터 리스트 생성)
+        # DataFrame을 dict list로 변환
         events_list = df.to_dict('records')
+        
+        # JS 변수로 넣기 위해 JSON 문자열로 변환 (ensure_ascii=False로 한글 깨짐 방지)
         events_json = json.dumps(events_list, ensure_ascii=False)
 
         # 4. 장르 목록
@@ -81,7 +87,7 @@ def main():
                 raw_genres.remove(g)
         unique_genres.extend(sorted(list(raw_genres)))
 
-        # 시작 연월 계산
+        # 시작 연월 계산 (데이터 중 가장 빠른 날짜 or 현재 날짜)
         min_year = df['Year'].min()
         min_month = df[df['Year'] == min_year]['Month'].min()
 
@@ -235,7 +241,7 @@ def main():
     <div class="header-container">
         <div class="nav-btn" id="prev-btn">&lt;</div>
         <div class="title-wrap">
-            <div class="main-title"><span class="emoji-font">📌</span> 공연 예매일정</div>
+            <div class="main-title"><span class="emoji-font">📅</span> 공연 예매일정</div>
             <div class="sub-title" id="calendar-title">YEAR년 MONTH월</div>
         </div>
         <div class="nav-btn" id="next-btn">&gt;</div>
@@ -307,6 +313,9 @@ def main():
             if (region.includes("서울")) color = COLOR_SEOUL;
             else if (region.includes("경기") || region.includes("인천")) color = COLOR_GYEONGGI;
 
+            // HTML 생성 (파이썬 로직을 JS로 이식)
+            // LAYOUT 설정이 파이썬 변수로 되어있지만, 여기선 JS에서 조립해야 함.
+            // 요청하신 배치: TL:시간, TR:지역, B:제목
             const htmlLeft = `<span style="color:#212529; font-weight:800;">${{timeTxt}}</span>`;
             const htmlRight = `<span style="color:${{color}}; font-weight:800;">${{region}}</span>`;
             const htmlBottom = `<span style="color:#495057; font-weight:500;">${{title}}</span>`;
@@ -327,8 +336,10 @@ def main():
         }}
 
         function renderCalendar(year, month) {{
+            // 제목 업데이트
             titleEl.textContent = `${{year}}년 ${{month}}월`;
             
+            // 달력 계산
             const firstDay = new Date(year, month - 1, 1);
             const lastDay = new Date(year, month, 0);
             
@@ -339,7 +350,7 @@ def main():
             let dayCount = 1;
             let rowHtml = "<tr>";
 
-            // 첫 주 빈칸
+            // 첫 주 빈칸 채우기
             for (let i = 0; i < startDayIdx; i++) {{
                 rowHtml += "<td></td>";
             }}
@@ -352,7 +363,7 @@ def main():
             rowHtml += "</tr>";
             html += rowHtml;
 
-            // 나머지 주
+            // 나머지 주 채우기
             while (dayCount <= totalDays) {{
                 rowHtml = "<tr>";
                 for (let i = 0; i < 7; i++) {{
@@ -368,15 +379,21 @@ def main():
             }}
 
             tbodyEl.innerHTML = html;
+            
+            // 렌더링 후 필터 적용
             applyFilter();
         }}
 
         function createTd(year, month, day, weekIdx) {{
+            // 주말 클래스
             let tdClass = "";
             if (weekIdx === 0) tdClass = "sun";
             else if (weekIdx === 6) tdClass = "sat";
 
+            // 해당 날짜의 이벤트 찾기
             const dayEvents = allEvents.filter(e => e.Year === year && e.Month === month && e.Day === day);
+            
+            // has-event / no-event (초기 로딩용 힌트)
             const eventClass = dayEvents.length > 0 ? "has-event" : "no-event";
             const dayName = getDayName(weekIdx);
 
@@ -389,6 +406,7 @@ def main():
             return `<td class="${{tdClass}} ${{eventClass}}">${{content}}</td>`;
         }}
 
+        // 설정 저장/로드
         function saveSettings() {{
             const settings = {{
                 regions: Array.from(regionChks).filter(c => c.checked).map(c => c.value),
@@ -406,6 +424,7 @@ def main():
             }}
         }}
 
+        // 필터링 로직 (모바일 스타일 적용 포함)
         function applyFilter() {{
             const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
             const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
@@ -414,6 +433,7 @@ def main():
 
             const allTds = tbodyEl.querySelectorAll('td');
 
+            // 1. 초기 모드 (지역 미선택)
             if (selectedRegions.length === 0) {{
                 document.body.classList.add('initial-mode');
                 document.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
@@ -426,6 +446,7 @@ def main():
                 document.body.classList.remove('initial-mode');
             }}
 
+            // 2. 일반 모드
             allTds.forEach(td => {{
                 const boxes = td.querySelectorAll('.event-box');
                 let hasVisible = false;
@@ -449,6 +470,7 @@ def main():
             }});
         }}
 
+        // 이벤트 리스너
         prevBtn.addEventListener('click', () => {{
             currMonth--;
             if (currMonth < 1) {{ currMonth = 12; currYear--; }}
@@ -478,6 +500,7 @@ def main():
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
+        // 초기 실행
         loadSettings();
         renderCalendar(currYear, currMonth);
         

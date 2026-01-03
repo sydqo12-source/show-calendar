@@ -147,7 +147,7 @@
     <div class="header-container">
         <div class="nav-btn" id="prev-btn">&lt;</div>
         <div class="title-wrap">
-            <div class="main-title"><span class="emoji-font">📌</span> 공연 예매일정</div>
+            <div class="main-title"><span class="emoji-font">📅</span> 공연 예매일정</div>
             <div class="sub-title" id="calendar-title">YEAR년 MONTH월</div>
         </div>
         <div class="nav-btn" id="next-btn">&gt;</div>
@@ -219,6 +219,9 @@
             if (region.includes("서울")) color = COLOR_SEOUL;
             else if (region.includes("경기") || region.includes("인천")) color = COLOR_GYEONGGI;
 
+            // HTML 생성 (파이썬 로직을 JS로 이식)
+            // LAYOUT 설정이 파이썬 변수로 되어있지만, 여기선 JS에서 조립해야 함.
+            // 요청하신 배치: TL:시간, TR:지역, B:제목
             const htmlLeft = `<span style="color:#212529; font-weight:800;">${timeTxt}</span>`;
             const htmlRight = `<span style="color:${color}; font-weight:800;">${region}</span>`;
             const htmlBottom = `<span style="color:#495057; font-weight:500;">${title}</span>`;
@@ -239,8 +242,10 @@
         }
 
         function renderCalendar(year, month) {
+            // 제목 업데이트
             titleEl.textContent = `${year}년 ${month}월`;
             
+            // 달력 계산
             const firstDay = new Date(year, month - 1, 1);
             const lastDay = new Date(year, month, 0);
             
@@ -251,7 +256,7 @@
             let dayCount = 1;
             let rowHtml = "<tr>";
 
-            // 첫 주 빈칸
+            // 첫 주 빈칸 채우기
             for (let i = 0; i < startDayIdx; i++) {
                 rowHtml += "<td></td>";
             }
@@ -264,7 +269,7 @@
             rowHtml += "</tr>";
             html += rowHtml;
 
-            // 나머지 주
+            // 나머지 주 채우기
             while (dayCount <= totalDays) {
                 rowHtml = "<tr>";
                 for (let i = 0; i < 7; i++) {
@@ -280,15 +285,21 @@
             }
 
             tbodyEl.innerHTML = html;
+            
+            // 렌더링 후 필터 적용
             applyFilter();
         }
 
         function createTd(year, month, day, weekIdx) {
+            // 주말 클래스
             let tdClass = "";
             if (weekIdx === 0) tdClass = "sun";
             else if (weekIdx === 6) tdClass = "sat";
 
+            // 해당 날짜의 이벤트 찾기
             const dayEvents = allEvents.filter(e => e.Year === year && e.Month === month && e.Day === day);
+            
+            // has-event / no-event (초기 로딩용 힌트)
             const eventClass = dayEvents.length > 0 ? "has-event" : "no-event";
             const dayName = getDayName(weekIdx);
 
@@ -301,6 +312,7 @@
             return `<td class="${tdClass} ${eventClass}">${content}</td>`;
         }
 
+        // 설정 저장/로드
         function saveSettings() {
             const settings = {
                 regions: Array.from(regionChks).filter(c => c.checked).map(c => c.value),
@@ -318,6 +330,7 @@
             }
         }
 
+        // 필터링 로직 (모바일 스타일 적용 포함)
         function applyFilter() {
             const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
             const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
@@ -326,6 +339,7 @@
 
             const allTds = tbodyEl.querySelectorAll('td');
 
+            // 1. 초기 모드 (지역 미선택)
             if (selectedRegions.length === 0) {
                 document.body.classList.add('initial-mode');
                 document.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
@@ -338,6 +352,7 @@
                 document.body.classList.remove('initial-mode');
             }
 
+            // 2. 일반 모드
             allTds.forEach(td => {
                 const boxes = td.querySelectorAll('.event-box');
                 let hasVisible = false;
@@ -361,6 +376,7 @@
             });
         }
 
+        // 이벤트 리스너
         prevBtn.addEventListener('click', () => {
             currMonth--;
             if (currMonth < 1) { currMonth = 12; currYear--; }
@@ -390,6 +406,7 @@
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
+        // 초기 실행
         loadSettings();
         renderCalendar(currYear, currMonth);
         
