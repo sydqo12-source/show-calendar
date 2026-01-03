@@ -71,7 +71,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Update Popup Design (Buttons & Content)"], check=True)
+            subprocess.run(["git", "commit", "-m", "Add Back Button Support & Confirm Dialog"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -294,13 +294,12 @@ def main():
         .modal-title {{ font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }}
         .modal-info {{ font-size: 14px; color: #868e96; margin-bottom: 15px; }}
 
-        /* [수정] 버튼 그룹 스타일 (같은 크기) */
+        /* 버튼 그룹 (5:5 비율) */
         .modal-btn-group {{ display: flex; gap: 8px; }}
         .modal-btn {{
-            flex: 1; /* 동일 너비 */
-            padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
-            display: flex; justify-content: center; align-items: center; /* 텍스트 수직 중앙 */
+            display: flex; justify-content: center; align-items: center; 
         }}
         .btn-booking {{ background-color: #343a40; color: white; }}
         .btn-calendar {{ background-color: #fa5252; color: white; }} 
@@ -446,8 +445,9 @@ def main():
         const modalInfo = document.getElementById('modalInfo');
         const btnBooking = document.getElementById('btnBooking');
         let currentEventData = {{}}; 
+        let isModalOpen = false; // 플래그
 
-        // --- 팝업 함수 ---
+        // --- 팝업 함수 (History API 적용) ---
         function openModal(element) {{
             const ds = element.dataset;
             currentEventData = {{
@@ -458,7 +458,6 @@ def main():
             }};
 
             modalTitle.innerText = ds.title;
-            // [수정] 날짜/시간 제거 -> 장소만 표시
             modalInfo.innerText = ds.place;
             
             if (ds.poster && ds.poster.trim() !== '') {{
@@ -472,21 +471,38 @@ def main():
 
             if (ds.link && ds.link.trim() !== '') {{
                 btnBooking.href = ds.link;
-                btnBooking.style.display = 'flex'; // flex로 변경하여 정렬 유지
-                // btnBooking.innerText = '예매 안내 페이지'; // HTML에 고정됨
+                btnBooking.style.display = 'flex'; 
             }} else {{
                 btnBooking.style.display = 'none'; 
             }}
 
             modal.style.display = 'flex';
+            isModalOpen = true;
+            // [중요] 뒤로가기 처리를 위해 히스토리 추가
+            history.pushState({{popup: true}}, '', window.location.pathname + '#popup');
         }}
 
-        function closeModal(e) {{
+        // 하드웨어 뒤로가기 감지
+        window.onpopstate = function(event) {{
+            // 뒤로가기를 누르면 이 함수가 실행됨 -> 팝업 닫기만 수행
             modal.style.display = 'none';
+            isModalOpen = false;
+        }};
+
+        // 배경 클릭으로 닫을 때 (UI Close)
+        function closeModal(e) {{
+            if (isModalOpen) {{
+                // UI로 닫을 때는 history.back()을 호출하여 popstate를 트리거함
+                history.back();
+            }}
         }}
 
-        // [기본 캘린더 앱 연동]
+        // [일정 추가 - 컨펌 창 포함]
         function addToNativeCalendar() {{
+            if (!confirm("다운로드 되는 ics 파일을 여시면 캘린더 앱에 일정 추가가 가능합니다.\\n다운로드하시겠습니까?")) {{
+                return; // 취소 누르면 종료
+            }}
+
             const title = currentEventData.title || "공연 관람";
             const rawDate = currentEventData.date;
             const place = currentEventData.place || "";
@@ -629,7 +645,7 @@ END:VCALENDAR`;
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        // [초기화 로직] 지역: 모두 해제, 장르: 모두 선택
+        // [초기화]
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
         isAllChecked = true;
