@@ -69,7 +69,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Improve Mobile Navigation & Popup UI"], check=True)
+            subprocess.run(["git", "commit", "-m", "Fix event box spacing on mobile"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -304,7 +304,6 @@ def main():
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             animation: popUp 0.2s ease-out;
         }}
-        /* [수정] 폰트 크기 확대 및 줄바꿈 처리 */
         .confirm-text {{
             font-size: 18px; font-weight: 700; color: #343a40; 
             margin-bottom: 25px; line-height: 1.6; word-break: keep-all;
@@ -314,7 +313,6 @@ def main():
             flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
             cursor: pointer; border: none;
         }}
-        /* [수정] 확인(Yes) 왼쪽, 취소(No) 오른쪽 */
         .btn-yes {{ background-color: #343a40; color: white; }}
         .btn-no {{ background-color: #f1f3f5; color: #495057; }}
 
@@ -368,9 +366,14 @@ def main():
             td.day-inactive.sun .date-num {{ color: #ffc9c9; }}
             td.day-inactive.sat .date-num {{ color: #a5d8ff; }}
 
+            /* [수정] 모바일 박스 스타일: 불필요한 공백 제거 (height auto) */
             .event-box {{ 
-                font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da;
-                height: auto !important; min-height: 60px;
+                font-size: 16px !important; 
+                padding: 12px; 
+                margin-bottom: 10px; 
+                border: 1px solid #ced4da;
+                height: auto !important; /* 높이 자동 조절 */
+                min-height: unset; /* 최소 높이 해제 */
             }}
             .box-line2 {{ 
                 display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
@@ -469,9 +472,9 @@ def main():
         const modalInfo = document.getElementById('modalInfo');
         const btnBooking = document.getElementById('btnBooking');
         let currentEventData = {{}}; 
-        // 팝업 상태 추적용 플래그 X -> history.state 사용
+        let isModalOpen = false; 
 
-        // --- 메인 팝업 열기 (history stack: step 1) ---
+        // --- 메인 팝업 열기 ---
         function openModal(element) {{
             const ds = element.dataset;
             currentEventData = {{
@@ -504,44 +507,39 @@ def main():
             history.pushState({{view: 'modal'}}, '', '#modal');
         }}
 
-        // --- 확인 팝업 열기 (history stack: step 2) ---
+        // --- 확인 팝업 열기 ---
         function openConfirmModal() {{
             confirmModal.style.display = 'flex';
             history.pushState({{view: 'confirm'}}, '', '#confirm');
         }}
 
-        // --- 뒤로가기 버튼(History) 감지 ---
+        // --- 뒤로가기 감지 ---
         window.onpopstate = function(event) {{
-            // 현재 상태가 'modal'이면 -> confirm 닫힘, modal 열림
             if (event.state && event.state.view === 'modal') {{
                 confirmModal.style.display = 'none';
                 modal.style.display = 'flex';
             }} 
-            // state가 없거나 다른거면 -> 모두 닫힘
             else {{
                 confirmModal.style.display = 'none';
                 modal.style.display = 'none';
             }}
         }};
 
-        // --- 취소/닫기 버튼 (History Back 트리거) ---
+        // --- 취소/닫기 (History Back) ---
         function closeConfirmModal() {{
-            // 확인창은 현재 최상위 history state이므로 back() 호출하면 닫힘
             if (confirmModal.style.display === 'flex') {{
                 history.back();
             }}
         }}
 
         function closeModal(e) {{
-            // 메인모달이 열려있을 때 닫기 요청
             if (modal.style.display === 'flex') {{
                 history.back();
             }}
         }}
 
-        // --- 다운로드 (확인 버튼) ---
+        // --- 다운로드 ---
         function realDownload() {{
-            // 팝업 닫기 (뒤로가기 트리거)
             history.back(); 
 
             const title = (currentEventData.title || "공연 관람") + " 예매";
@@ -569,7 +567,6 @@ def main():
             const startStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(hour)}}${{pad(min)}}00`;
             const endStr = `${{year}}${{pad(month)}}${{pad(day)}}T${{pad(parseInt(hour)+2)}}${{pad(min)}}00`; 
 
-            // 간소화된 ICS (제목, 시간만)
             const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
@@ -590,7 +587,7 @@ END:VCALENDAR`;
             document.body.removeChild(linkElem);
         }}
 
-        // --- 기존 달력 로직 ---
+        // --- 캘린더 로직 ---
         function showPage(index) {{
             pages.forEach((page, idx) => {{
                 if (idx === index) {{
@@ -683,7 +680,6 @@ END:VCALENDAR`;
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        // [초기화]
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
         isAllChecked = true;
