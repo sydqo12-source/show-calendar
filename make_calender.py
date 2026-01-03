@@ -108,10 +108,8 @@ def main():
             
             body {{ font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }}
             
-            /* [PC] 제목 스타일 */
             .header-container {{ text-align: center; margin-bottom: 10px; }}
             
-            /* 이모티콘 폰트 고정 (윈도우 스타일 강제 시도) */
             .emoji-font {{
                 font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
             }}
@@ -119,7 +117,6 @@ def main():
             .main-title {{ font-size: 30px; font-weight: 800; color: #343a40; margin-bottom: 30px; }}
             .sub-title {{ font-size: 29px; font-weight: 700; color: #495057; }}
             
-            /* [PC] 컨트롤 바 구조 */
             .control-bar {{ 
                 margin-bottom: 20px; 
                 display: flex; flex-direction: column; align-items: flex-start; gap: 2px; 
@@ -129,7 +126,7 @@ def main():
             
             .group-title {{ 
                 font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; 
-                margin-top: 3px; /* PC용 높이 */
+                margin-top: 3px;
             }}
             
             .chk-wrap {{ 
@@ -147,7 +144,6 @@ def main():
             }}
             .btn-reset:hover {{ background-color: #e9ecef; color: #212529; }}
 
-            /* [PC] 캘린더 스타일 */
             table {{ width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }}
             th {{ background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }}
             th:first-child {{ background-color: #fa5252; }}
@@ -178,22 +174,17 @@ def main():
             .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
             .txt-black {{ color: #495057; font-weight: 500; }}
 
-            /* ========================================================= */
-            /* 📱 모바일 최적화 (768px 이하) */
-            /* ========================================================= */
             @media screen and (max-width: 768px) {{
                 body {{ padding: 15px; }} 
                 
-                /* [수정] 대제목-연도 간격 벌림, 폰트 키움 */
                 .main-title {{ font-size: 32px; margin-bottom: 30px; word-break: keep-all; }}
-                .sub-title {{ font-size: 36px; margin-bottom: 25px; }} /* 연도/월 대폭 확대 */
+                .sub-title {{ font-size: 36px; margin-bottom: 25px; }}
                 
                 .control-bar {{ padding-left: 0; gap: 15px; }}
                 
-                /* [수정] 제목과 선택지 높이 맞춤 */
                 .group-title {{ 
                     font-size: 17px; min-width: 50px; 
-                    margin-top: 2px; /* 체크박스와 시각적 높이 정렬 */
+                    margin-top: 2px;
                 }}
                 
                 .chk-wrap {{ gap: 8px 12px; }} 
@@ -217,9 +208,11 @@ def main():
                 .date-num {{ 
                     display: inline-block; width: 100%;
                 }}
+                
+                /* [수정] 날짜 옆 요일: 띄어쓰기 없이 붙임, 마진 제거 */
                 .date-num::after {{
-                    content: " (" attr(data-dayname) ")";
-                    font-size: inherit; color: inherit; font-weight: inherit; margin-left: 4px;
+                    content: "(" attr(data-dayname) ")"; /* 괄호 앞 공백 제거 */
+                    font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; /* 마진 0 */
                 }}
                 
                 .sun .date-num {{ color: #ff8787 !important; }}
@@ -227,16 +220,18 @@ def main():
                 .sun .date-num::after {{ color: #ffc9c9 !important; }} 
                 .sat .date-num::after {{ color: #a5d8ff !important; }}
 
-                /* [기본 상태] - 일정이 있는 날 (has-event) */
-                /* 기본적으로는 강조됨. JS로 'initial-mode' 클래스가 붙으면 아래 .no-event 스타일로 덮어씌움 */
+                /* [수정] 일정이 나타났을 때 */
                 td.has-event .date-num {{
                     font-size: 24px; margin-bottom: 12px; 
                     border-bottom: 2px solid #343a40; padding-bottom: 5px;
                     color: #212529; 
                 }}
-                td.has-event .date-num::after {{ font-size: 18px; color: #868e96; }}
+                /* [수정] 요일도 날짜와 동일한 스타일(inherit) 적용 */
+                td.has-event .date-num::after {{ 
+                    font-size: inherit; color: inherit; font-weight: inherit;
+                }}
 
-                /* [기본 상태] - 일정이 없는 날 (no-event) */
+                /* 일정이 없는 날 (no-event) */
                 td.no-event {{
                     padding: 10px 5px !important; 
                     border-bottom: 1px solid #f1f3f5;
@@ -259,9 +254,7 @@ def main():
                 }}
                 .box-line2 {{ -webkit-line-clamp: 10; line-height: 1.5; }}
             
-                /* ------------------------------------------------------------- */
-                /* [신규 기능] 초기 상태(지역 미선택) 디자인 - 모든 날짜 평범하게 */
-                /* ------------------------------------------------------------- */
+                /* 초기 상태(지역 미선택) */
                 body.initial-mode td.has-event {{
                     padding: 10px 5px !important;
                     border-bottom: 1px solid #f1f3f5;
@@ -270,12 +263,11 @@ def main():
                     font-size: 15px; 
                     margin-bottom: 0;
                     border-bottom: none;
-                    color: #ced4da; /* 평일 기본색 */
+                    color: #ced4da; 
                 }}
                 body.initial-mode td.has-event .date-num::after {{
                     font-size: 14px; opacity: 0.7; color: #e9ecef;
                 }}
-                /* 초기상태에서도 주말 색상은 유지하되 흐리게 */
                 body.initial-mode td.has-event.sun .date-num {{ color: #ffc9c9 !important; }}
                 body.initial-mode td.has-event.sat .date-num {{ color: #a5d8ff !important; }}
                 body.initial-mode td.has-event.sun .date-num::after {{ color: #ffc9c9 !important; }}
@@ -283,7 +275,8 @@ def main():
             }}
         </style>
     </head>
-    <body class="initial-mode"> <div class="header-container">
+    <body class="initial-mode">
+        <div class="header-container">
             <div class="main-title"><span class="emoji-font">📅</span> 공연 예매일정 캘린더</div>
             <div class="sub-title">{YEAR}년 {MONTH}월</div>
         </div>
@@ -377,11 +370,10 @@ def main():
                     } else { el.style.display = 'none'; }
                 });
                 
-                // [수정] 초기 상태(지역 미선택) 감지
                 if (selectedRegions.length === 0) {
-                    document.body.classList.add('initial-mode'); // 초기 모드 클래스 추가
+                    document.body.classList.add('initial-mode'); 
                 } else {
-                    document.body.classList.remove('initial-mode'); // 초기 모드 해제 (날짜 강조)
+                    document.body.classList.remove('initial-mode'); 
                 }
             }
 
@@ -402,7 +394,6 @@ def main():
             regionChks.forEach(chk => chk.addEventListener('change', updateCalendar));
             genreChks.forEach(chk => chk.addEventListener('change', updateCalendar));
             
-            // 처음 로딩 시 실행 (initial-mode 적용됨)
             updateCalendar();
         </script>
     </body>
