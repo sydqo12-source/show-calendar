@@ -9,7 +9,6 @@ import re
 # ==========================================
 # [설정]
 # ==========================================
-# 엑셀에 연도가 없을 경우 사용할 기본 연도
 DEFAULT_YEAR = 2026 
 
 GENRE_ORDER = ["콘서트", "뮤지컬", "연극", "클래식", "행사(전시)", "가족"]
@@ -59,7 +58,7 @@ def push_to_github():
     try:
         subprocess.run(["git", "add", "."], check=True)
         try:
-            subprocess.run(["git", "commit", "-m", "Fix date parsing logic"], check=True)
+            subprocess.run(["git", "commit", "-m", "Update calendar (Header & Nav Fix)"], check=True)
         except subprocess.CalledProcessError:
             print("⚠️ 변경된 내용이 없습니다.")
             return
@@ -85,18 +84,15 @@ def main():
 
         print("엑셀 데이터 로드 성공. 날짜 변환 중...")
 
-        # 2. [수정됨] 강력한 날짜 파싱 로직 (연도 없으면 DEFAULT_YEAR 사용)
+        # 2. 날짜 파싱
         def smart_parse_date(x):
             s = str(x).strip()
-            # 괄호 안 내용 제거 (예: (월))
             s = re.sub(r'\(.*?\)', '', s)
             
-            # 패턴 1: 2026.01.05 (연도 있음)
             match_full = re.search(r'(\d{4})[\.\-/](\d{1,2})[\.\-/](\d{1,2})', s)
             if match_full:
                 return int(match_full.group(1)), int(match_full.group(2)), int(match_full.group(3))
             
-            # 패턴 2: 01.05 (연도 없음 -> DEFAULT_YEAR 사용)
             match_short = re.search(r'(\d{1,2})[\.\-/](\d{1,2})', s)
             if match_short:
                 return DEFAULT_YEAR, int(match_short.group(1)), int(match_short.group(2))
@@ -106,11 +102,6 @@ def main():
         parsed_data = df['오픈일시'].apply(smart_parse_date)
         df['Year'], df['Month'], df['Day'] = zip(*parsed_data)
 
-        # 파싱 실패 확인
-        failed_count = df['Year'].isna().sum()
-        if failed_count > 0:
-            print(f"⚠️ 경고: {failed_count}개의 데이터는 날짜 형식을 인식하지 못해 제외되었습니다.")
-        
         df = df.dropna(subset=['Year', 'Month', 'Day'])
         df['Year'] = df['Year'].astype(int)
         df['Month'] = df['Month'].astype(int)
@@ -129,7 +120,7 @@ def main():
         sorted_genres.extend(unique_genres)
         unique_genres = sorted_genres
 
-        # 4. 존재하는 월 목록 확인
+        # 4. 월 목록
         all_yms = sorted(list(df[['Year', 'Month']].drop_duplicates().itertuples(index=False, name=None)))
         
         if not all_yms:
@@ -181,7 +172,7 @@ def main():
             all_calendars_html += table_html
 
 
-        # 6. 최종 HTML 조립
+        # 6. 최종 HTML 조립 (헤더 구조 변경 및 CSS 수정)
         full_html = f"""
 <!DOCTYPE html>
 <html lang="ko">
@@ -194,22 +185,62 @@ def main():
         
         body {{ font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }}
         
-        .header-container {{ 
-            display: flex; justify-content: center; align-items: center; gap: 20px;
-            margin-bottom: 20px;
+        /* [수정] 헤더 전체 래퍼 */
+        .header-wrapper {{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
         }}
-        .nav-btn {{
-            cursor: pointer; color: #868e96; font-size: 30px; font-weight: 800;
-            padding: 10px; border-radius: 50%; transition: all 0.2s; line-height: 1;
-        }}
-        .nav-btn:hover {{ background-color: #f1f3f5; color: #343a40; }}
-        .nav-btn.disabled {{ opacity: 0.2; pointer-events: none; }}
 
-        .title-wrap {{ text-align: center; }}
-        .emoji-font {{ font-family: "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }}
-        .main-title {{ font-size: 30px; font-weight: 800; color: #343a40; margin-bottom: 5px; }}
-        .sub-title {{ font-size: 29px; font-weight: 700; color: #495057; }}
+        /* [수정] 대제목 스타일 (수정 전 크기 유지) */
+        .main-title {{ 
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #343a40; 
+            margin-bottom: 10px; /* 연도와의 간격 */
+            word-break: keep-all;
+            text-align: center;
+        }}
+
+        /* [수정] 연도/월 네비게이션 행 */
+        .nav-row {{
+            display: flex;
+            align-items: center;
+            gap: 15px; /* 버튼과 텍스트 사이 간격 */
+        }}
+
+        .sub-title {{ 
+            font-size: 36px; /* 크기 유지 */
+            font-weight: 800; 
+            color: #495057; 
+        }}
+
+        /* [수정] 네모난 화살표 버튼 */
+        .nav-btn {{
+            width: 32px;
+            height: 32px;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 6px; /* 약간 둥근 사각형 */
+            color: #868e96;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }}
+        .nav-btn:hover {{ 
+            background-color: #f1f3f5; 
+            color: #343a40; 
+            border-color: #adb5bd;
+        }}
+        .nav-btn.disabled {{ opacity: 0.3; pointer-events: none; }}
         
+        /* 컨트롤 바 */
         .control-bar {{ 
             margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; 
             padding-left: 12px; font-size: 13px;
@@ -222,6 +253,8 @@ def main():
             cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; 
             -webkit-tap-highlight-color: transparent; 
         }}
+        /* [수정] PC에서도 선택지 폰트 항상 선명하게 */
+        label:hover {{ opacity: 1; }} 
         
         input[type="checkbox"] {{ accent-color: #343a40; width: 14px; height: 14px; cursor: pointer; }}
         
@@ -232,6 +265,7 @@ def main():
         }}
         .btn-reset:hover {{ background-color: #e9ecef; color: #212529; }}
 
+        /* 캘린더 (PC) */
         table {{ width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }}
         th {{ background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }}
         th:first-child {{ background-color: #fa5252; }}
@@ -239,10 +273,16 @@ def main():
         td {{ vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }}
         td:hover {{ background-color: #fcfcfc; }}
         
-        .date-num {{ font-weight: 800; font-size: 14px; color: #adb5bd; margin-bottom: 5px; display: block; }}
+        /* [수정] PC 날짜 숫자: 항상 선명한 색상 유지 (흐림 제거) */
+        .date-num {{ 
+            font-weight: 800; font-size: 14px; 
+            color: #868e96; /* adb5bd보다 진한 회색으로 변경하여 잘 보이게 함 */
+            margin-bottom: 5px; display: block; 
+        }}
         .sun .date-num {{ color: #ff8787; }}
         .sat .date-num {{ color: #74c0fc; }}
 
+        /* 이벤트 박스 (PC) */
         .event-box {{ 
             display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px; 
             background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
@@ -262,18 +302,21 @@ def main():
         .txt-blue {{ color: {COLOR_OTHERS}; font-weight: 700; }}
         .txt-black {{ color: #495057; font-weight: 500; }}
 
+        /* 📱 모바일 최적화 */
         @media screen and (max-width: 768px) {{
             body {{ padding: 15px; }} 
             
-            .header-container {{ gap: 10px; margin-bottom: 25px; }}
-            .nav-btn {{ font-size: 36px; padding: 5px 15px; }}
-            .main-title {{ font-size: 16px; margin-bottom: 2px; font-weight: 700; }}
-            .sub-title {{ font-size: 32px; font-weight: 800; }}
+            /* [수정] 모바일 헤더 간격 */
+            .header-wrapper {{ margin-bottom: 25px; gap: 0; }}
+            .main-title {{ font-size: 30px; margin-bottom: 15px; }} /* 모바일 사이즈 조정 */
+            .nav-row {{ gap: 15px; }}
+            .nav-btn {{ width: 36px; height: 36px; font-size: 20px; }}
+            .sub-title {{ font-size: 32px; }}
             
             .control-bar {{ padding-left: 0; gap: 15px; }}
             .group-title {{ font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }}
             .chk-wrap {{ gap: 8px 12px; }} 
-            label {{ font-size: 16px; margin: 0; line-height: 1.5; }} 
+            label {{ font-size: 16px; margin: 0; line-height: 1.5; opacity: 1 !important; }} 
             input[type="checkbox"] {{ width: 18px; height: 18px; margin-top: 0; transform: translateY(1px); }}
             .btn-reset {{ font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 0; }}
             
@@ -326,13 +369,14 @@ def main():
     </style>
 </head>
 <body class="initial-mode">
-    <div class="header-container">
-        <div class="nav-btn" id="prev-btn">&lt;</div>
-        <div class="title-wrap">
-            <div class="main-title"><span class="emoji-font">📌</span> 공연 예매일정</div>
+    <div class="header-wrapper">
+        <div class="main-title">📌공연 예매일정 캘린더</div>
+        
+        <div class="nav-row">
+            <div class="nav-btn" id="prev-btn">&lt;</div>
             <div class="sub-title" id="calendar-title">Loading...</div>
+            <div class="nav-btn" id="next-btn">&gt;</div>
         </div>
-        <div class="nav-btn" id="next-btn">&gt;</div>
     </div>
     
     <div class="control-bar">
