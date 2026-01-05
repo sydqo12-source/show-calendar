@@ -232,8 +232,28 @@
             table, thead, tbody, th, td, tr { display: block; }
             thead { display: none; }
             tr { margin-bottom: 0; }
-            td { height: auto !important; border: none; border-bottom: 1px solid #eee; position: relative; text-align: left !important; padding: 10px 5px 0px 5px !important; }
+            
+            /* ▼▼▼ [수정됨] 칸(td) 간격 조정 ▼▼▼ */
+            td { 
+                height: auto !important; 
+                border: none; 
+                border-bottom: 1px solid #eee; 
+                position: relative; 
+                text-align: left !important; 
+                padding: 10px 5px !important; /* 기본값 */
+            }
             td:empty { display: none; }
+
+            /* [추가] 공연이 있는 날: 바닥 여백 0 (마지막 박스의 margin 10px가 간격 역할) */
+            td.day-active {
+                padding: 10px 5px 0px 5px !important;
+            }
+
+            /* [추가] 공연이 없는 날: 바닥 여백 10px (기존 유지) */
+            td.day-inactive {
+                padding: 10px 5px 10px 5px !important;
+            }
+            /* ▲▲▲ [수정 끝] ▲▲▲ */
             
             .date-num { display: inline-block; width: auto; font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
             .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
