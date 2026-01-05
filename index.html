@@ -12,7 +12,9 @@
         
         body.no-scroll { overflow: hidden; touch-action: none; }
 
+        /* [수정 5] 연도월과 지역 선택지 사이 간격 15px로 고정 */
         .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
+        
         .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
         .nav-row { display: flex; align-items: center; gap: 15px; }
         
@@ -27,26 +29,70 @@
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
-        /* [수정] filter-group은 이제 단순 껍데기 역할 (마진만 담당) */
-        .control-bar { margin-bottom: 25px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding-left: 12px; font-size: 16px; }
-        .filter-group { width: 100%; margin-bottom: 5px; }
+        /* [수정 1, 2] 폰트 18px, 줄 간격 18px */
+        .control-bar { 
+            margin-bottom: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 18px; /* 지역 줄과 장르 줄 사이 간격 */
+            padding-left: 12px; 
+            font-size: 18px; /* 전체 기본 폰트 크기 */
+        }
         
-        /* [핵심 수정] chk-wrap 안에 제목과 체크박스가 다 들어감. align-items: center로 완벽 정렬 */
-        .chk-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        /* [수정 4] 정렬 구조 변경: flex-start로 상단 기준 정렬 */
+        .filter-group { 
+            display: flex; 
+            align-items: flex-start; /* 제목과 내용물의 상단 라인을 맞춤 */
+            gap: 4px; 
+            width: 100%; 
+        }
         
-        /* 제목 스타일: 체크박스들과 같은 줄에 있으므로 우측 여백만 줌 */
-        .group-title { font-weight: 800; color: #212529; margin-right: 4px; white-space: nowrap; font-size: 18px; }
+        /* 제목 스타일: 줄바꿈 방지 및 높이 보정 */
+        .group-title { 
+            font-weight: 800; 
+            color: #212529; 
+            white-space: nowrap; 
+            font-size: 18px; 
+            margin-top: 1px; /* 텍스트 베이스라인 미세 조정 */
+        }
         
-        label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 8px; -webkit-tap-highlight-color: transparent; }
+        /* [수정 4] 체크박스 리스트 컨테이너: 내용물만 여기서 줄바꿈 */
+        .chk-list { 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            gap: 8px; 
+            flex: 1; 
+        }
+        
+        label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 12px; -webkit-tap-highlight-color: transparent; }
         label:hover { opacity: 1; } 
         
-        /* PC 체크박스 크기 16px */
-        input[type="checkbox"] { accent-color: #343a40; width: 16px; height: 16px; cursor: pointer; margin: 0; }
+        /* [수정 1] 체크박스 크기 18px로 확대 */
+        input[type="checkbox"] { 
+            accent-color: #343a40; 
+            width: 18px; 
+            height: 18px; 
+            cursor: pointer; 
+            margin: 0; 
+        }
         
+        /* [수정 3] 모두해제 버튼 크기 및 스타일 조정 */
         .btn-reset {
-            margin-left: 2px; background-color: transparent; border: 1px solid #ced4da;
-            border-radius: 4px; padding: 4px 10px; font-size: 14px; font-weight: 600; 
-            color: #495057; cursor: pointer; transition: all 0.2s; height: 28px; display: flex; align-items: center;
+            margin-left: 2px; 
+            background-color: transparent; 
+            border: 1px solid #ced4da;
+            border-radius: 4px; 
+            padding: 2px 10px; /* 내부 여백 조정 */
+            font-size: 16px; /* 18px 텍스트 옆에 어울리는 크기 */
+            font-weight: 600; 
+            color: #495057; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            height: 28px; /* 높이 고정 */
+            display: flex; 
+            align-items: center;
             -webkit-tap-highlight-color: transparent;
         }
         .btn-reset:hover { background-color: #e9ecef; color: #212529; }
@@ -162,26 +208,28 @@
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
             
-            .header-wrapper { margin-bottom: 30px; }
+            /* [수정 5] 모바일에서도 15px */
+            .header-wrapper { margin-bottom: 15px; }
+            
             .main-title { font-size: 34px; margin-bottom: 25px; } 
             .sub-title { font-size: 32px; } 
             .nav-row { gap: 8px; } 
             .nav-btn { width: 30px; height: 30px; font-size: 16px; }
             
-            .control-bar { padding-left: 0; gap: 15px; font-size: 17px; }
+            /* [수정 1, 2] 모바일 폰트 18px, 간격 18px */
+            .control-bar { padding-left: 0; gap: 18px; font-size: 18px; }
             
-            /* [수정] 모바일에서 gap과 마진을 조절하여 한 줄에 예쁘게 나오도록 조정 */
-            .chk-wrap { gap: 5px 4px; } 
+            /* [수정 4] 줄바꿈 정렬을 위해 chk-list 사용 (gap 조절) */
+            .chk-list { gap: 5px 4px; } 
             
-            /* 제목 여백을 극소화하여 첫 체크박스와 붙임 */
             .group-title { font-size: 18px; margin-right: 4px; }
             
-            .label { font-size: 17px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
+            .label { font-size: 18px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
             
             label { margin-right: 5px; }
 
-            /* [수정] 모바일 체크박스 크기 17px로 폰트와 일치 */
-            input[type="checkbox"] { width: 17px; height: 17px; margin: 0; }
+            /* [수정 1] 모바일 체크박스 크기 18px */
+            input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
             
             .btn-reset { font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 2px; }
             
@@ -227,17 +275,23 @@
     
     <div class="control-bar">
         <div class="filter-group">
-            <div class="chk-wrap">
-                <span class="group-title">지역 :</span>
+            <span class="group-title">지역 :</span>
+            <div class="chk-list">
                 <label><input type="checkbox" class="region-chk" value="seoul"> <span class="txt-red">서울</span></label>
                 <label><input type="checkbox" class="region-chk" value="gyeonggi"> <span class="txt-red">경기/인천</span></label>
                 <label><input type="checkbox" class="region-chk" value="others"> <span class="txt-blue">그 외 지역</span></label>
             </div>
         </div>
+        
         <div class="filter-group">
-            <div class="chk-wrap">
-                <span class="group-title">장르 :</span>
-                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label> <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label> <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+            <span class="group-title">장르 :</span>
+            <div class="chk-list">
+                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
                 <button id="btn-reset" class="btn-reset">모두해제</button>
             </div>
         </div>
