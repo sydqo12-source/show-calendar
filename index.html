@@ -10,14 +10,12 @@
         
         body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
         
-        /* [수정] 팝업 오픈 시 스크롤 잠금 */
         body.no-scroll { overflow: hidden; touch-action: none; }
 
         .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
         .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
         .nav-row { display: flex; align-items: center; gap: 15px; }
         
-        /* [수정] 연도/월 폰트 사이즈 확대 */
         .sub-title { font-size: 42px; font-weight: 800; color: #495057; }
         
         .nav-btn {
@@ -29,7 +27,6 @@
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
-        /* [수정] 지역/장르 선택지 폰트 사이즈 키움 */
         .control-bar { margin-bottom: 25px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding-left: 12px; font-size: 16px; }
         .filter-group { display: flex; align-items: baseline; gap: 0px; width: 100%; margin-bottom: 5px; }
         .group-title { font-weight: 800; color: #212529; margin-right: 8px; white-space: nowrap; font-size: 18px; }
@@ -37,7 +34,6 @@
         
         label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 12px; -webkit-tap-highlight-color: transparent; }
         label:hover { opacity: 1; } 
-        /* 체크박스 크기도 약간 확대 */
         input[type="checkbox"] { accent-color: #343a40; width: 18px; height: 18px; cursor: pointer; }
         
         .btn-reset {
@@ -118,7 +114,6 @@
         .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
         .btn-action-red { background-color: #fa5252; color: white; flex: 1; }
 
-        /* [수정] 유튜브 버튼 스타일 (흰색 배경, 검은 글씨, 이미지 포함) */
         .btn-youtube-custom {
             background-color: white; color: black; border: 1px solid #ced4da;
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -138,13 +133,11 @@
         .btn-yes { background-color: #343a40; color: white; }
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
-        /* 이미지 확대 오버레이 스타일 */
+        /* 이미지 확대 오버레이 */
         #imageZoomOverlay {
             display: none; position: fixed; z-index: 10001; 
             padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
             overflow: auto; background-color: rgba(0,0,0,0.9);
-            /* 확대 모드에서는 터치 액션 허용 */
-            touch-action: pan-x pan-y pinch-zoom;
         }
         #zoomedImage {
             margin: auto; display: block; max-width: 95%; max-height: 90vh; 
@@ -159,22 +152,32 @@
         .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
 
 
+        /* ========================================= */
+        /* [모바일 스타일 수정 영역] */
+        /* ========================================= */
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
-            .header-wrapper { margin-bottom: 10px; }
+            
+            /* 1. 연도월과 선택지 사이 줄간격 확대 (10px -> 30px) */
+            .header-wrapper { margin-bottom: 30px; }
+            
             .main-title { font-size: 34px; margin-bottom: 25px; } 
-            /* 모바일에서도 연도월 크게 */
             .sub-title { font-size: 32px; } 
             .nav-row { gap: 8px; } 
             .nav-btn { width: 30px; height: 30px; font-size: 16px; }
             
-            /* 모바일 필터바 폰트 조정 */
             .control-bar { padding-left: 0; gap: 15px; font-size: 17px; }
             .group-title { font-size: 18px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
-            .chk-wrap { gap: 8px 12px; } 
+            
+            /* 2, 3. 지역/장르 선택지 간격 줄임 (한 줄 정렬 및 모두해제 버튼 위치 조정) */
+            .chk-wrap { gap: 5px 4px; } 
             .label { font-size: 17px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
+            
+            /* label 우측 여백 줄임 (12px -> 5px) */
+            label { margin-right: 5px; }
+
             input[type="checkbox"] { width: 20px; height: 20px; margin-top: 0; transform: translateY(1px); }
-            .btn-reset { font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 0; }
+            .btn-reset { font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 2px; }
             
             table, thead, tbody, th, td, tr { display: block; }
             thead { display: none; }
@@ -187,7 +190,9 @@
             .sun .date-num { color: #ffc9c9; } 
             .sat .date-num { color: #a5d8ff; }
 
-            td.day-active .date-num { font-size: 24px; margin-bottom: 12px; padding-bottom: 5px; color: #212529; font-weight: 800; }
+            /* 4. 날짜와 첫 공연 박스 간격 줄임 (12px -> 4px) */
+            td.day-active .date-num { font-size: 24px; margin-bottom: 4px; padding-bottom: 2px; color: #212529; font-weight: 800; }
+            
             td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
             td.day-active.sun .date-num { color: #e03131 !important; } 
             td.day-active.sat .date-num { color: #1971c2 !important; }
@@ -301,10 +306,9 @@
         const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
         
-        // Supabase 클라이언트 생성
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let events = []; // 데이터를 담을 빈 배열
+        let events = [];
 
         // ========================================================
         // [2] Supabase에서 데이터 가져오기
@@ -353,7 +357,6 @@
         let currentEventData = {}; 
         let isModalOpen = false; 
 
-        // 지역별 텍스트 매핑
         function getRegionHtml(region, fullDate) {
             const timePart = fullDate.split(' ')[1] || '';
             let colorClass = 'txt-blue';
@@ -399,7 +402,6 @@
                     const div = document.createElement('div');
                     div.className = 'event-box';
                     
-                    // 데이터셋에 저장 (모달에서 사용)
                     div.dataset.region = evt.region;
                     div.dataset.genre = evt.genre;
                     div.dataset.title = evt.title;
@@ -407,14 +409,12 @@
                     div.dataset.place = evt.place;
                     div.dataset.poster = evt.poster;
                     
-                    // 링크 저장 (없으면 빈값)
                     div.dataset.link1 = evt.link1 || '';
                     div.dataset.link2 = evt.link2 || '';
                     div.dataset.link3 = evt.link3 || '';
                     div.dataset.link4 = evt.link4 || '';
                     div.dataset.link5 = evt.link5 || '';
                     
-                    // 유튜브 검색어
                     div.dataset.youtube = evt['youtube search'] || '';
 
                     div.onclick = function() { openModal(this); };
@@ -458,7 +458,7 @@
         }
 
         // ========================================================
-        // 팝업 열기 (수정됨: 스크롤 방지 & 유튜브 버튼 디자인)
+        // 팝업 열기
         // ========================================================
         function openModal(element) {
             const ds = element.dataset;
@@ -476,7 +476,6 @@
                 modalPoster.style.display = 'block';
                 noPosterText.style.display = 'none';
                 
-                // 포스터 클릭 시 확대 이벤트 연결
                 modalPoster.onclick = function() {
                     openZoomOverlay(ds.poster);
                 };
@@ -486,10 +485,8 @@
                 modalPoster.onclick = null;
             }
 
-            // --- 버튼 생성 로직 ---
             let htmlContent = '';
 
-            // [1줄: 예매 링크 버튼들]
             const links = [];
             if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1});
             if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2});
@@ -505,14 +502,11 @@
                 htmlContent += `</div>`;
             }
 
-            // [2줄: 일정 추가 + 유튜브 검색]
             htmlContent += `<div class="btn-row">`;
             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">일정 추가</button>`;
             
-            // [수정] 유튜브 버튼: 하얀 배경 + yt.png 이미지 + 유튜브 검색
             if (ds.youtube && ds.youtube.trim() !== '') {
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
-                // 'yt.png'가 같은 폴더에 있다고 가정
                 htmlContent += `
                     <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom">
                         <img src="yt.png" alt="Youtube" class="yt-icon">
@@ -524,22 +518,17 @@
             btnGroup.innerHTML = htmlContent;
 
             modal.style.display = 'flex';
-            
-            // [수정] 팝업 뜰 때 백그라운드 스크롤 막기
             document.body.classList.add('no-scroll');
             
             history.pushState({view: 'modal'}, '', '#modal');
         }
 
-        // --- 확인 팝업 열기 ---
         function openConfirmModal() {
             confirmModal.style.display = 'flex';
             history.pushState({view: 'confirm'}, '', '#confirm');
         }
 
-        // --- 뒤로가기 감지 ---
         window.onpopstate = function(event) {
-            // 확대 창이 열려있으면 닫기
             const zoomOverlay = document.getElementById('imageZoomOverlay');
             if (zoomOverlay.style.display === 'block') {
                 closeZoomOverlay();
@@ -553,7 +542,6 @@
             else {
                 confirmModal.style.display = 'none';
                 modal.style.display = 'none';
-                // [수정] 팝업 닫힐 때 스크롤 잠금 해제
                 document.body.classList.remove('no-scroll');
             }
         };
@@ -570,17 +558,17 @@
             }
         }
 
-        // --- [수정] 이미지 확대 기능 (메타태그 조작으로 핀치줌 허용) ---
+        // --- [수정] 이미지 확대 기능 (확대 배율 증가 및 ID 셀렉팅 강화) ---
         function openZoomOverlay(imgSrc) {
             const overlay = document.getElementById('imageZoomOverlay');
             const zoomedImg = document.getElementById('zoomedImage');
             zoomedImg.src = imgSrc;
             overlay.style.display = 'block';
             
-            // [핵심] 확대 모달이 뜰 때만 viewport 줌 허용 (JS로 태그 속성 변경)
+            // [수정] user-scalable=yes 와 maximum-scale을 넉넉하게(5.0) 설정
             const viewport = document.getElementById('viewport-meta');
             if(viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes');
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
             }
         }
 
@@ -588,7 +576,7 @@
             const overlay = document.getElementById('imageZoomOverlay');
             overlay.style.display = 'none';
             
-            // [핵심] 확대 모달 닫으면 다시 줌 막기
+            // [수정] 다시 확대 금지
             const viewport = document.getElementById('viewport-meta');
             if(viewport) {
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
@@ -596,7 +584,6 @@
         }
 
 
-        // --- 다운로드 ---
         function realDownload() {
             history.back(); 
 
