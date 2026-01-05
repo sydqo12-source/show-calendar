@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공연 예매일정 캘린더</title>
+    <title>공연 예매일정 캘린더 (Supabase)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
@@ -56,16 +56,17 @@
         .event-box:hover { transform: translateY(-1px); border-color: #adb5bd; z-index: 5; position: relative; }
         .event-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
         .box-line2 { 
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+            display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical;
             overflow: hidden; text-overflow: ellipsis; line-height: 1.3; 
             word-break: break-all; margin-top: 1px; 
         }
 
         .txt-red { color: #e03131; font-weight: 700; }
-        .txt-green { color: #e03131; font-weight: 700; }
+        .txt-green { color: #2b8a3e; font-weight: 700; }
         .txt-blue { color: #1971c2; font-weight: 700; }
         .txt-black { color: #495057; font-weight: 500; }
 
+        /* 팝업 스타일 */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
@@ -92,17 +93,21 @@
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
         .modal-info { font-size: 14px; color: #868e96; margin-bottom: 15px; }
 
-        .modal-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        /* [수정] 버튼 컨테이너 스타일 */
+        .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .btn-row { display: flex; width: 100%; gap: 8px; }
+        
         .modal-btn {
-            flex: 1; padding: 12px 0; border-radius: 8px; font-size: 15px; font-weight: 700;
+            padding: 12px 0; border-radius: 8px; font-size: 14px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
             display: flex; justify-content: center; align-items: center; 
-            min-width: 100px; 
+            transition: opacity 0.2s;
         }
-        .btn-booking { background-color: #343a40; color: white; }
-        .btn-yes24 { background-color: #1a73e8; color: white; } 
-        .btn-calendar { background-color: #fa5252; color: white; flex-basis: 100%; } 
-        .btn-calendar:hover { background-color: #ff6b6b; }
+        .modal-btn:hover { opacity: 0.9; }
+
+        /* [수정] 버튼 색상 클래스 통일 */
+        .btn-link-black { background-color: #343a40; color: white; flex: 1; } /* NOL 색상 (검정) */
+        .btn-action-red { background-color: #fa5252; color: white; flex: 1; } /* 일정추가 색상 (빨강) */
 
         .confirm-content {
             background: white; width: 85%; max-width: 320px;
@@ -151,7 +156,7 @@
             td.day-inactive.sat .date-num { color: #a5d8ff; }
 
             .event-box { font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da; height: auto !important; min-height: unset; }
-            .box-line2 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; white-space: normal; word-break: break-all; }
+            .box-line2 { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; white-space: normal; word-break: break-all; }
 
             body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
             body.initial-mode .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
@@ -189,981 +194,15 @@
     </div>
 
     <div id="calendar-container">
-        
             <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
                 <table>
                     <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
                     <tbody>
-            <tr><td class='sun no-event'></td><td class=' no-event'></td><td class=' no-event'></td><td class=' no-event'></td><td class=' no-event'><span class='date-num' data-dayname='목'>1</span></td><td class=' has-event'><span class='date-num' data-dayname='금'>2</span>
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="클래식" 
-         data-title="서초금요음악회 신년음악회 [2026 신년 서리풀 갈라콘서트]"
-         data-date="01.02(금) 09:00"
-         data-place="서초문화예술회관 아트홀"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202512/20251230/20251230-56600.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17056"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">09:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">서초금요음악회 신년음악회 [2026 신년 서리풀 갈라콘서트]</span></span>
-    </div>
-    </td><td class='sat no-event'><span class='date-num' data-dayname='토'>3</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>4</span></td><td class=' has-event'><span class='date-num' data-dayname='월'>5</span>
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="가족" 
-         data-title="뮤지컬 집사TV 〈대저택 문의 비밀〉 : part.1 - 용인"
-         data-date="01.05(월) 10:00"
-         data-place="용인시문예회관 처인홀"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018679_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12223"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">10:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 집사TV 〈대저택 문의 비밀〉 : part.1 - 용인</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="클래식" 
-         data-title="WDR쾰른방송오케스트라 내한 공연"
-         data-date="01.05(월) 14:00"
-         data-place="구미문화예술회관"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018649_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12218"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(경북)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">WDR쾰른방송오케스트라 내한 공연</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="뮤지컬 〈트레이스 유〉"
-         data-date="01.05(월) 14:00"
-         data-place="링크아트센터 벅스홀"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25015463_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12229"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈트레이스 유〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="2025-26 강승윤(KANGSEUNGYOON) : PASSAGE ＃2 CONCERT TOUR IN SEOUL"
-         data-date="01.05(월) 20:00"
-         data-place="명화라이브홀"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018356_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12196"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 강승윤(KANGSEUNGYOON) : PASSAGE ＃2 CONCERT TOUR IN SEOUL</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="2026 KickFlip FAN-CON 〈From KickFlip, To WeFlip〉 in 청주"
-         data-date="01.05(월) 20:00"
-         data-place="청주 CJB미디어센터"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018597_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12213"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(충북)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 KickFlip FAN-CON 〈From KickFlip, To WeFlip〉 in 청주</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="2026 JOY콘서트 - 보이스 오브 스프링(Voice of spring) <에이엠피(AxMxP), 소란, 엔플라잉(N.Flying)>"
-         data-date="01.05(월) 10:00"
-         data-place="잠실학생체육관"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202512/20251231/20251231-56618.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17065"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">10:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 JOY콘서트 - 보이스 오브 스프링(Voice of spring) <에이엠피(AxMxP), 소란, 엔플라잉(N.Flying)></span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[창원] ’25-26 김건모 라이브투어 〈KIM GUN MO.〉"
-         data-date="01.05(월) 14:00"
-         data-place="창원컨벤션센터"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202601/20260102/20260102-56627.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17090"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(경남)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[창원] ’25-26 김건모 라이브투어 〈KIM GUN MO.〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="@WANDERLOCH with PEPPERTONES X KACHISAN"
-         data-date="01.05(월) 19:00"
-         data-place="예스24 원더로크홀"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202512/20251229/20251229-56584.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17067"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">19:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">@WANDERLOCH with PEPPERTONES X KACHISAN</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="2026 우디(Woody) 콘서트 〈Woody, Story〉"
-         data-date="01.05(월) 19:00"
-         data-place="구름 아래 소극장"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202601/20260103/20260103-56628.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17073"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">19:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 우디(Woody) 콘서트 〈Woody, Story〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="ITZY 3RD WORLD TOUR 〈TUNNEL VISION〉 in SEOUL"
-         data-date="01.05(월) 20:00"
-         data-place="잠실실내체육관"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251229/20251229-89c4f173-7b36-4237-98d0-7cecfe009313.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17069"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">ITZY 3RD WORLD TOUR 〈TUNNEL VISION〉 in SEOUL</span></span>
-    </div>
-    </td><td class=' has-event'><span class='date-num' data-dayname='화'>6</span>
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="가족" 
-         data-title="뮤지컬 〈설민석의 한국사 대모험 : 안중근〉 - 안양"
-         data-date="01.06(화) 10:00"
-         data-place="안양아트센터 관악홀"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018694_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12214"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">10:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈설민석의 한국사 대모험 : 안중근〉 - 안양</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[데뷔 60주년 기념공연] 2026 남진 전국투어 콘서트 - 부산"
-         data-date="01.06(화) 10:00"
-         data-place="부산영화의전당 하늘연극장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123113074940.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12234"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">10:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[데뷔 60주년 기념공연] 2026 남진 전국투어 콘서트 - 부산</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="조항조 전국투어 콘서트 : 생각 - 부산"
-         data-date="01.06(화) 10:00"
-         data-place="부산영화의전당 하늘연극장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123113173748.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12235"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">10:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">조항조 전국투어 콘서트 : 생각 - 부산</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="뮤지컬 〈팬레터〉 10주년 기념 공연"
-         data-date="01.06(화) 11:00"
-         data-place="예술의전당 CJ 토월극장"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25015215_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12200"
-         data-link2="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17061"
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">11:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈팬레터〉 10주년 기념 공연</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="연극" 
-         data-title="연극 〈살아있는 자를 수선하기〉"
-         data-date="01.06(화) 13:00"
-         data-place="국립정동극장"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25017744_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12221"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">13:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">연극 〈살아있는 자를 수선하기〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="행사(전시)" 
-         data-title="쇼뮤지컬〈프린세스 캐치! 티니핑〉- 당진"
-         data-date="01.06(화) 14:00"
-         data-place="당진문예의전당 대공연장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025122620311357.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12248"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(충남)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">쇼뮤지컬〈프린세스 캐치! 티니핑〉- 당진</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="뮤지컬" 
-         data-title="TV애니메이션 체인소 맨 展"
-         data-date="01.06(화) 14:00"
-         data-place="덕스 (DUEX) 부산"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025122415045682.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12224"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">TV애니메이션 체인소 맨 展</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="뮤지컬 〈앤ANNE〉 10th Anniversary"
-         data-date="01.06(화) 14:00"
-         data-place="대학로 자유극장"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25014944_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12227"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈앤ANNE〉 10th Anniversary</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="뮤지컬 슈가 〈SUGAR〉"
-         data-date="01.06(화) 14:00"
-         data-place="한전아트센터"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25015110_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12228"
-         data-link2="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17086"
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 슈가 〈SUGAR〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="가족" 
-         data-title="이은결 〈META〉- 의정부"
-         data-date="01.06(화) 14:00"
-         data-place="의정부예술의전당 대극장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025122619430664.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12231"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">이은결 〈META〉- 의정부</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="〈센과 치히로의 행방불명〉오리지널 투어 (SPIRITED AWAY)"
-         data-date="01.06(화) 14:00"
-         data-place="예술의전당 오페라극장"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25015528_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12252"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">〈센과 치히로의 행방불명〉오리지널 투어 (SPIRITED AWAY)</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="가족" 
-         data-title="쇼뮤지컬〈프린세스 캐치! 티니핑〉- 대구"
-         data-date="01.06(화) 15:00"
-         data-place="영남대학교 천마아트센터 그랜드홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025122621073344.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12249"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">15:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(대구)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">쇼뮤지컬〈프린세스 캐치! 티니핑〉- 대구</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="클래식" 
-         data-title="드미트리 시쉬킨 피아노 리사이틀"
-         data-date="01.06(화) 16:00"
-         data-place="예술의전당 콘서트홀"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25017505_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12246"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">16:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">드미트리 시쉬킨 피아노 리사이틀</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="가족" 
-         data-title="쇼뮤지컬〈프린세스 캐치! 티니핑〉- 부산"
-         data-date="01.06(화) 16:00"
-         data-place="부산 벡스코 오디토리움"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025122622183998.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12250"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">16:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">쇼뮤지컬〈프린세스 캐치! 티니핑〉- 부산</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="<센과 치히로의 행방불명> OP석"
-         data-date="01.06(화) 14:00"
-         data-place="예술의전당 오페라극장"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202510/20251028/20251028-55838.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17091"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;"><센과 치히로의 행방불명> OP석</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[창원] 2026모닝콘서트 - 2월 [옥상달빛의 ‘수고했어,오늘도’]"
-         data-date="01.06(화) 14:00"
-         data-place="창원 성산아트홀 소극장"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251230/20251230-ef81865b-a8d1-464e-80a8-1a2c9180698d.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17076"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(경남)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[창원] 2026모닝콘서트 - 2월 [옥상달빛의 ‘수고했어,오늘도’]</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[창원] 2026모닝콘서트 - 3월 [강재훈재즈트리오 with 김주환 ’화이트데이 콘서트’]"
-         data-date="01.06(화) 14:00"
-         data-place="창원 성산아트홀 소극장"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251230/20251230-44bdc4d3-72aa-4f4b-9d33-bc7e02e7a7a7.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17077"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(경남)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[창원] 2026모닝콘서트 - 3월 [강재훈재즈트리오 with 김주환 ’화이트데이 콘서트’]</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[창원] 2026모닝콘서트 - 4월 [더블베이시스트 성민제 ‘베스트 베이스 콰르텟’]"
-         data-date="01.06(화) 14:00"
-         data-place="창원 성산아트홀 소극장"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251230/20251230-7eb272eb-6530-4d39-9b97-b2712cff8f0b.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17078"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(경남)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[창원] 2026모닝콘서트 - 4월 [더블베이시스트 성민제 ‘베스트 베이스 콰르텟’]</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="2025 뮤지컬 [미드나잇 : 액터뮤지션] 3차"
-         data-date="01.06(화) 14:00"
-         data-place="예스24 아트원 1관"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202511/20251104/20251104-55930.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17087"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2025 뮤지컬 [미드나잇 : 액터뮤지션] 3차</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="2025 뮤지컬 [미드나잇 : 액터뮤지션] 3차"
-         data-date="01.06(화) 14:00"
-         data-place="예스24 아트원 1관"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202511/20251104/20251104-55930.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17051"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2025 뮤지컬 [미드나잇 : 액터뮤지션] 3차</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="Rothy 1st Concert: This Is My New Button"
-         data-date="01.06(화) 20:00"
-         data-place="예스24 원더로크홀"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202512/20251230/20251230-56596_1.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17072"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">Rothy 1st Concert: This Is My New Button</span></span>
-    </div>
-    </td><td class=' has-event'><span class='date-num' data-dayname='수'>7</span>
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="가족" 
-         data-title="뮤지컬 한글용사 아이야 새로운 이야기〈달라도 친구야!〉"
-         data-date="01.07(수) 11:00"
-         data-place="안산문화예술의전당 해돋이극장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123020465677.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12232"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">11:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 한글용사 아이야 새로운 이야기〈달라도 친구야!〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="가족" 
-         data-title="뮤지컬 〈장수탕 선녀님〉 - 서울숲"
-         data-date="01.07(수) 11:00"
-         data-place="서울숲 씨어터 2관"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25001460_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12238"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">11:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈장수탕 선녀님〉 - 서울숲</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="연극" 
-         data-title="앙드레와 도린 (Andre ＆ Dorine)"
-         data-date="01.07(수) 12:00"
-         data-place="강남씨어터"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018682_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12226"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">12:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">앙드레와 도린 (Andre ＆ Dorine)</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="클래식" 
-         data-title="히사이시 조 영화음악 콘서트 2026_Chamber Edition(예술의전당)"
-         data-date="01.07(수) 13:00"
-         data-place="예술의전당 콘서트홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123017244212.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12245"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">13:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">히사이시 조 영화음악 콘서트 2026_Chamber Edition(예술의전당)</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="연극" 
-         data-title="2026 쿼드기획:〈함수 도미노〉"
-         data-date="01.07(수) 14:00"
-         data-place="대학로극장 쿼드"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018629_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12219"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 쿼드기획:〈함수 도미노〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="연극" 
-         data-title="그레잇코미디추리극 〈히든퍼즐〉"
-         data-date="01.07(수) 14:00"
-         data-place="코델아트홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2026010119363007.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12247"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">그레잇코미디추리극 〈히든퍼즐〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="뮤지컬 〈긴긴밤〉"
-         data-date="01.07(수) 16:00"
-         data-place="링크아트센터드림 드림1관"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25018118_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12230"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">16:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈긴긴밤〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="오월오일 단독 콘서트 〈AQUA〉"
-         data-date="01.07(수) 19:00"
-         data-place="YES24 LIVE HALL"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/20260102042315.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12251"
-         data-link2="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17093"
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">19:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">오월오일 단독 콘서트 〈AQUA〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="2026 10CM Asia Tour <To 10CM: Chapter 1> in Busan"
-         data-date="01.07(수) 20:00"
-         data-place="01.05 20:00"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025121715070785.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12136"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 10CM Asia Tour <To 10CM: Chapter 1> in Busan</span></span>
-    </div>
-    </td><td class=' has-event'><span class='date-num' data-dayname='목'>8</span>
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="가족" 
-         data-title="K-히어로 뮤지컬 〈똥볶이 할멈 : 정의의 맛〉 - 울산"
-         data-date="01.08(목) 09:00"
-         data-place="울산중구문화의전당 함월홀(2층)"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2026010217252356.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12253"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">09:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(울산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">K-히어로 뮤지컬 〈똥볶이 할멈 : 정의의 맛〉 - 울산</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="콘서트" 
-         data-title="센트럴 씨 첫 단독 내한공연 (CAN’T RUSH GREATNESS WORLD TOUR - Asia 2026)"
-         data-date="01.08(목) 12:00"
-         data-place="킨텍스 제2전시장 9홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025121719172777.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12138"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">12:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">센트럴 씨 첫 단독 내한공연 (CAN’T RUSH GREATNESS WORLD TOUR - Asia 2026)</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="2025-26 김창옥 토크콘서트 시즌5 - 울산"
-         data-date="01.08(목) 14:00"
-         data-place="울산문화예술회관 대공연장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025122915001553.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12236"
-         data-link2="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17089"
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(울산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 김창옥 토크콘서트 시즌5 - 울산</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="콘서트" 
-         data-title="2025-26 김창옥 토크콘서트 시즌5 - 부천"
-         data-date="01.08(목) 14:00"
-         data-place="부천시민회관 대공연장"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123014460535.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12237"
-         data-link2="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17088"
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 김창옥 토크콘서트 시즌5 - 부천</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="연극" 
-         data-title="연극 〈벙커 트릴로지〉"
-         data-date="01.08(목) 14:00"
-         data-place="홍익대 대학로 아트센터 소극장"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25015600_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12241"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">연극 〈벙커 트릴로지〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="에녹 2026년 새해맞이 디너쇼 - 대구"
-         data-date="01.08(목) 20:00"
-         data-place="호텔인터불고 대구 컨벤션홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/20260102050313.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12244"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(대구)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">에녹 2026년 새해맞이 디너쇼 - 대구</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="Zhang Zhehan 2026「Kaleidoscope」Fan Meeting - Seoul, South Korea"
-         data-date="01.08(목) 11:30"
-         data-place="세종대학교 대양홀"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251224/20251224-085aae7b-58bb-41dc-ba62-952b6f27f365.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17054"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">11:30</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">Zhang Zhehan 2026「Kaleidoscope」Fan Meeting - Seoul, South Korea</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[광주] 2025-26 이찬원 콘서트 <찬가 : 찬란한 하루>"
-         data-date="01.08(목) 20:00"
-         data-place="김대중컨벤션센터 다목적홀"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251231/20251231-c785f06a-d514-45e3-9411-e5fd90f6b1ca.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17081"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(광주)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[광주] 2025-26 이찬원 콘서트 <찬가 : 찬란한 하루></span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="LUCKLIFE TOUR 2026 「Dreamer Believer」in KOREA"
-         data-date="01.08(목) 20:00"
-         data-place="YES24 LIVE HALL"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251219/20251219-c7bfdefd-e2ec-49b8-a199-72bba4994d9a.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17047"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">LUCKLIFE TOUR 2026 「Dreamer Believer」in KOREA</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="2025-26 포레스텔라 콘서트 THE LEGACY in Busan"
-         data-date="01.08(목) 20:00"
-         data-place="벡스코 오디토리움"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202511/20251113/20251113-e8268667-d95a-4759-8a9b-c12f3e18efc7.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=16918"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(부산)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2025-26 포레스텔라 콘서트 THE LEGACY in Busan</span></span>
-    </div>
-    </td><td class=' has-event'><span class='date-num' data-dayname='금'>9</span>
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="어른이 뮤지컬 〈난쟁이들〉"
-         data-date="01.09(금) 11:00"
-         data-place="플러스씨어터"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25013784_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12222"
-         data-link2="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17070"
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">11:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">어른이 뮤지컬 〈난쟁이들〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="뮤지컬" 
-         data-title="뮤지컬 〈킹키부츠〉"
-         data-date="01.09(금) 14:00"
-         data-place="샤롯데씨어터"
-         data-poster="https://ticketimage.interpark.com/Play/image/large/25/25014553_p.gif"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12242"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">뮤지컬 〈킹키부츠〉</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="gyeonggi" 
-         data-genre="콘서트" 
-         data-title="2026 최백호 50주년 콘서트 "낭만의 50년, 시간의 흔적을 노래하다""
-         data-date="01.09(금) 14:00"
-         data-place="안양아트센터 관악홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123015211549.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12243"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">14:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(경기)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 최백호 50주년 콘서트 "낭만의 50년, 시간의 흔적을 노래하다"</span></span>
-    </div>
-    
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="2026 [황가람 콘서트 : 나는] - 서울공연"
-         data-date="01.09(금) 15:00"
-         data-place="블루스퀘어 우리WON뱅킹홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025123119191778.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12239"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">15:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 [황가람 콘서트 : 나는] - 서울공연</span></span>
-    </div>
-    </td><td class='sat no-event'><span class='date-num' data-dayname='토'>10</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>11</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>12</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>13</span></td><td class=' has-event'><span class='date-num' data-dayname='수'>14</span>
-    <div class="event-box" 
-         data-region="seoul" 
-         data-genre="콘서트" 
-         data-title="황민현 팬미팅 [도화원] - 서울"
-         data-date="01.14(수) 20:00"
-         data-place="YES24 LIVE HALL"
-         data-poster="https://tkfile.yes24.com/upload2/PerfBlog/202512/20251229/20251229-56490.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17071"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#e03131; font-weight:800;">(서울)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">황민현 팬미팅 [도화원] - 서울</span></span>
-    </div>
-    </td><td class=' has-event'><span class='date-num' data-dayname='목'>15</span>
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="[대전] 2025-26 이찬원 콘서트 <찬가 : 찬란한 하루>"
-         data-date="01.15(목) 20:00"
-         data-place="대전컨벤션센터 제2전시장"
-         data-poster="https://tkfile.yes24.com/upload2/BoardNotice/202512/20251231/20251231-3a65dd7a-98ee-4831-b1fa-454d64f2c3cf.jpg"
-         data-link="https://ticket.yes24.com/New/Notice/NoticeMain.aspx?Gcode=009_208_002#id=17082"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(대전)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">[대전] 2025-26 이찬원 콘서트 <찬가 : 찬란한 하루></span></span>
-    </div>
-    </td><td class=' no-event'><span class='date-num' data-dayname='금'>16</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>17</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>18</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>19</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>20</span></td><td class=' no-event'><span class='date-num' data-dayname='수'>21</span></td><td class=' no-event'><span class='date-num' data-dayname='목'>22</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>23</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>24</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>25</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>26</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>27</span></td><td class=' no-event'><span class='date-num' data-dayname='수'>28</span></td><td class=' no-event'><span class='date-num' data-dayname='목'>29</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>30</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>31</span></td></tr>
+                        <tr><td class='sun'></td><td></td><td></td><td></td><td><span class='date-num' data-dayname='목'>1</span></td><td><span class='date-num' data-dayname='금'>2</span></td><td class='sat'><span class='date-num' data-dayname='토'>3</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>4</span></td><td><span class='date-num' data-dayname='월'>5</span></td><td><span class='date-num' data-dayname='화'>6</span></td><td><span class='date-num' data-dayname='수'>7</span></td><td><span class='date-num' data-dayname='목'>8</span></td><td><span class='date-num' data-dayname='금'>9</span></td><td class='sat'><span class='date-num' data-dayname='토'>10</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>11</span></td><td><span class='date-num' data-dayname='월'>12</span></td><td><span class='date-num' data-dayname='화'>13</span></td><td><span class='date-num' data-dayname='수'>14</span></td><td><span class='date-num' data-dayname='목'>15</span></td><td><span class='date-num' data-dayname='금'>16</span></td><td class='sat'><span class='date-num' data-dayname='토'>17</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>18</span></td><td><span class='date-num' data-dayname='월'>19</span></td><td><span class='date-num' data-dayname='화'>20</span></td><td><span class='date-num' data-dayname='수'>21</span></td><td><span class='date-num' data-dayname='목'>22</span></td><td><span class='date-num' data-dayname='금'>23</span></td><td class='sat'><span class='date-num' data-dayname='토'>24</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>25</span></td><td><span class='date-num' data-dayname='월'>26</span></td><td><span class='date-num' data-dayname='화'>27</span></td><td><span class='date-num' data-dayname='수'>28</span></td><td><span class='date-num' data-dayname='목'>29</span></td><td><span class='date-num' data-dayname='금'>30</span></td><td class='sat'><span class='date-num' data-dayname='토'>31</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1172,28 +211,13 @@
                 <table>
                     <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
                     <tbody>
-            <tr><td class='sun no-event'><span class='date-num' data-dayname='일'>1</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>2</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>3</span></td><td class=' no-event'><span class='date-num' data-dayname='수'>4</span></td><td class=' no-event'><span class='date-num' data-dayname='목'>5</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>6</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>7</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>8</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>9</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>10</span></td><td class=' has-event'><span class='date-num' data-dayname='수'>11</span>
-    <div class="event-box" 
-         data-region="others" 
-         data-genre="콘서트" 
-         data-title="2026 10CM Asia Tour <To 10CM: Chapter 1> in Daejeon"
-         data-date="02.11(수) 20:00"
-         data-place="충남대학교 정심화홀"
-         data-poster="https://ticketimage.interpark.com/TicketImage/notice_poster/20/2025121715100246.jpg"
-         data-link="https://tickets.interpark.com/contents/notice/detail/12137"
-         data-link2=""
-         onclick="openModal(this)">
-        <div class="event-header">
-            <div><span style="color:#212529; font-weight:800;">20:00</span></div>
-            <div><span style="color:#1971c2; font-weight:800;">(대전)</span></div>
-        </div>
-        <span class="box-line2"><span style="color:#495057; font-weight:500;">2026 10CM Asia Tour <To 10CM: Chapter 1> in Daejeon</span></span>
-    </div>
-    </td><td class=' no-event'><span class='date-num' data-dayname='목'>12</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>13</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>14</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>15</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>16</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>17</span></td><td class=' no-event'><span class='date-num' data-dayname='수'>18</span></td><td class=' no-event'><span class='date-num' data-dayname='목'>19</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>20</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>21</span></td></tr><tr><td class='sun no-event'><span class='date-num' data-dayname='일'>22</span></td><td class=' no-event'><span class='date-num' data-dayname='월'>23</span></td><td class=' no-event'><span class='date-num' data-dayname='화'>24</span></td><td class=' no-event'><span class='date-num' data-dayname='수'>25</span></td><td class=' no-event'><span class='date-num' data-dayname='목'>26</span></td><td class=' no-event'><span class='date-num' data-dayname='금'>27</span></td><td class='sat no-event'><span class='date-num' data-dayname='토'>28</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>1</span></td><td><span class='date-num' data-dayname='월'>2</span></td><td><span class='date-num' data-dayname='화'>3</span></td><td><span class='date-num' data-dayname='수'>4</span></td><td><span class='date-num' data-dayname='목'>5</span></td><td><span class='date-num' data-dayname='금'>6</span></td><td class='sat'><span class='date-num' data-dayname='토'>7</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>8</span></td><td><span class='date-num' data-dayname='월'>9</span></td><td><span class='date-num' data-dayname='화'>10</span></td><td><span class='date-num' data-dayname='수'>11</span></td><td><span class='date-num' data-dayname='목'>12</span></td><td><span class='date-num' data-dayname='금'>13</span></td><td class='sat'><span class='date-num' data-dayname='토'>14</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>15</span></td><td><span class='date-num' data-dayname='월'>16</span></td><td><span class='date-num' data-dayname='화'>17</span></td><td><span class='date-num' data-dayname='수'>18</span></td><td><span class='date-num' data-dayname='목'>19</span></td><td><span class='date-num' data-dayname='금'>20</span></td><td class='sat'><span class='date-num' data-dayname='토'>21</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>22</span></td><td><span class='date-num' data-dayname='월'>23</span></td><td><span class='date-num' data-dayname='화'>24</span></td><td><span class='date-num' data-dayname='수'>25</span></td><td><span class='date-num' data-dayname='목'>26</span></td><td><span class='date-num' data-dayname='금'>27</span></td><td class='sat'><span class='date-num' data-dayname='토'>28</span></td></tr>
                     </tbody>
                 </table>
             </div>
-            
     </div>
 
     <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
@@ -1205,7 +229,8 @@
             <div class="modal-body">
                 <div id="modalTitle" class="modal-title"></div>
                 <div id="modalInfo" class="modal-info"></div>
-                <div class="modal-btn-group" id="btnGroup">
+                
+                <div class="modal-btn-container" id="btnGroup">
                     </div>
             </div>
         </div>
@@ -1224,6 +249,42 @@
     </div>
 
     <script>
+        // ========================================================
+        // [1] Supabase 연결 설정 (본인 키로 교체 필수!)
+        // ========================================================
+        const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
+        
+        // Supabase 클라이언트 생성
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let events = []; // 데이터를 담을 빈 배열
+
+        // ========================================================
+        // [2] Supabase에서 데이터 가져오기
+        // ========================================================
+        async function fetchEvents() {
+            titleEl.innerText = "데이터 불러오는 중...";
+            
+            const { data, error } = await client.from('events').select('*');
+            
+            if (error) {
+                console.error('Error:', error);
+                titleEl.innerText = "로딩 실패 (콘솔 확인)";
+                alert("Supabase 연결 오류: 키 설정을 확인하세요.");
+                return;
+            }
+            
+            events = data;
+            console.log("Supabase 데이터:", events);
+            
+            renderEvents();
+            showPage(0); // 1월 페이지로 이동
+        }
+
+        // ========================================================
+        // [3] 로직
+        // ========================================================
         const regionChks = document.querySelectorAll('.region-chk');
         const genreChks = document.querySelectorAll('.genre-chk');
         const btnReset = document.getElementById('btn-reset');
@@ -1246,14 +307,113 @@
         let currentEventData = {}; 
         let isModalOpen = false; 
 
-        // --- 메인 팝업 열기 ---
+        // 지역별 텍스트 매핑
+        function getRegionHtml(region, fullDate) {
+            const timePart = fullDate.split(' ')[1] || '';
+            let colorClass = 'txt-blue';
+            let regionText = '(지역)';
+
+            if (region === 'seoul') {
+                colorClass = 'txt-red';
+                regionText = '(서울)';
+            } else if (region === 'gyeonggi') {
+                colorClass = 'txt-green';
+                regionText = '(경기)';
+            }
+            return { colorClass, regionText };
+        }
+        
+        function renderEvents() {
+            document.querySelectorAll('.event-box').forEach(el => el.remove());
+            document.querySelectorAll('td').forEach(td => {
+                td.classList.remove('has-event');
+                td.classList.add('no-event'); // 초기화
+            });
+
+            events.forEach(evt => {
+                const nums = evt.date.match(/\d+/g); 
+                if (!nums || nums.length < 2) return;
+
+                const month = parseInt(nums[0], 10);
+                const day = parseInt(nums[1], 10);
+                const pageIndex = month - 1; 
+                const targetPage = document.getElementById(`page-${pageIndex}`);
+                if (!targetPage) return;
+
+                const dateSpans = targetPage.querySelectorAll('.date-num');
+                let targetTd = null;
+                for (let span of dateSpans) {
+                    if (parseInt(span.innerText, 10) === day) {
+                        targetTd = span.parentElement;
+                        break;
+                    }
+                }
+
+                if (targetTd) {
+                    const div = document.createElement('div');
+                    div.className = 'event-box';
+                    
+                    // 데이터셋에 저장 (모달에서 사용)
+                    div.dataset.region = evt.region;
+                    div.dataset.genre = evt.genre;
+                    div.dataset.title = evt.title;
+                    div.dataset.date = evt.date;
+                    div.dataset.place = evt.place;
+                    div.dataset.poster = evt.poster;
+                    
+                    // 링크 저장 (없으면 빈값)
+                    div.dataset.link1 = evt.link1 || '';
+                    div.dataset.link2 = evt.link2 || '';
+                    div.dataset.link3 = evt.link3 || '';
+                    div.dataset.link4 = evt.link4 || '';
+                    div.dataset.link5 = evt.link5 || '';
+                    
+                    // 유튜브 검색어 (공백 포함 컬럼명 접근)
+                    div.dataset.youtube = evt['youtube search'] || '';
+
+                    div.onclick = function() { openModal(this); };
+
+                    const timeStr = evt.date.split(' ')[1] || '';
+                    
+                    let rClass = 'txt-blue';
+                    let rText = '(지역)';
+                    if(evt.region === 'seoul') { rClass = 'txt-red'; rText = '(서울)'; }
+                    else if(evt.region === 'gyeonggi') { rClass = 'txt-green'; rText = '(경기)'; }
+                    else {
+                         if(evt.title.includes('부산') || evt.place.includes('부산')) rText = '(부산)';
+                        else if(evt.title.includes('대구') || evt.place.includes('대구')) rText = '(대구)';
+                        else if(evt.title.includes('창원') || evt.place.includes('창원')) rText = '(경남)';
+                        else if(evt.title.includes('광주') || evt.place.includes('광주')) rText = '(광주)';
+                        else if(evt.title.includes('대전') || evt.place.includes('대전')) rText = '(대전)';
+                        else if(evt.title.includes('울산') || evt.place.includes('울산')) rText = '(울산)';
+                    }
+                    
+                    const htmlContent = `
+                        <div class="event-header">
+                            <div><span style="color:#212529; font-weight:800;">${timeStr}</span></div>
+                            <div><span class="${rClass}">${rText}</span></div>
+                        </div>
+                        <span class="box-line2"><span style="color:#495057; font-weight:500;">${evt.title}</span></span>
+                    `;
+                    div.innerHTML = htmlContent;
+
+                    targetTd.appendChild(div);
+                    targetTd.classList.add('has-event');
+                    targetTd.classList.remove('no-event');
+                }
+            });
+            applyFilter();
+        }
+
+        // ========================================================
+        // [수정] 팝업 열기 (2줄 버튼 로직)
+        // ========================================================
         function openModal(element) {
             const ds = element.dataset;
             currentEventData = {
                 title: ds.title,
                 date: ds.date,
-                place: ds.place,
-                link: ds.link
+                place: ds.place
             };
 
             modalTitle.innerText = ds.title;
@@ -1268,27 +428,40 @@
                 noPosterText.style.display = 'block';
             }
 
-            // [수정] 통합 여부에 따른 버튼 생성 로직
-            let htmlBtns = '';
-            
-            const hasLink1 = (ds.link && ds.link.trim() !== '' && ds.link !== 'nan');
-            const hasLink2 = (ds.link2 && ds.link2.trim() !== '' && ds.link2 !== 'nan');
+            // --- 버튼 생성 로직 시작 ---
+            let htmlContent = '';
 
-            if (hasLink2) {
-                // 중복(통합)된 경우: 왼쪽(NOL) + 오른쪽(yes24)
-                if (hasLink1) htmlBtns += `<a href="${ds.link}" target="_blank" class="modal-btn btn-booking">NOL 티켓</a>`;
-                htmlBtns += `<a href="${ds.link2}" target="_blank" class="modal-btn btn-yes24">yes24 티켓</a>`;
-            } else {
-                // 일반: 기존 버튼명 사용 (예매 안내 페이지)
-                if (hasLink1) {
-                    htmlBtns += `<a href="${ds.link}" target="_blank" class="modal-btn btn-booking">예매 안내 페이지</a>`;
-                }
+            // [1줄: 예매 링크 버튼들]
+            // 데이터가 있는 링크만 배열에 담기
+            const links = [];
+            if(ds.link1) links.push({name: 'nol 티켓', url: ds.link1});
+            if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2});
+            if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3});
+            if(ds.link4) links.push({name: '티켓링크', url: ds.link4});
+            if(ds.link5) links.push({name: '예매처', url: ds.link5});
+
+            if (links.length > 0) {
+                htmlContent += `<div class="btn-row">`;
+                links.forEach(link => {
+                    // flex:1 스타일 덕분에 개수에 맞춰 자동 등분됨 (검은색)
+                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black">${link.name}</a>`;
+                });
+                htmlContent += `</div>`;
             }
+
+            // [2줄: 일정 추가 + 유튜브 검색]
+            htmlContent += `<div class="btn-row">`;
+            // 일정추가 (빨간색)
+            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">📅 일정 추가</button>`;
             
-            // 일정 추가 버튼은 항상 표시
-            htmlBtns += `<button onclick="openConfirmModal()" class="modal-btn btn-calendar">일정 추가</button>`;
-            
-            btnGroup.innerHTML = htmlBtns;
+            // 유튜브 검색어가 있으면 버튼 생성 (빨간색)
+            if (ds.youtube && ds.youtube.trim() !== '') {
+                const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
+                htmlContent += `<a href="${ytUrl}" target="_blank" class="modal-btn btn-action-red">▶ 유튜브 검색</a>`;
+            }
+            htmlContent += `</div>`;
+
+            btnGroup.innerHTML = htmlContent;
 
             modal.style.display = 'flex';
             history.pushState({view: 'modal'}, '', '#modal');
@@ -1312,7 +485,6 @@
             }
         };
 
-        // --- 취소/닫기 ---
         function closeConfirmModal() {
             if (confirmModal.style.display === 'flex') {
                 history.back();
@@ -1331,7 +503,6 @@
 
             const title = (currentEventData.title || "공연 관람") + " 예매";
             const rawDate = currentEventData.date;
-            
             const nums = rawDate.match(/\d+/g); 
             
             let year = 2026;
@@ -1467,18 +638,15 @@ END:VCALENDAR`;
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
+        // [초기화 실행]
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
         isAllChecked = true;
         btnReset.innerText = "모두해제";
 
-        if (totalPages > 0) {
-            showPage(0);
-        } else {
-            titleEl.innerText = "일정 없음";
-        }
+        // 마지막에 Supabase 데이터 로드 시작
+        fetchEvents();
         
     </script>
 </body>
 </html>
-        
