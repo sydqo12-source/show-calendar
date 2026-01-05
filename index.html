@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="viewport-meta">
     <title>공연 예매일정 캘린더 (Supabase)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -10,30 +10,40 @@
         
         body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
         
-        .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+        /* [수정] 팝업 오픈 시 스크롤 잠금 */
+        body.no-scroll { overflow: hidden; touch-action: none; }
+
+        .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
         .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
-        .nav-row { display: flex; align-items: center; gap: 10px; }
-        .sub-title { font-size: 34px; font-weight: 800; color: #495057; }
+        .nav-row { display: flex; align-items: center; gap: 15px; }
+        
+        /* [수정] 연도/월 폰트 사이즈 확대 */
+        .sub-title { font-size: 42px; font-weight: 800; color: #495057; }
+        
         .nav-btn {
-            width: 24px; height: 24px; background-color: #fff; border: 1px solid #ced4da;
-            border-radius: 4px; color: #868e96; font-size: 14px; font-weight: 700;
+            width: 32px; height: 32px; background-color: #fff; border: 1px solid #ced4da;
+            border-radius: 4px; color: #868e96; font-size: 18px; font-weight: 700;
             display: flex; justify-content: center; align-items: center; cursor: pointer;
             transition: all 0.2s; user-select: none;
         }
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
-        .control-bar { margin-bottom: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding-left: 12px; font-size: 13px; }
-        .filter-group { display: flex; align-items: baseline; gap: 0px; width: 100%; }
-        .group-title { font-weight: 800; color: #212529; margin-right: 2px; white-space: nowrap; margin-top: 3px; }
-        .chk-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0px; flex: 1; }
-        label { cursor: pointer; display: flex; align-items: center; gap: 4px; margin-right: 8px; -webkit-tap-highlight-color: transparent; }
+        /* [수정] 지역/장르 선택지 폰트 사이즈 키움 */
+        .control-bar { margin-bottom: 25px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding-left: 12px; font-size: 16px; }
+        .filter-group { display: flex; align-items: baseline; gap: 0px; width: 100%; margin-bottom: 5px; }
+        .group-title { font-weight: 800; color: #212529; margin-right: 8px; white-space: nowrap; font-size: 18px; }
+        .chk-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex: 1; }
+        
+        label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 12px; -webkit-tap-highlight-color: transparent; }
         label:hover { opacity: 1; } 
-        input[type="checkbox"] { accent-color: #343a40; width: 14px; height: 14px; cursor: pointer; }
+        /* 체크박스 크기도 약간 확대 */
+        input[type="checkbox"] { accent-color: #343a40; width: 18px; height: 18px; cursor: pointer; }
+        
         .btn-reset {
             margin-left: 4px; background-color: transparent; border: 1px solid #ced4da;
-            border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; 
-            color: #495057; cursor: pointer; transition: all 0.2s; height: 24px; display: flex; align-items: center;
+            border-radius: 4px; padding: 4px 10px; font-size: 14px; font-weight: 600; 
+            color: #495057; cursor: pointer; transition: all 0.2s; height: 28px; display: flex; align-items: center;
         }
         .btn-reset:hover { background-color: #e9ecef; color: #212529; }
 
@@ -86,7 +96,7 @@
             display: flex; justify-content: center; align-items: center;
             overflow: hidden; border-bottom: 1px solid #eee;
         }
-        /* [수정] 포스터 줌인 커서 추가 */
+        
         .modal-poster-area img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
         .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
 
@@ -97,7 +107,6 @@
         .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .btn-row { display: flex; width: 100%; gap: 8px; }
         
-        /* [수정] 버튼 폰트 사이즈 증가 (14px -> 16px) */
         .modal-btn {
             padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
@@ -106,8 +115,16 @@
         }
         .modal-btn:hover { opacity: 0.9; }
 
-        .btn-link-black { background-color: #343a40; color: white; flex: 1; } /* NOL 색상 (검정) */
-        .btn-action-red { background-color: #fa5252; color: white; flex: 1; } /* 일정추가 색상 (빨강) */
+        .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
+        .btn-action-red { background-color: #fa5252; color: white; flex: 1; }
+
+        /* [수정] 유튜브 버튼 스타일 (흰색 배경, 검은 글씨, 이미지 포함) */
+        .btn-youtube-custom {
+            background-color: white; color: black; border: 1px solid #ced4da;
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-youtube-custom:hover { background-color: #f8f9fa; }
+        .yt-icon { width: 24px; height: auto; display: block; }
 
         .confirm-content {
             background: white; width: 85%; max-width: 320px;
@@ -121,11 +138,13 @@
         .btn-yes { background-color: #343a40; color: white; }
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
-        /* [추가] 이미지 확대 오버레이 스타일 */
+        /* 이미지 확대 오버레이 스타일 */
         #imageZoomOverlay {
             display: none; position: fixed; z-index: 10001; 
             padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
             overflow: auto; background-color: rgba(0,0,0,0.9);
+            /* 확대 모드에서는 터치 액션 허용 */
+            touch-action: pan-x pan-y pinch-zoom;
         }
         #zoomedImage {
             margin: auto; display: block; max-width: 95%; max-height: 90vh; 
@@ -144,14 +163,17 @@
             body { padding: 15px; } 
             .header-wrapper { margin-bottom: 10px; }
             .main-title { font-size: 34px; margin-bottom: 25px; } 
-            .sub-title { font-size: 24px; } 
+            /* 모바일에서도 연도월 크게 */
+            .sub-title { font-size: 32px; } 
             .nav-row { gap: 8px; } 
-            .nav-btn { width: 26px; height: 26px; font-size: 14px; }
-            .control-bar { padding-left: 0; gap: 15px; }
-            .group-title { font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
+            .nav-btn { width: 30px; height: 30px; font-size: 16px; }
+            
+            /* 모바일 필터바 폰트 조정 */
+            .control-bar { padding-left: 0; gap: 15px; font-size: 17px; }
+            .group-title { font-size: 18px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
             .chk-wrap { gap: 8px 12px; } 
-            .label { font-size: 16px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
-            input[type="checkbox"] { width: 18px; height: 18px; margin-top: 0; transform: translateY(1px); }
+            .label { font-size: 17px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
+            input[type="checkbox"] { width: 20px; height: 20px; margin-top: 0; transform: translateY(1px); }
             .btn-reset { font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 0; }
             
             table, thead, tbody, th, td, tr { display: block; }
@@ -274,7 +296,7 @@
 
     <script>
         // ========================================================
-        // [1] Supabase 연결 설정 (본인 키로 교체 필수!)
+        // [1] Supabase 연결 설정
         // ========================================================
         const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
@@ -341,7 +363,6 @@
                 colorClass = 'txt-red';
                 regionText = '(서울)';
             } else if (region === 'gyeonggi') {
-                // [수정] 경기도 빨강색으로 변경
                 colorClass = 'txt-red';
                 regionText = '(경기)';
             }
@@ -393,7 +414,7 @@
                     div.dataset.link4 = evt.link4 || '';
                     div.dataset.link5 = evt.link5 || '';
                     
-                    // 유튜브 검색어 (공백 포함 컬럼명 접근)
+                    // 유튜브 검색어
                     div.dataset.youtube = evt['youtube search'] || '';
 
                     div.onclick = function() { openModal(this); };
@@ -404,7 +425,6 @@
                     let rText = '(지역)';
                     if(evt.region === 'seoul') { rClass = 'txt-red'; rText = '(서울)'; }
                     else if(evt.region === 'gyeonggi') { 
-                        // [수정] 경기/인천 표시 색상 빨강(txt-red)으로 변경
                         rClass = 'txt-red'; rText = '(경기)'; 
                     }
                     else {
@@ -414,7 +434,6 @@
                         else if(evt.title.includes('광주') || evt.place.includes('광주')) rText = '(광주)';
                         else if(evt.title.includes('대전') || evt.place.includes('대전')) rText = '(대전)';
                         else if(evt.title.includes('울산') || evt.place.includes('울산')) rText = '(울산)';
-                        // [수정] 인천 지역명 명시적으로 체크하여 표시 변경 (요청사항)
                         else if(evt.title.includes('인천') || evt.place.includes('인천')) {
                             rClass = 'txt-red';
                             rText = '(인천)';
@@ -439,7 +458,7 @@
         }
 
         // ========================================================
-        // [수정] 팝업 열기 (2줄 버튼 로직)
+        // 팝업 열기 (수정됨: 스크롤 방지 & 유튜브 버튼 디자인)
         // ========================================================
         function openModal(element) {
             const ds = element.dataset;
@@ -457,7 +476,7 @@
                 modalPoster.style.display = 'block';
                 noPosterText.style.display = 'none';
                 
-                // [추가] 포스터 클릭 시 확대 이벤트 연결
+                // 포스터 클릭 시 확대 이벤트 연결
                 modalPoster.onclick = function() {
                     openZoomOverlay(ds.poster);
                 };
@@ -467,13 +486,11 @@
                 modalPoster.onclick = null;
             }
 
-            // --- 버튼 생성 로직 시작 ---
+            // --- 버튼 생성 로직 ---
             let htmlContent = '';
 
             // [1줄: 예매 링크 버튼들]
-            // 데이터가 있는 링크만 배열에 담기
             const links = [];
-            // [수정] link1 텍스트를 'NOL 티켓'으로 변경
             if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1});
             if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2});
             if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3});
@@ -483,7 +500,6 @@
             if (links.length > 0) {
                 htmlContent += `<div class="btn-row">`;
                 links.forEach(link => {
-                    // flex:1 스타일 덕분에 개수에 맞춰 자동 등분됨 (검은색)
                     htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black">${link.name}</a>`;
                 });
                 htmlContent += `</div>`;
@@ -491,19 +507,27 @@
 
             // [2줄: 일정 추가 + 유튜브 검색]
             htmlContent += `<div class="btn-row">`;
-            // [수정] 일정추가 이모지 삭제
             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">일정 추가</button>`;
             
-            // 유튜브 검색어가 있으면 버튼 생성 (빨간색)
+            // [수정] 유튜브 버튼: 하얀 배경 + yt.png 이미지 + 유튜브 검색
             if (ds.youtube && ds.youtube.trim() !== '') {
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
-                htmlContent += `<a href="${ytUrl}" target="_blank" class="modal-btn btn-action-red">▶ 유튜브 검색</a>`;
+                // 'yt.png'가 같은 폴더에 있다고 가정
+                htmlContent += `
+                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom">
+                        <img src="yt.png" alt="Youtube" class="yt-icon">
+                        유튜브 검색
+                    </a>`;
             }
             htmlContent += `</div>`;
 
             btnGroup.innerHTML = htmlContent;
 
             modal.style.display = 'flex';
+            
+            // [수정] 팝업 뜰 때 백그라운드 스크롤 막기
+            document.body.classList.add('no-scroll');
+            
             history.pushState({view: 'modal'}, '', '#modal');
         }
 
@@ -529,6 +553,8 @@
             else {
                 confirmModal.style.display = 'none';
                 modal.style.display = 'none';
+                // [수정] 팝업 닫힐 때 스크롤 잠금 해제
+                document.body.classList.remove('no-scroll');
             }
         };
 
@@ -544,17 +570,29 @@
             }
         }
 
-        // --- [추가] 이미지 확대 기능 ---
+        // --- [수정] 이미지 확대 기능 (메타태그 조작으로 핀치줌 허용) ---
         function openZoomOverlay(imgSrc) {
             const overlay = document.getElementById('imageZoomOverlay');
             const zoomedImg = document.getElementById('zoomedImage');
             zoomedImg.src = imgSrc;
             overlay.style.display = 'block';
+            
+            // [핵심] 확대 모달이 뜰 때만 viewport 줌 허용 (JS로 태그 속성 변경)
+            const viewport = document.getElementById('viewport-meta');
+            if(viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes');
+            }
         }
 
         function closeZoomOverlay() {
             const overlay = document.getElementById('imageZoomOverlay');
             overlay.style.display = 'none';
+            
+            // [핵심] 확대 모달 닫으면 다시 줌 막기
+            const viewport = document.getElementById('viewport-meta');
+            if(viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            }
         }
 
 
