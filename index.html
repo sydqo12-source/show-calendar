@@ -1,1597 +1,819 @@
 <!DOCTYPE html>
-
 <html lang="ko">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="viewport-meta">
-
     <title>공연 예매일정 캘린더 (Supabase)</title>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-       
-
+        
         body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
-
-       
-
+        
         /* [중요] 스크롤 잠금 시 터치 액션 제어 */
-
         body.no-scroll { overflow: hidden; touch-action: none; }
 
-
-
         .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
-
         .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
-
         .nav-row { display: flex; align-items: center; gap: 15px; }
-
-       
-
+        
         .sub-title { font-size: 42px; font-weight: 800; color: #495057; }
-
-       
-
+        
         .nav-btn {
-
             width: 32px; height: 32px; background-color: #fff; border: 1px solid #ced4da;
-
             border-radius: 4px; color: #868e96; font-size: 18px; font-weight: 700;
-
             display: flex; justify-content: center; align-items: center; cursor: pointer;
-
             transition: all 0.2s; user-select: none;
-
         }
-
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
-
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
-
-       
-
-        .control-bar {
-
-            margin-bottom: 25px;
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: flex-start;
-
-            gap: 18px;
-
-            padding-left: 12px;
-
-            font-size: 18px;
-
+        
+        .control-bar { 
+            margin-bottom: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 18px; 
+            padding-left: 12px; 
+            font-size: 18px; 
         }
-
-       
-
-        .filter-group {
-
-            display: flex;
-
-            align-items: flex-start;
-
-            gap: 4px;
-
-            width: 100%;
-
+        
+        .filter-group { 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 4px; 
+            width: 100%; 
         }
-
-       
-
-        .group-title {
-
-            font-weight: 800;
-
-            color: #212529;
-
-            white-space: nowrap;
-
-            font-size: 18px;
-
-            margin-top: 1px;
-
+        
+        .group-title { 
+            font-weight: 800; 
+            color: #212529; 
+            white-space: nowrap; 
+            font-size: 18px; 
+            margin-top: 1px; 
         }
-
-       
-
-        .chk-list {
-
-            display: flex;
-
-            flex-wrap: wrap;
-
-            align-items: center;
-
-            gap: 8px;
-
-            flex: 1;
-
+        
+        .chk-list { 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            gap: 8px; 
+            flex: 1; 
         }
-
-       
-
+        
         label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 12px; -webkit-tap-highlight-color: transparent; }
-
-        label:hover { opacity: 1; }
-
-       
-
-        input[type="checkbox"] {
-
-            accent-color: #343a40;
-
-            width: 18px;
-
-            height: 18px;
-
-            cursor: pointer;
-
-            margin: 0;
-
+        label:hover { opacity: 1; } 
+        
+        input[type="checkbox"] { 
+            accent-color: #343a40; 
+            width: 18px; 
+            height: 18px; 
+            cursor: pointer; 
+            margin: 0; 
         }
-
-       
-
+        
         /* [복구] 모두해제 버튼 원래 크기로 복구 (폰트 16px, 높이 28px) */
-
         .btn-reset {
-
-            margin-left: 2px;
-
-            background-color: transparent;
-
+            margin-left: 2px; 
+            background-color: transparent; 
             border: 1px solid #ced4da;
-
-            border-radius: 4px;
-
-            padding: 1px 8px;
-
-            font-size: 16px;
-
-            font-weight: 600;
-
-            color: #495057;
-
-            cursor: pointer;
-
-            transition: all 0.2s;
-
-            height: 28px;
-
-            display: flex;
-
+            border-radius: 4px; 
+            padding: 1px 8px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: #495057; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            height: 28px; 
+            display: flex; 
             align-items: center;
-
             -webkit-tap-highlight-color: transparent;
-
         }
-
         .btn-reset:hover { background-color: #e9ecef; color: #212529; }
-
         .btn-reset:active { background-color: transparent; color: #495057; border-color: #ced4da; }
 
-
-
         table { width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }
-
         th { background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }
-
         th:first-child { background-color: #fa5252; }
-
         th:last-child { background-color: #228be6; }
-
         td { vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }
-
         td:hover { background-color: #fcfcfc; }
-
-       
-
+        
         .date-num { font-weight: 800; font-size: 14px; color: #212529; margin-bottom: 5px; display: block; }
+        .sun .date-num { color: #e03131; } 
+        .sat .date-num { color: #1971c2; } 
 
-        .sun .date-num { color: #e03131; }
-
-        .sat .date-num { color: #1971c2; }
-
-
-
-        .event-box {
-
-            display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px;
-
-            background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-
-            cursor: pointer; font-size: 11px; overflow: hidden;
-
+        .event-box { 
+            display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px; 
+            background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+            cursor: pointer; font-size: 11px; overflow: hidden; 
         }
-
         .event-box:hover { transform: translateY(-1px); border-color: #adb5bd; z-index: 5; position: relative; }
-
         .event-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-
-        .box-line2 {
-
+        .box-line2 { 
             display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical;
-
-            overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
-
-            word-break: break-all; margin-top: 1px;
-
+            overflow: hidden; text-overflow: ellipsis; line-height: 1.3; 
+            word-break: break-all; margin-top: 1px; 
         }
-
-
 
         .txt-red { color: #e03131; font-weight: 700; }
-
         .txt-green { color: #2b8a3e; font-weight: 700; }
-
         .txt-blue { color: #1971c2; font-weight: 700; }
-
         .txt-black { color: #495057; font-weight: 500; }
 
-
-
         .modal-overlay {
-
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
-
-            justify-content: center; align-items: flex-start; padding-top: 5vh;
-
-            padding-bottom: 50px; backdrop-filter: blur(3px); overflow-y: auto;
-
+            justify-content: center; align-items: flex-start; padding-top: 5vh; 
+            padding-bottom: 50px; backdrop-filter: blur(3px); overflow-y: auto; 
         }
-
         .modal-content {
-
             background: white; width: 90%; max-width: 350px;
-
             border-radius: 12px; overflow: hidden;
-
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-
-            animation: popUp 0.2s ease-out; margin-bottom: 30px;
-
+            animation: popUp 0.2s ease-out; margin-bottom: 30px; 
         }
-
         @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-       
-
+        
         .modal-poster-area {
-
             width: 100%; height: 400px; background-color: #f8f9fa;
-
             display: flex; justify-content: center; align-items: center;
-
             overflow: hidden; border-bottom: 1px solid #eee;
-
         }
-
-       
-
+        
         .modal-poster-area img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
-
         .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
 
-
-
         .modal-body { padding: 15px; text-align: center; }
-
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
-
         .modal-info { font-size: 14px; color: #868e96; margin-bottom: 15px; }
 
-
-
         .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-
         .btn-row { display: flex; width: 100%; gap: 8px; }
-
-       
-
+        
         /* [수정] 팝업 버튼 텍스트 크기 확대 (16px -> 18px) */
-
         .modal-btn {
-
             padding: 12px 0; border-radius: 8px; font-size: 18px; font-weight: 700;
-
             text-align: center; cursor: pointer; text-decoration: none; border: none;
-
-            display: flex; justify-content: center; align-items: center;
-
+            display: flex; justify-content: center; align-items: center; 
             transition: opacity 0.2s;
-
         }
-
         .modal-btn:hover { opacity: 0.9; }
 
-
-
-        .btn-link-black { background-color: #343a40; color: white; flex: 1; }
-
+        .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
         .btn-action-red { background-color: #fa5252; color: white; flex: 1; }
 
-
-
         .btn-youtube-custom {
-
             background-color: white; color: black; border: 1px solid #ced4da;
-
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-
         }
-
         .btn-youtube-custom:hover { background-color: #f8f9fa; }
-
-       
-
+        
         /* [수정] 유튜브 아이콘 크기 확대 (24px -> 28px) */
-
         .yt-icon { width: 28px; height: auto; display: block; }
 
-
-
         .confirm-content {
-
             background: white; width: 85%; max-width: 320px;
-
             border-radius: 12px; padding: 20px; text-align: center;
-
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-
             animation: popUp 0.2s ease-out; margin: 0;
-
         }
-
         .confirm-text { font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 25px; line-height: 1.6; word-break: keep-all; }
-
         .confirm-btn-group { display: flex; gap: 10px; justify-content: center; }
-
         .confirm-btn { flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
-
         .btn-yes { background-color: #343a40; color: white; }
-
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
-
-
         /* [수정] 이미지 확대 오버레이: 터치 액션 허용 */
-
         #imageZoomOverlay {
-
-            display: none; position: fixed; z-index: 10001;
-
-            padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%;
-
+            display: none; position: fixed; z-index: 10001; 
+            padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
             overflow: auto; background-color: rgba(0,0,0,0.9);
-
             touch-action: pan-x pan-y pinch-zoom; /* 확대 제스처 허용 */
-
         }
-
         #zoomedImage {
-
-            margin: auto; display: block; max-width: 95%; max-height: 90vh;
-
+            margin: auto; display: block; max-width: 95%; max-height: 90vh; 
             object-fit: contain; animation: zoomAnim 0.3s;
-
         }
-
         @keyframes zoomAnim { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
-
         .close-zoom {
-
-            position: absolute; top: 20px; right: 30px;
-
-            color: #f1f1f1; font-size: 40px; font-weight: bold;
-
+            position: absolute; top: 20px; right: 30px; 
+            color: #f1f1f1; font-size: 40px; font-weight: bold; 
             transition: 0.3s; cursor: pointer; z-index: 10002;
-
         }
-
         .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
 
 
-
-
-
         @media screen and (max-width: 768px) {
-
-            body { padding: 15px; }
-
-           
-
+            body { padding: 15px; } 
+            
             .header-wrapper { margin-bottom: 15px; }
-
-           
-
-            .main-title { font-size: 36px; margin-bottom: 25px; }
-
-            .sub-title { font-size: 32px; }
-
-            .nav-row { gap: 8px; }
-
+            
+            .main-title { font-size: 36px; margin-bottom: 25px; } 
+            .sub-title { font-size: 32px; } 
+            .nav-row { gap: 8px; } 
             .nav-btn { width: 30px; height: 30px; font-size: 16px; }
-
-           
-
+            
             .control-bar { padding-left: 0; gap: 12px; font-size: 18px; }
-
-           
-
-            .chk-list { gap: 5px 4px; }
-
-           
-
+            
+            .chk-list { gap: 5px 4px; } 
+            
             .group-title { font-size: 18px; margin-right: 4px; }
-
-           
-
-            .label { font-size: 18px; margin: 0; line-height: 1.5; opacity: 1 !important; }
-
-           
-
+            
+            .label { font-size: 18px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
+            
             label { margin-right: 5px; }
 
-
-
             input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
-
-           
-
+            
             /* [복구] 모바일 버튼 크기 기존 유지 (15px) */
-
             .btn-reset { font-size: 15px; padding: 2px 8px; border: 1px solid #adb5bd; margin-left: 2px; height: 28px; }
-
-           
-
+            
             table, thead, tbody, th, td, tr { display: block; }
-
             thead { display: none; }
-
             tr { margin-bottom: 0; }
-
-            td { height: auto !important; border: none; border-bottom: 1px solid #eee; position: relative; text-align: left !important; padding: 10px 5px 0px 5px !important; }
-
+            
+            /* ▼▼▼ [수정됨] 칸(td) 간격 조정 ▼▼▼ */
+            td { 
+                height: auto !important; 
+                border: none; 
+                border-bottom: 1px solid #eee; 
+                position: relative; 
+                text-align: left !important; 
+                padding: 10px 5px !important; /* 기본값 */
+            }
             td:empty { display: none; }
 
-           
+            /* [추가] 공연이 있는 날: 바닥 여백 0 (마지막 박스의 margin 10px가 간격 역할) */
+            td.day-active {
+                padding: 10px 5px 0px 5px !important;
+            }
 
+            /* [추가] 공연이 없는 날: 바닥 여백 10px (기존 유지) */
+            td.day-inactive {
+                padding: 10px 5px 10px 5px !important;
+            }
+            /* ▲▲▲ [수정 끝] ▲▲▲ */
+            
             .date-num { display: inline-block; width: auto; font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
-
             .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
-
-            .sun .date-num { color: #ffc9c9; }
-
+            .sun .date-num { color: #ffc9c9; } 
             .sat .date-num { color: #a5d8ff; }
 
-
-
             td.day-active .date-num { font-size: 23px; margin-bottom: 4px; padding-bottom: 2px; color: #212529; font-weight: 800; }
-
             td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
-
-            td.day-active.sun .date-num { color: #e03131 !important; }
-
+            td.day-active.sun .date-num { color: #e03131 !important; } 
             td.day-active.sat .date-num { color: #1971c2 !important; }
 
-
-
             td.day-inactive .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; color: #ced4da; }
-
             td.day-inactive.sun .date-num { color: #ffc9c9; }
-
             td.day-inactive.sat .date-num { color: #a5d8ff; }
 
-
-
             .event-box { font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da; height: auto !important; min-height: unset; }
-
             .box-line2 { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; white-space: normal; word-break: break-all; }
 
-
-
             body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
-
             body.initial-mode .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
-
             body.initial-mode .sun .date-num { color: #ffc9c9; }
-
             body.initial-mode .sat .date-num { color: #a5d8ff; }
-
         }
-
     </style>
-
 </head>
-
 <body class="initial-mode">
-
     <div class="header-wrapper">
-
         <div class="main-title">📌공연 예매일정 캘린더</div>
-
         <div class="nav-row">
-
             <div class="nav-btn" id="prev-btn">&lt;</div>
-
             <div class="sub-title" id="calendar-title">Loading...</div>
-
             <div class="nav-btn" id="next-btn">&gt;</div>
-
         </div>
-
     </div>
-
-   
-
+    
     <div class="control-bar">
-
         <div class="filter-group">
-
             <span class="group-title">지역 :</span>
-
             <div class="chk-list">
-
                 <label><input type="checkbox" class="region-chk" value="seoul"> <span class="txt-red">서울</span></label>
-
                 <label><input type="checkbox" class="region-chk" value="gyeonggi"> <span class="txt-red">경기/인천</span></label>
-
                 <label><input type="checkbox" class="region-chk" value="others"> <span class="txt-blue">그 외 지역</span></label>
-
             </div>
-
         </div>
-
-       
-
+        
         <div class="filter-group">
-
             <span class="group-title">장르 :</span>
-
             <div class="chk-list">
-
-                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
-
-                <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
-
-                <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
-
-                <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
-
-                <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
-
+                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label> 
                 <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-
                 <button id="btn-reset" class="btn-reset">모두해제</button>
-
             </div>
-
         </div>
-
     </div>
-
-
 
     <div id="calendar-container">
-
             <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
-
                 <table>
-
                     <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
-
                     <tbody>
-
                         <tr><td class='sun'></td><td></td><td></td><td></td><td><span class='date-num' data-dayname='목'>1</span></td><td><span class='date-num' data-dayname='금'>2</span></td><td class='sat'><span class='date-num' data-dayname='토'>3</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>4</span></td><td><span class='date-num' data-dayname='월'>5</span></td><td><span class='date-num' data-dayname='화'>6</span></td><td><span class='date-num' data-dayname='수'>7</span></td><td><span class='date-num' data-dayname='목'>8</span></td><td><span class='date-num' data-dayname='금'>9</span></td><td class='sat'><span class='date-num' data-dayname='토'>10</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>11</span></td><td><span class='date-num' data-dayname='월'>12</span></td><td><span class='date-num' data-dayname='화'>13</span></td><td><span class='date-num' data-dayname='수'>14</span></td><td><span class='date-num' data-dayname='목'>15</span></td><td><span class='date-num' data-dayname='금'>16</span></td><td class='sat'><span class='date-num' data-dayname='토'>17</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>18</span></td><td><span class='date-num' data-dayname='월'>19</span></td><td><span class='date-num' data-dayname='화'>20</span></td><td><span class='date-num' data-dayname='수'>21</span></td><td><span class='date-num' data-dayname='목'>22</span></td><td><span class='date-num' data-dayname='금'>23</span></td><td class='sat'><span class='date-num' data-dayname='토'>24</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>25</span></td><td><span class='date-num' data-dayname='월'>26</span></td><td><span class='date-num' data-dayname='화'>27</span></td><td><span class='date-num' data-dayname='수'>28</span></td><td><span class='date-num' data-dayname='목'>29</span></td><td><span class='date-num' data-dayname='금'>30</span></td><td class='sat'><span class='date-num' data-dayname='토'>31</span></td></tr>
-
                     </tbody>
-
                 </table>
-
             </div>
-
-           
-
+            
             <div id="page-1" class="calendar-page" data-title="2026년 2월" style="display: none;">
-
                 <table>
-
                     <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
-
                     <tbody>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>1</span></td><td><span class='date-num' data-dayname='월'>2</span></td><td><span class='date-num' data-dayname='화'>3</span></td><td><span class='date-num' data-dayname='수'>4</span></td><td><span class='date-num' data-dayname='목'>5</span></td><td><span class='date-num' data-dayname='금'>6</span></td><td class='sat'><span class='date-num' data-dayname='토'>7</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>8</span></td><td><span class='date-num' data-dayname='월'>9</span></td><td><span class='date-num' data-dayname='화'>10</span></td><td><span class='date-num' data-dayname='수'>11</span></td><td><span class='date-num' data-dayname='목'>12</span></td><td><span class='date-num' data-dayname='금'>13</span></td><td class='sat'><span class='date-num' data-dayname='토'>14</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>15</span></td><td><span class='date-num' data-dayname='월'>16</span></td><td><span class='date-num' data-dayname='화'>17</span></td><td><span class='date-num' data-dayname='수'>18</span></td><td><span class='date-num' data-dayname='목'>19</span></td><td><span class='date-num' data-dayname='금'>20</span></td><td class='sat'><span class='date-num' data-dayname='토'>21</span></td></tr>
-
                         <tr><td class='sun'><span class='date-num' data-dayname='일'>22</span></td><td><span class='date-num' data-dayname='월'>23</span></td><td><span class='date-num' data-dayname='화'>24</span></td><td><span class='date-num' data-dayname='수'>25</span></td><td><span class='date-num' data-dayname='목'>26</span></td><td><span class='date-num' data-dayname='금'>27</span></td><td class='sat'><span class='date-num' data-dayname='토'>28</span></td></tr>
-
                     </tbody>
-
                 </table>
-
             </div>
-
     </div>
-
-
 
     <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
-
         <div class="modal-content" onclick="event.stopPropagation()">
-
             <div class="modal-poster-area">
-
                 <img id="modalPoster" src="" alt="공연 포스터" style="display:none;">
-
                 <span id="noPosterText" class="no-poster-text" style="display:none;">이미지 없음</span>
-
             </div>
-
             <div class="modal-body">
-
                 <div id="modalTitle" class="modal-title"></div>
-
                 <div id="modalInfo" class="modal-info"></div>
-
-               
-
+                
                 <div class="modal-btn-container" id="btnGroup">
-
                     </div>
-
             </div>
-
         </div>
-
     </div>
-
-
 
     <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: center; padding-top: 0;" onclick="closeConfirmModal(event)">
-
         <div class="confirm-content" onclick="event.stopPropagation()">
-
             <div class="confirm-text">
-
                 다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
-
             </div>
-
             <div class="confirm-btn-group">
-
                 <button onclick="realDownload()" class="confirm-btn btn-yes">확인</button>
-
                 <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
-
             </div>
-
         </div>
-
     </div>
-
-
 
     <div id="imageZoomOverlay" onclick="closeZoomOverlay()">
-
         <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
-
         <img id="zoomedImage" src="">
-
     </div>
 
-
-
     <script>
-
         // ========================================================
-
         // [1] Supabase 연결 설정
-
         // ========================================================
-
         const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
-
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
-
-       
-
+        
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-
 
         let events = [];
 
-
-
         // ========================================================
-
         // [2] Supabase에서 데이터 가져오기
-
         // ========================================================
-
         async function fetchEvents() {
-
             titleEl.innerText = "데이터 불러오는 중...";
-
-           
-
+            
             const { data, error } = await client.from('events').select('*');
-
-           
-
+            
             if (error) {
-
                 console.error('Error:', error);
-
                 titleEl.innerText = "로딩 실패 (콘솔 확인)";
-
                 alert("Supabase 연결 오류: 키 설정을 확인하세요.");
-
                 return;
-
             }
-
-           
-
+            
             events = data;
-
             console.log("Supabase 데이터:", events);
-
-           
-
+            
             renderEvents();
-
             showPage(0); // 1월 페이지로 이동
-
         }
 
-
-
         // ========================================================
-
         // [3] 로직
-
         // ========================================================
-
         const regionChks = document.querySelectorAll('.region-chk');
-
         const genreChks = document.querySelectorAll('.genre-chk');
-
         const btnReset = document.getElementById('btn-reset');
-
         const prevBtn = document.getElementById('prev-btn');
-
         const nextBtn = document.getElementById('next-btn');
-
         const titleEl = document.getElementById('calendar-title');
-
-       
-
+        
         const pages = document.querySelectorAll('.calendar-page');
-
         let currentIndex = 0;
-
         const totalPages = pages.length;
 
-
-
         const modal = document.getElementById('eventModal');
-
-        const confirmModal = document.getElementById('confirmModal');
-
+        const confirmModal = document.getElementById('confirmModal'); 
         const modalPoster = document.getElementById('modalPoster');
-
         const noPosterText = document.getElementById('noPosterText');
-
         const modalTitle = document.getElementById('modalTitle');
-
         const modalInfo = document.getElementById('modalInfo');
-
-        const btnGroup = document.getElementById('btnGroup');
-
-       
-
-        let currentEventData = {};
-
-        let isModalOpen = false;
-
-
+        const btnGroup = document.getElementById('btnGroup'); 
+        
+        let currentEventData = {}; 
+        let isModalOpen = false; 
 
         function getRegionHtml(region, fullDate) {
-
             const timePart = fullDate.split(' ')[1] || '';
-
             let colorClass = 'txt-blue';
-
             let regionText = '(지역)';
 
-
-
             if (region === 'seoul') {
-
                 colorClass = 'txt-red';
-
                 regionText = '(서울)';
-
             } else if (region === 'gyeonggi') {
-
                 colorClass = 'txt-red';
-
                 regionText = '(경기)';
-
             }
-
             return { colorClass, regionText };
-
         }
-
-       
-
+        
         function renderEvents() {
-
             document.querySelectorAll('.event-box').forEach(el => el.remove());
-
             document.querySelectorAll('td').forEach(td => {
-
                 td.classList.remove('has-event');
-
                 td.classList.add('no-event'); // 초기화
-
             });
 
-
-
             events.forEach(evt => {
-
-                const nums = evt.date.match(/\d+/g);
-
+                const nums = evt.date.match(/\d+/g); 
                 if (!nums || nums.length < 2) return;
 
-
-
                 const month = parseInt(nums[0], 10);
-
                 const day = parseInt(nums[1], 10);
-
-                const pageIndex = month - 1;
-
+                const pageIndex = month - 1; 
                 const targetPage = document.getElementById(`page-${pageIndex}`);
-
                 if (!targetPage) return;
 
-
-
                 const dateSpans = targetPage.querySelectorAll('.date-num');
-
                 let targetTd = null;
-
                 for (let span of dateSpans) {
-
                     if (parseInt(span.innerText, 10) === day) {
-
                         targetTd = span.parentElement;
-
                         break;
-
                     }
-
                 }
 
-
-
                 if (targetTd) {
-
                     const div = document.createElement('div');
-
                     div.className = 'event-box';
-
-                   
-
+                    
                     div.dataset.region = evt.region;
-
                     div.dataset.genre = evt.genre;
-
                     div.dataset.title = evt.title;
-
                     div.dataset.date = evt.date;
-
                     div.dataset.place = evt.place;
-
                     div.dataset.poster = evt.poster;
-
-                   
-
+                    
                     div.dataset.link1 = evt.link1 || '';
-
                     div.dataset.link2 = evt.link2 || '';
-
                     div.dataset.link3 = evt.link3 || '';
-
                     div.dataset.link4 = evt.link4 || '';
-
                     div.dataset.link5 = evt.link5 || '';
-
-                   
-
+                    
                     div.dataset.youtube = evt['youtube search'] || '';
-
-
 
                     div.onclick = function() { openModal(this); };
 
-
-
                     const timeStr = evt.date.split(' ')[1] || '';
-
-                   
-
+                    
                     let rClass = 'txt-blue';
-
                     let rText = '(지역)';
-
                     if(evt.region === 'seoul') { rClass = 'txt-red'; rText = '(서울)'; }
-
-                    else if(evt.region === 'gyeonggi') {
-
-                        rClass = 'txt-red'; rText = '(경기)';
-
+                    else if(evt.region === 'gyeonggi') { 
+                        rClass = 'txt-red'; rText = '(경기)'; 
                     }
-
                     else {
-
                          if(evt.title.includes('부산') || evt.place.includes('부산')) rText = '(부산)';
-
                         else if(evt.title.includes('대구') || evt.place.includes('대구')) rText = '(대구)';
-
                         else if(evt.title.includes('창원') || evt.place.includes('창원')) rText = '(경남)';
-
                         else if(evt.title.includes('광주') || evt.place.includes('광주')) rText = '(광주)';
-
                         else if(evt.title.includes('대전') || evt.place.includes('대전')) rText = '(대전)';
-
                         else if(evt.title.includes('울산') || evt.place.includes('울산')) rText = '(울산)';
-
                         else if(evt.title.includes('인천') || evt.place.includes('인천')) {
-
                             rClass = 'txt-red';
-
                             rText = '(인천)';
-
                         }
-
                     }
-
-                   
-
+                    
                     const htmlContent = `
-
                         <div class="event-header">
-
                             <div><span style="color:#212529; font-weight:800;">${timeStr}</span></div>
-
                             <div><span class="${rClass}">${rText}</span></div>
-
                         </div>
-
                         <span class="box-line2"><span style="color:#495057; font-weight:500;">${evt.title}</span></span>
-
                     `;
-
                     div.innerHTML = htmlContent;
 
-
-
                     targetTd.appendChild(div);
-
                     targetTd.classList.add('has-event');
-
                     targetTd.classList.remove('no-event');
-
                 }
-
             });
-
             applyFilter();
-
         }
 
-
-
         // ========================================================
-
         // 팝업 열기
-
         // ========================================================
-
         function openModal(element) {
-
             const ds = element.dataset;
-
             currentEventData = {
-
                 title: ds.title,
-
                 date: ds.date,
-
                 place: ds.place
-
             };
 
-
-
             modalTitle.innerText = ds.title;
-
-            modalInfo.innerText = ds.place;
-
-           
-
+            modalInfo.innerText = ds.place; 
+            
             if (ds.poster && ds.poster.trim() !== '') {
-
                 modalPoster.src = ds.poster;
-
                 modalPoster.style.display = 'block';
-
                 noPosterText.style.display = 'none';
-
-               
-
+                
                 modalPoster.onclick = function() {
-
                     openZoomOverlay(ds.poster);
-
                 };
-
             } else {
-
                 modalPoster.style.display = 'none';
-
                 noPosterText.style.display = 'block';
-
                 modalPoster.onclick = null;
-
             }
-
-
 
             let htmlContent = '';
 
-
-
             const links = [];
-
             if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1});
-
             if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2});
-
             if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3});
-
             if(ds.link4) links.push({name: '티켓링크', url: ds.link4});
-
             if(ds.link5) links.push({name: '예매처', url: ds.link5});
 
-
-
             if (links.length > 0) {
-
                 htmlContent += `<div class="btn-row">`;
-
                 links.forEach(link => {
-
                     htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black">${link.name}</a>`;
-
                 });
-
                 htmlContent += `</div>`;
-
             }
-
-
 
             // [수정 2] 텍스트 변경
-
             htmlContent += `<div class="btn-row">`;
-
             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">예매일정 추가</button>`;
-
-           
-
+            
             if (ds.youtube && ds.youtube.trim() !== '') {
-
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
-
                 htmlContent += `
-
                     <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom">
-
                         <img src="yt.png" alt="Youtube" class="yt-icon">
-
                         유튜브 검색
-
                     </a>`;
-
             }
-
             htmlContent += `</div>`;
-
-
 
             btnGroup.innerHTML = htmlContent;
 
-
-
             modal.style.display = 'flex';
-
             document.body.classList.add('no-scroll');
-
-           
-
+            
             history.pushState({view: 'modal'}, '', '#modal');
-
         }
-
-
 
         function openConfirmModal() {
-
             confirmModal.style.display = 'flex';
-
             history.pushState({view: 'confirm'}, '', '#confirm');
-
         }
-
-
 
         window.onpopstate = function(event) {
-
             const zoomOverlay = document.getElementById('imageZoomOverlay');
-
             if (zoomOverlay.style.display === 'block') {
-
                 closeZoomOverlay();
-
                 return;
-
             }
-
-
 
             if (event.state && event.state.view === 'modal') {
-
                 confirmModal.style.display = 'none';
-
                 modal.style.display = 'flex';
-
-            }
-
+            } 
             else {
-
                 confirmModal.style.display = 'none';
-
                 modal.style.display = 'none';
-
                 document.body.classList.remove('no-scroll');
-
             }
-
         };
 
-
-
         function closeConfirmModal() {
-
             if (confirmModal.style.display === 'flex') {
-
                 history.back();
-
             }
-
         }
-
-
 
         function closeModal(e) {
-
             if (modal.style.display === 'flex') {
-
                 history.back();
-
             }
-
         }
-
-
 
         // --- [수정 4] 이미지 확대 기능 개선 (no-scroll 잠시 해제) ---
-
         function openZoomOverlay(imgSrc) {
-
             const overlay = document.getElementById('imageZoomOverlay');
-
             const zoomedImg = document.getElementById('zoomedImage');
-
             zoomedImg.src = imgSrc;
-
             overlay.style.display = 'block';
-
-           
-
+            
             // [핵심] 확대 중에는 body의 스크롤 잠금을 풀어야 핀치줌이 동작함 (일부 모바일 브라우저 이슈 해결)
-
             document.body.classList.remove('no-scroll');
 
-
-
             const viewport = document.getElementById('viewport-meta');
-
             if(viewport) {
-
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
-
             }
-
         }
-
-
 
         function closeZoomOverlay() {
-
             const overlay = document.getElementById('imageZoomOverlay');
-
             overlay.style.display = 'none';
-
-           
-
+            
             // 닫으면 다시 스크롤 잠금 (팝업이 떠 있는 상태이므로)
-
             if (modal.style.display === 'flex') {
-
                 document.body.classList.add('no-scroll');
-
             }
-
-
 
             const viewport = document.getElementById('viewport-meta');
-
             if(viewport) {
-
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-
             }
-
         }
-
-
-
 
 
         function realDownload() {
-
-            history.back();
-
-
+            history.back(); 
 
             const title = (currentEventData.title || "공연 관람") + " 예매";
-
             const rawDate = currentEventData.date;
-
-            const nums = rawDate.match(/\d+/g);
-
-           
-
+            const nums = rawDate.match(/\d+/g); 
+            
             let year = 2026;
-
             let month = '01';
-
             let day = '01';
-
             let hour = '12';
-
             let min = '00';
 
-
-
             if (nums) {
-
-                if (nums[0].length === 4) {
-
+                if (nums[0].length === 4) { 
                     year = nums[0]; month = nums[1]; day = nums[2];
-
                     if(nums.length >= 5) { hour = nums[3]; min = nums[4]; }
-
-                } else {
-
+                } else { 
                     month = nums[0]; day = nums[1];
-
                     if(nums.length >= 4) { hour = nums[2]; min = nums[3]; }
-
                 }
-
             }
-
-           
-
+            
             const pad = (n) => n.toString().padStart(2, '0');
-
             const startStr = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(min)}00`;
+            const endStr = `${year}${pad(month)}${pad(day)}T${pad(parseInt(hour)+2)}${pad(min)}00`; 
 
-            const endStr = `${year}${pad(month)}${pad(day)}T${pad(parseInt(hour)+2)}${pad(min)}00`;
-
-
-
-            const icsContent =
-
+            const icsContent = 
 `BEGIN:VCALENDAR
-
 VERSION:2.0
-
 PRODID:-//Show Calendar//KR
-
 BEGIN:VEVENT
-
 SUMMARY:${title}
-
 DTSTART:${startStr}
-
 DTEND:${endStr}
-
 END:VEVENT
-
 END:VCALENDAR`;
 
-
-
             const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-
             const linkElem = document.createElement('a');
-
             linkElem.href = window.URL.createObjectURL(blob);
-
             linkElem.setAttribute('download', `${title}.ics`);
-
             document.body.appendChild(linkElem);
-
             linkElem.click();
-
             document.body.removeChild(linkElem);
-
         }
-
-
 
         // --- 캘린더 로직 ---
-
         function showPage(index) {
-
             pages.forEach((page, idx) => {
-
                 if (idx === index) {
-
                     page.style.display = 'block';
-
                     titleEl.innerText = page.dataset.title;
-
                 } else {
-
                     page.style.display = 'none';
-
                 }
-
             });
-
-           
-
+            
             if (index === 0) prevBtn.classList.add('disabled');
-
             else prevBtn.classList.remove('disabled');
 
-
-
             if (index === totalPages - 1) nextBtn.classList.add('disabled');
-
             else nextBtn.classList.remove('disabled');
 
-
-
             applyFilter();
-
         }
-
-
 
         function applyFilter() {
-
             const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
-
             const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
-
-           
-
+            
             const visiblePage = pages[currentIndex];
-
             const tds = visiblePage.querySelectorAll('td');
 
-
-
             if (selectedRegions.length === 0) {
-
                 document.body.classList.add('initial-mode');
-
                 visiblePage.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
-
                 tds.forEach(td => {
-
                     td.classList.remove('day-active');
-
                     td.classList.add('day-inactive');
-
                 });
-
                 return;
-
             } else {
-
                 document.body.classList.remove('initial-mode');
-
             }
-
-
 
             tds.forEach(td => {
-
                 const boxes = td.querySelectorAll('.event-box');
-
                 let hasVisible = false;
-
-               
-
+                
                 boxes.forEach(box => {
-
                     if (selectedRegions.includes(box.dataset.region) && selectedGenres.includes(box.dataset.genre)) {
-
                         box.style.display = 'block';
-
                         hasVisible = true;
-
                     } else {
-
                         box.style.display = 'none';
-
                     }
-
                 });
 
-
-
                 if (hasVisible) {
-
                     td.classList.add('day-active');
-
                     td.classList.remove('day-inactive');
-
                 } else {
-
                     td.classList.remove('day-active');
-
                     td.classList.add('day-inactive');
-
                 }
-
             });
-
         }
 
-
-
         prevBtn.addEventListener('click', () => {
-
             if (currentIndex > 0) {
-
                 currentIndex--;
-
                 showPage(currentIndex);
-
             }
-
         });
-
-
 
         nextBtn.addEventListener('click', () => {
-
             if (currentIndex < totalPages - 1) {
-
                 currentIndex++;
-
                 showPage(currentIndex);
-
             }
-
         });
-
-
 
         let isAllChecked = true;
-
         btnReset.addEventListener('click', () => {
-
             if (isAllChecked) {
-
                 genreChks.forEach(chk => chk.checked = false);
-
                 btnReset.innerText = "모두선택";
-
                 isAllChecked = false;
-
             } else {
-
                 genreChks.forEach(chk => chk.checked = true);
-
                 btnReset.innerText = "모두해제";
-
                 isAllChecked = true;
-
             }
-
             applyFilter();
-
         });
 
-
-
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
-
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-
-
         // [초기화 실행]
-
         regionChks.forEach(c => c.checked = false);
-
         genreChks.forEach(c => c.checked = true);
-
         isAllChecked = true;
-
         btnReset.innerText = "모두해제";
 
-
-
         // 마지막에 Supabase 데이터 로드 시작
-
         fetchEvents();
-
-       
-
+        
     </script>
-
 </body>
-
 </html>
