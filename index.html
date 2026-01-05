@@ -10,11 +10,10 @@
         
         body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
         
+        /* [중요] 스크롤 잠금 시 터치 액션 제어 (확대 모드 아닐 때만 적용됨) */
         body.no-scroll { overflow: hidden; touch-action: none; }
 
-        /* [수정 5] 연도월과 지역 선택지 사이 간격 15px로 고정 */
         .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
-        
         .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
         .nav-row { display: flex; align-items: center; gap: 15px; }
         
@@ -29,35 +28,31 @@
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
-        /* [수정 1, 2] 폰트 18px, 줄 간격 18px */
         .control-bar { 
             margin-bottom: 25px; 
             display: flex; 
             flex-direction: column; 
             align-items: flex-start; 
-            gap: 5px; /* 지역 줄과 장르 줄 사이 간격 */
+            gap: 18px; 
             padding-left: 12px; 
-            font-size: 18px; /* 전체 기본 폰트 크기 */
+            font-size: 18px; 
         }
         
-        /* [수정 4] 정렬 구조 변경: flex-start로 상단 기준 정렬 */
         .filter-group { 
             display: flex; 
-            align-items: flex-start; /* 제목과 내용물의 상단 라인을 맞춤 */
+            align-items: flex-start; 
             gap: 4px; 
             width: 100%; 
         }
         
-        /* 제목 스타일: 줄바꿈 방지 및 높이 보정 */
         .group-title { 
             font-weight: 800; 
             color: #212529; 
             white-space: nowrap; 
             font-size: 18px; 
-            margin-top: 1px; /* 텍스트 베이스라인 미세 조정 */
+            margin-top: 1px; 
         }
         
-        /* [수정 4] 체크박스 리스트 컨테이너: 내용물만 여기서 줄바꿈 */
         .chk-list { 
             display: flex; 
             flex-wrap: wrap; 
@@ -69,7 +64,6 @@
         label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 12px; -webkit-tap-highlight-color: transparent; }
         label:hover { opacity: 1; } 
         
-        /* [수정 1] 체크박스 크기 18px로 확대 */
         input[type="checkbox"] { 
             accent-color: #343a40; 
             width: 18px; 
@@ -78,19 +72,19 @@
             margin: 0; 
         }
         
-        /* [수정 3] 모두해제 버튼 크기 및 스타일 조정 */
+        /* [수정 1] 모두해제 버튼 크기 축소 (16px -> 14px, 높이 28px -> 24px) */
         .btn-reset {
             margin-left: 2px; 
             background-color: transparent; 
             border: 1px solid #ced4da;
             border-radius: 4px; 
-            padding: 2px 10px; /* 내부 여백 조정 */
-            font-size: 16px; /* 18px 텍스트 옆에 어울리는 크기 */
+            padding: 0 8px; 
+            font-size: 14px; 
             font-weight: 600; 
             color: #495057; 
             cursor: pointer; 
             transition: all 0.2s; 
-            height: 28px; /* 높이 고정 */
+            height: 24px; 
             display: flex; 
             align-items: center;
             -webkit-tap-highlight-color: transparent;
@@ -157,8 +151,9 @@
         .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .btn-row { display: flex; width: 100%; gap: 8px; }
         
+        /* [수정 3] 팝업 버튼 텍스트 크기 확대 (16px -> 18px) */
         .modal-btn {
-            padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
+            padding: 12px 0; border-radius: 8px; font-size: 18px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
             display: flex; justify-content: center; align-items: center; 
             transition: opacity 0.2s;
@@ -173,7 +168,9 @@
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-youtube-custom:hover { background-color: #f8f9fa; }
-        .yt-icon { width: 24px; height: auto; display: block; }
+        
+        /* [수정 3] 유튜브 아이콘 크기 확대 (24px -> 28px) */
+        .yt-icon { width: 28px; height: auto; display: block; }
 
         .confirm-content {
             background: white; width: 85%; max-width: 320px;
@@ -187,10 +184,12 @@
         .btn-yes { background-color: #343a40; color: white; }
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
+        /* [수정 4] 이미지 확대 오버레이: 터치 액션 허용 */
         #imageZoomOverlay {
             display: none; position: fixed; z-index: 10001; 
             padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
             overflow: auto; background-color: rgba(0,0,0,0.9);
+            touch-action: pan-x pan-y pinch-zoom; /* 확대 제스처 허용 */
         }
         #zoomedImage {
             margin: auto; display: block; max-width: 95%; max-height: 90vh; 
@@ -208,7 +207,6 @@
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
             
-            /* [수정 5] 모바일에서도 15px */
             .header-wrapper { margin-bottom: 15px; }
             
             .main-title { font-size: 34px; margin-bottom: 25px; } 
@@ -216,10 +214,8 @@
             .nav-row { gap: 8px; } 
             .nav-btn { width: 30px; height: 30px; font-size: 16px; }
             
-            /* [수정 1, 2] 모바일 폰트 18px, 간격 18px */
-            .control-bar { padding-left: 0; gap: 15px; font-size: 18px; }
+            .control-bar { padding-left: 0; gap: 18px; font-size: 18px; }
             
-            /* [수정 4] 줄바꿈 정렬을 위해 chk-list 사용 (gap 조절) */
             .chk-list { gap: 5px 4px; } 
             
             .group-title { font-size: 18px; margin-right: 4px; }
@@ -228,10 +224,10 @@
             
             label { margin-right: 5px; }
 
-            /* [수정 1] 모바일 체크박스 크기 18px */
             input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
             
-            .btn-reset { font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 2px; }
+            /* [수정 1] 모바일에서도 버튼 크기 작게 유지 */
+            .btn-reset { font-size: 14px; padding: 0 8px; border: 1px solid #adb5bd; margin-left: 2px; height: 24px; }
             
             table, thead, tbody, th, td, tr { display: block; }
             thead { display: none; }
@@ -560,8 +556,9 @@
                 htmlContent += `</div>`;
             }
 
+            // [수정 2] 텍스트 변경 '일정 추가' -> '예매일정 추가'
             htmlContent += `<div class="btn-row">`;
-            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">일정 추가</button>`;
+            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">예매일정 추가</button>`;
             
             if (ds.youtube && ds.youtube.trim() !== '') {
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
@@ -616,14 +613,16 @@
             }
         }
 
-        // --- [수정] 이미지 확대 기능 (확대 배율 증가 및 ID 셀렉팅 강화) ---
+        // --- [수정 4] 이미지 확대 기능 (no-scroll 잠시 해제하여 핀치줌 허용) ---
         function openZoomOverlay(imgSrc) {
             const overlay = document.getElementById('imageZoomOverlay');
             const zoomedImg = document.getElementById('zoomedImage');
             zoomedImg.src = imgSrc;
             overlay.style.display = 'block';
             
-            // [수정] user-scalable=yes 와 maximum-scale을 넉넉하게(5.0) 설정
+            // [중요] 확대 중에는 스크롤 방지 클래스를 제거해야 핀치줌이 먹히는 브라우저가 많음
+            document.body.classList.remove('no-scroll');
+
             const viewport = document.getElementById('viewport-meta');
             if(viewport) {
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
@@ -634,7 +633,11 @@
             const overlay = document.getElementById('imageZoomOverlay');
             overlay.style.display = 'none';
             
-            // [수정] 다시 확대 금지
+            // 닫으면 다시 스크롤 방지 (만약 팝업이 떠 있다면)
+            if (modal.style.display === 'flex') {
+                document.body.classList.add('no-scroll');
+            }
+
             const viewport = document.getElementById('viewport-meta');
             if(viewport) {
                 viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
