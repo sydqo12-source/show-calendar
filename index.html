@@ -86,26 +86,26 @@
             display: flex; justify-content: center; align-items: center;
             overflow: hidden; border-bottom: 1px solid #eee;
         }
-        .modal-poster-area img { width: 100%; height: 100%; object-fit: contain; }
+        /* [수정] 포스터 줌인 커서 추가 */
+        .modal-poster-area img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
         .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
 
         .modal-body { padding: 15px; text-align: center; }
         .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
         .modal-info { font-size: 14px; color: #868e96; margin-bottom: 15px; }
 
-        /* [수정] 버튼 컨테이너 스타일 */
         .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .btn-row { display: flex; width: 100%; gap: 8px; }
         
+        /* [수정] 버튼 폰트 사이즈 증가 (14px -> 16px) */
         .modal-btn {
-            padding: 12px 0; border-radius: 8px; font-size: 14px; font-weight: 700;
+            padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
             display: flex; justify-content: center; align-items: center; 
             transition: opacity 0.2s;
         }
         .modal-btn:hover { opacity: 0.9; }
 
-        /* [수정] 버튼 색상 클래스 통일 */
         .btn-link-black { background-color: #343a40; color: white; flex: 1; } /* NOL 색상 (검정) */
         .btn-action-red { background-color: #fa5252; color: white; flex: 1; } /* 일정추가 색상 (빨강) */
 
@@ -121,6 +121,25 @@
         .btn-yes { background-color: #343a40; color: white; }
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
+        /* [추가] 이미지 확대 오버레이 스타일 */
+        #imageZoomOverlay {
+            display: none; position: fixed; z-index: 10001; 
+            padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
+            overflow: auto; background-color: rgba(0,0,0,0.9);
+        }
+        #zoomedImage {
+            margin: auto; display: block; max-width: 95%; max-height: 90vh; 
+            object-fit: contain; animation: zoomAnim 0.3s;
+        }
+        @keyframes zoomAnim { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+        .close-zoom {
+            position: absolute; top: 20px; right: 30px; 
+            color: #f1f1f1; font-size: 40px; font-weight: bold; 
+            transition: 0.3s; cursor: pointer; z-index: 10002;
+        }
+        .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
+
+
         @media screen and (max-width: 768px) {
             body { padding: 15px; } 
             .header-wrapper { margin-bottom: 10px; }
@@ -131,7 +150,7 @@
             .control-bar { padding-left: 0; gap: 15px; }
             .group-title { font-size: 17px; min-width: 50px; margin-top: 0; transform: translateY(2px); }
             .chk-wrap { gap: 8px 12px; } 
-            label { font-size: 16px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
+            .label { font-size: 16px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
             input[type="checkbox"] { width: 18px; height: 18px; margin-top: 0; transform: translateY(1px); }
             .btn-reset { font-size: 15px; padding: 4px 10px; border: 1px solid #adb5bd; margin-left: 0; }
             
@@ -180,7 +199,7 @@
             <span class="group-title">지역 :</span>
             <div class="chk-wrap">
                 <label><input type="checkbox" class="region-chk" value="seoul"> <span class="txt-red">서울</span></label>
-                <label><input type="checkbox" class="region-chk" value="gyeonggi"> <span class="txt-green">경기/인천</span></label>
+                <label><input type="checkbox" class="region-chk" value="gyeonggi"> <span class="txt-red">경기/인천</span></label>
                 <label><input type="checkbox" class="region-chk" value="others"> <span class="txt-blue">그 외 지역</span></label>
             </div>
         </div>
@@ -246,6 +265,11 @@
                 <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
             </div>
         </div>
+    </div>
+
+    <div id="imageZoomOverlay" onclick="closeZoomOverlay()">
+        <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
+        <img id="zoomedImage" src="">
     </div>
 
     <script>
@@ -317,7 +341,8 @@
                 colorClass = 'txt-red';
                 regionText = '(서울)';
             } else if (region === 'gyeonggi') {
-                colorClass = 'txt-green';
+                // [수정] 경기도 빨강색으로 변경
+                colorClass = 'txt-red';
                 regionText = '(경기)';
             }
             return { colorClass, regionText };
@@ -378,7 +403,10 @@
                     let rClass = 'txt-blue';
                     let rText = '(지역)';
                     if(evt.region === 'seoul') { rClass = 'txt-red'; rText = '(서울)'; }
-                    else if(evt.region === 'gyeonggi') { rClass = 'txt-green'; rText = '(경기)'; }
+                    else if(evt.region === 'gyeonggi') { 
+                        // [수정] 경기/인천 표시 색상 빨강(txt-red)으로 변경
+                        rClass = 'txt-red'; rText = '(경기)'; 
+                    }
                     else {
                          if(evt.title.includes('부산') || evt.place.includes('부산')) rText = '(부산)';
                         else if(evt.title.includes('대구') || evt.place.includes('대구')) rText = '(대구)';
@@ -386,6 +414,11 @@
                         else if(evt.title.includes('광주') || evt.place.includes('광주')) rText = '(광주)';
                         else if(evt.title.includes('대전') || evt.place.includes('대전')) rText = '(대전)';
                         else if(evt.title.includes('울산') || evt.place.includes('울산')) rText = '(울산)';
+                        // [수정] 인천 지역명 명시적으로 체크하여 표시 변경 (요청사항)
+                        else if(evt.title.includes('인천') || evt.place.includes('인천')) {
+                            rClass = 'txt-red';
+                            rText = '(인천)';
+                        }
                     }
                     
                     const htmlContent = `
@@ -423,9 +456,15 @@
                 modalPoster.src = ds.poster;
                 modalPoster.style.display = 'block';
                 noPosterText.style.display = 'none';
+                
+                // [추가] 포스터 클릭 시 확대 이벤트 연결
+                modalPoster.onclick = function() {
+                    openZoomOverlay(ds.poster);
+                };
             } else {
                 modalPoster.style.display = 'none';
                 noPosterText.style.display = 'block';
+                modalPoster.onclick = null;
             }
 
             // --- 버튼 생성 로직 시작 ---
@@ -434,7 +473,8 @@
             // [1줄: 예매 링크 버튼들]
             // 데이터가 있는 링크만 배열에 담기
             const links = [];
-            if(ds.link1) links.push({name: 'nol 티켓', url: ds.link1});
+            // [수정] link1 텍스트를 'NOL 티켓'으로 변경
+            if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1});
             if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2});
             if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3});
             if(ds.link4) links.push({name: '티켓링크', url: ds.link4});
@@ -451,8 +491,8 @@
 
             // [2줄: 일정 추가 + 유튜브 검색]
             htmlContent += `<div class="btn-row">`;
-            // 일정추가 (빨간색)
-            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">📅 일정 추가</button>`;
+            // [수정] 일정추가 이모지 삭제
+            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">일정 추가</button>`;
             
             // 유튜브 검색어가 있으면 버튼 생성 (빨간색)
             if (ds.youtube && ds.youtube.trim() !== '') {
@@ -475,6 +515,13 @@
 
         // --- 뒤로가기 감지 ---
         window.onpopstate = function(event) {
+            // 확대 창이 열려있으면 닫기
+            const zoomOverlay = document.getElementById('imageZoomOverlay');
+            if (zoomOverlay.style.display === 'block') {
+                closeZoomOverlay();
+                return;
+            }
+
             if (event.state && event.state.view === 'modal') {
                 confirmModal.style.display = 'none';
                 modal.style.display = 'flex';
@@ -496,6 +543,20 @@
                 history.back();
             }
         }
+
+        // --- [추가] 이미지 확대 기능 ---
+        function openZoomOverlay(imgSrc) {
+            const overlay = document.getElementById('imageZoomOverlay');
+            const zoomedImg = document.getElementById('zoomedImage');
+            zoomedImg.src = imgSrc;
+            overlay.style.display = 'block';
+        }
+
+        function closeZoomOverlay() {
+            const overlay = document.getElementById('imageZoomOverlay');
+            overlay.style.display = 'none';
+        }
+
 
         // --- 다운로드 ---
         function realDownload() {
