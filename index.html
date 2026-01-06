@@ -3,124 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="viewport-meta">
-    <title>공연 예매일정 캘린더 (Supabase)</title>
+    <title>공연 예매일정 (Mobile Only)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         
-        body { font-family: 'Pretendard', sans-serif; background-color: #ffffff; padding: 20px 40px; user-select: none; }
+        /* [기본 설정] */
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #ffffff; 
+            padding: 15px; /* 모바일 패딩으로 통일 */
+            user-select: none; 
+        }
         
-        /* [중요] 스크롤 잠금 시 터치 액션 제어 */
         body.no-scroll { overflow: hidden; touch-action: none; }
 
+        /* [헤더] */
         .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
-        .main-title { font-size: 34px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
-        .nav-row { display: flex; align-items: center; gap: 15px; }
-        
-        .sub-title { font-size: 42px; font-weight: 800; color: #495057; }
+        .main-title { font-size: 36px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; }
+        .sub-title { font-size: 32px; font-weight: 800; color: #495057; }
+        .nav-row { display: flex; align-items: center; gap: 8px; }
         
         .nav-btn {
-            width: 32px; height: 32px; background-color: #fff; border: 1px solid #ced4da;
-            border-radius: 4px; color: #868e96; font-size: 18px; font-weight: 700;
+            width: 30px; height: 30px; background-color: #fff; border: 1px solid #ced4da;
+            border-radius: 4px; color: #868e96; font-size: 16px; font-weight: 700;
             display: flex; justify-content: center; align-items: center; cursor: pointer;
             transition: all 0.2s; user-select: none;
         }
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
         
+        /* [컨트롤 바 (필터)] */
         .control-bar { 
             margin-bottom: 25px; 
             display: flex; 
             flex-direction: column; 
             align-items: flex-start; 
-            gap: 18px; 
-            padding-left: 12px; 
+            gap: 12px; 
+            padding-left: 0;
             font-size: 18px; 
         }
         
-        .filter-group { 
-            display: flex; 
-            align-items: flex-start; 
-            gap: 4px; 
-            width: 100%; 
-        }
+        .filter-group { display: flex; align-items: flex-start; gap: 4px; width: 100%; }
+        .group-title { font-weight: 800; color: #212529; white-space: nowrap; font-size: 18px; margin-right: 4px; margin-top: 1px; }
+        .chk-list { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 4px; flex: 1; }
         
-        .group-title { 
-            font-weight: 800; 
-            color: #212529; 
-            white-space: nowrap; 
-            font-size: 18px; 
-            margin-top: 1px; 
-        }
-        
-        .chk-list { 
-            display: flex; 
-            flex-wrap: wrap; 
-            align-items: center; 
-            gap: 8px; 
-            flex: 1; 
-        }
-        
-        label { cursor: pointer; display: flex; align-items: center; gap: 6px; margin-right: 12px; -webkit-tap-highlight-color: transparent; }
+        label { cursor: pointer; display: flex; align-items: center; gap: 5px; margin-right: 5px; -webkit-tap-highlight-color: transparent; }
         label:hover { opacity: 1; } 
+        input[type="checkbox"] { accent-color: #343a40; width: 18px; height: 18px; margin: 0; cursor: pointer; }
         
-        input[type="checkbox"] { 
-            accent-color: #343a40; 
-            width: 18px; 
-            height: 18px; 
-            cursor: pointer; 
-            margin: 0; 
-        }
-        
-        /* [복구] 모두해제 버튼 원래 크기로 복구 (폰트 16px, 높이 28px) */
         .btn-reset {
-            margin-left: 2px; 
-            background-color: transparent; 
-            border: 1px solid #ced4da;
-            border-radius: 4px; 
-            padding: 1px 8px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            color: #495057; 
-            cursor: pointer; 
-            transition: all 0.2s; 
-            height: 28px; 
-            display: flex; 
-            align-items: center;
-            -webkit-tap-highlight-color: transparent;
+            margin-left: 2px; background-color: transparent; border: 1px solid #adb5bd;
+            border-radius: 4px; padding: 2px 8px; font-size: 15px; font-weight: 600;
+            color: #495057; cursor: pointer; transition: all 0.2s; height: 28px;
+            display: flex; align-items: center; -webkit-tap-highlight-color: transparent;
         }
         .btn-reset:hover { background-color: #e9ecef; color: #212529; }
         .btn-reset:active { background-color: transparent; color: #495057; border-color: #ced4da; }
 
-        table { width: 100%; table-layout: fixed; border-collapse: collapse; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }
-        th { background-color: #495057; color: white; padding: 10px; font-size: 14px; font-weight: 600; }
-        th:first-child { background-color: #fa5252; }
-        th:last-child { background-color: #228be6; }
-        td { vertical-align: top; height: 150px; border: 1px solid #dee2e6; padding: 5px; }
-        td:hover { background-color: #fcfcfc; }
-        
-        .date-num { font-weight: 800; font-size: 14px; color: #212529; margin-bottom: 5px; display: block; }
-        .sun .date-num { color: #e03131; } 
-        .sat .date-num { color: #1971c2; } 
-
-        .event-box { 
-            display: none; margin-bottom: 4px; padding: 4px 6px; border-radius: 4px; 
-            background-color: #fff; border: 1px solid #e9ecef; box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
-            cursor: pointer; font-size: 11px; overflow: hidden; 
-        }
-        .event-box:hover { transform: translateY(-1px); border-color: #adb5bd; z-index: 5; position: relative; }
-        .event-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-        .box-line2 { 
-            display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical;
-            overflow: hidden; text-overflow: ellipsis; line-height: 1.3; 
-            word-break: break-all; margin-top: 1px; 
-        }
-
+        /* [텍스트 색상] */
         .txt-red { color: #e03131; font-weight: 700; }
         .txt-green { color: #2b8a3e; font-weight: 700; }
         .txt-blue { color: #1971c2; font-weight: 700; }
         .txt-black { color: #495057; font-weight: 500; }
 
+        /* ==========================================================================
+           [중요] 리스트형 캘린더 스타일 (PC 테이블 스타일 제거됨)
+           ========================================================================== */
+        table, thead, tbody, th, td, tr { display: block; }
+        thead { display: none; } /* 요일 헤더 숨김 */
+        tr { margin-bottom: 0; }
+        
+        td { 
+            height: auto !important; 
+            border: none; 
+            border-bottom: 1px solid #eee; 
+            position: relative; 
+            text-align: left !important; 
+            /* 기본 패딩 (비활성 날짜용) */
+            padding: 10px 5px !important; 
+        }
+        td:empty { display: none; } /* 빈 날짜 숨김 */
+
+        /* 날짜 숫자 스타일 (리스트형) */
+        .date-num { 
+            display: inline-block; width: auto; font-size: 16px; 
+            margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; 
+        }
+        .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
+        .sun .date-num { color: #ffc9c9; } 
+        .sat .date-num { color: #a5d8ff; }
+
+        /* [상태별 스타일] */
+        /* 1. 공연 있는 날 (Active) */
+        td.day-active {
+            /* 바닥 여백 0 (마지막 박스의 margin이 간격 역할) */
+            padding: 15px 5px 0px 5px !important;
+        }
+        td.day-active .date-num { 
+            font-size: 24px; margin-bottom: 12px; padding-bottom: 2px; color: #212529; font-weight: 800; 
+        }
+        td.day-active.sun .date-num { color: #e03131 !important; } 
+        td.day-active.sat .date-num { color: #1971c2 !important; }
+
+        /* 2. 공연 없는 날 (Inactive) */
+        td.day-inactive {
+            padding: 10px 5px 10px 5px !important;
+        }
+        td.day-inactive .date-num { font-size: 16px; color: #ced4da; }
+        td.day-inactive.sun .date-num { color: #ffc9c9; }
+        td.day-inactive.sat .date-num { color: #a5d8ff; }
+
+        /* [공연 박스 디자인] */
+        .event-box { 
+            display: none; /* 필터링 전 숨김 */
+            font-size: 16px !important; 
+            padding: 15px; 
+            margin-bottom: 20px; /* 박스 간격 */
+            border-radius: 10px;
+            background-color: #fff; 
+            border: 1px solid #ced4da; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer; 
+            overflow: hidden; 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .event-box:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1); 
+            border-color: #adb5bd; 
+        }
+
+        /* [포스터 이미지] */
+        .event-poster-thumb {
+            width: 100%;
+            height: auto;
+            max-height: 400px; /* 너무 길어지지 않게 제한 */
+            aspect-ratio: 3 / 4; /* 포스터 비율 유지 시도 (선택사항) */
+            object-fit: cover;
+            object-position: top;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: block;
+            background-color: #f1f3f5;
+        }
+
+        .event-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 6px; 
+        }
+        
+        .box-line2 { 
+            display: block;
+            line-height: 1.4; 
+            margin-top: 8px; 
+            white-space: normal; 
+            word-break: keep-all; 
+        }
+
+        /* 초기 로딩 시 스타일 */
+        body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
+        body.initial-mode .date-num { font-size: 16px; font-weight: 500; color: #ced4da; }
+        body.initial-mode .sun .date-num { color: #ffc9c9; }
+        body.initial-mode .sat .date-num { color: #a5d8ff; }
+
+        /* [팝업(모달) 스타일] */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.7); z-index: 9999;
@@ -140,7 +188,6 @@
             display: flex; justify-content: center; align-items: center;
             overflow: hidden; border-bottom: 1px solid #eee;
         }
-        
         .modal-poster-area img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
         .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
 
@@ -151,7 +198,6 @@
         .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .btn-row { display: flex; width: 100%; gap: 8px; }
         
-        /* [수정] 팝업 버튼 텍스트 크기 확대 (16px -> 18px) */
         .modal-btn {
             padding: 12px 0; border-radius: 8px; font-size: 18px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
@@ -159,19 +205,16 @@
             transition: opacity 0.2s;
         }
         .modal-btn:hover { opacity: 0.9; }
-
         .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
         .btn-action-red { background-color: #fa5252; color: white; flex: 1; }
-
         .btn-youtube-custom {
             background-color: white; color: black; border: 1px solid #ced4da;
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-youtube-custom:hover { background-color: #f8f9fa; }
-        
-        /* [수정] 유튜브 아이콘 크기 확대 (24px -> 28px) */
         .yt-icon { width: 28px; height: auto; display: block; }
 
+        /* [확인창 및 이미지 확대] */
         .confirm-content {
             background: white; width: 85%; max-width: 320px;
             border-radius: 12px; padding: 20px; text-align: center;
@@ -184,12 +227,11 @@
         .btn-yes { background-color: #343a40; color: white; }
         .btn-no { background-color: #f1f3f5; color: #495057; }
 
-        /* [수정] 이미지 확대 오버레이: 터치 액션 허용 */
         #imageZoomOverlay {
             display: none; position: fixed; z-index: 10001; 
             padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
             overflow: auto; background-color: rgba(0,0,0,0.9);
-            touch-action: pan-x pan-y pinch-zoom; /* 확대 제스처 허용 */
+            touch-action: pan-x pan-y pinch-zoom;
         }
         #zoomedImage {
             margin: auto; display: block; max-width: 95%; max-height: 90vh; 
@@ -202,81 +244,6 @@
             transition: 0.3s; cursor: pointer; z-index: 10002;
         }
         .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
-
-
-        @media screen and (max-width: 768px) {
-            body { padding: 15px; } 
-            
-            .header-wrapper { margin-bottom: 15px; }
-            
-            .main-title { font-size: 36px; margin-bottom: 25px; } 
-            .sub-title { font-size: 32px; } 
-            .nav-row { gap: 8px; } 
-            .nav-btn { width: 30px; height: 30px; font-size: 16px; }
-            
-            .control-bar { padding-left: 0; gap: 12px; font-size: 18px; }
-            
-            .chk-list { gap: 5px 4px; } 
-            
-            .group-title { font-size: 18px; margin-right: 4px; }
-            
-            .label { font-size: 18px; margin: 0; line-height: 1.5; opacity: 1 !important; } 
-            
-            label { margin-right: 5px; }
-
-            input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
-            
-            /* [복구] 모바일 버튼 크기 기존 유지 (15px) */
-            .btn-reset { font-size: 15px; padding: 2px 8px; border: 1px solid #adb5bd; margin-left: 2px; height: 28px; }
-            
-            table, thead, tbody, th, td, tr { display: block; }
-            thead { display: none; }
-            tr { margin-bottom: 0; }
-            
-            /* ▼▼▼ [수정됨] 칸(td) 간격 조정 ▼▼▼ */
-            td { 
-                height: auto !important; 
-                border: none; 
-                border-bottom: 1px solid #eee; 
-                position: relative; 
-                text-align: left !important; 
-                padding: 10px 5px !important; /* 기본값 */
-            }
-            td:empty { display: none; }
-
-            /* [추가] 공연이 있는 날: 바닥 여백 0 (마지막 박스의 margin 10px가 간격 역할) */
-            td.day-active {
-                padding: 10px 7px 0px 7px !important;
-            }
-
-            /* [추가] 공연이 없는 날: 바닥 여백 10px (기존 유지) */
-            td.day-inactive {
-                padding: 10px 7px 10px 7px !important;
-            }
-            /* ▲▲▲ [수정 끝] ▲▲▲ */
-            
-            .date-num { display: inline-block; width: auto; font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
-            .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
-            .sun .date-num { color: #ffc9c9; } 
-            .sat .date-num { color: #a5d8ff; }
-
-            td.day-active .date-num { font-size: 23px; margin-bottom: 4px; padding-bottom: 2px; color: #212529; font-weight: 800; }
-            td.day-active .date-num::after { font-size: inherit; color: inherit; font-weight: inherit; }
-            td.day-active.sun .date-num { color: #e03131 !important; } 
-            td.day-active.sat .date-num { color: #1971c2 !important; }
-
-            td.day-inactive .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; color: #ced4da; }
-            td.day-inactive.sun .date-num { color: #ffc9c9; }
-            td.day-inactive.sat .date-num { color: #a5d8ff; }
-
-            .event-box { font-size: 16px !important; padding: 12px; margin-bottom: 10px; border: 1px solid #ced4da; height: auto !important; min-height: unset; }
-            .box-line2 { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; margin-top: 6px; white-space: normal; word-break: break-all; }
-
-            body.initial-mode td { border-bottom: 1px solid #f1f3f5; }
-            body.initial-mode .date-num { font-size: 16px; margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; }
-            body.initial-mode .sun .date-num { color: #ffc9c9; }
-            body.initial-mode .sat .date-num { color: #a5d8ff; }
-        }
     </style>
 </head>
 <body class="initial-mode">
@@ -349,9 +316,7 @@
             <div class="modal-body">
                 <div id="modalTitle" class="modal-title"></div>
                 <div id="modalInfo" class="modal-info"></div>
-                
-                <div class="modal-btn-container" id="btnGroup">
-                    </div>
+                <div class="modal-btn-container" id="btnGroup"></div>
             </div>
         </div>
     </div>
@@ -374,9 +339,6 @@
     </div>
 
     <script>
-        // ========================================================
-        // [1] Supabase 연결 설정
-        // ========================================================
         const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
         
@@ -384,9 +346,6 @@
 
         let events = [];
 
-        // ========================================================
-        // [2] Supabase에서 데이터 가져오기
-        // ========================================================
         async function fetchEvents() {
             titleEl.innerText = "데이터 불러오는 중...";
             
@@ -401,7 +360,6 @@
             
             events = data;
             
-            // 시간 오름차순 -> 제목 오름차순 정렬
             events.sort((a, b) => {
                 const getTime = (str) => {
                     const match = str.match(/\d{2}:\d{2}/);
@@ -423,12 +381,9 @@
             console.log("Supabase 데이터:", events);
             
             renderEvents();
-            showPage(0); // 1월 페이지로 이동
+            showPage(0); 
         }
 
-        // ========================================================
-        // [3] 로직
-        // ========================================================
         const regionChks = document.querySelectorAll('.region-chk');
         const genreChks = document.querySelectorAll('.genre-chk');
         const btnReset = document.getElementById('btn-reset');
@@ -455,7 +410,7 @@
             document.querySelectorAll('.event-box').forEach(el => el.remove());
             document.querySelectorAll('td').forEach(td => {
                 td.classList.remove('has-event');
-                td.classList.add('no-event'); // 초기화
+                td.classList.add('no-event'); 
             });
 
             events.forEach(evt => {
@@ -481,27 +436,10 @@
                     const div = document.createElement('div');
                     div.className = 'event-box';
                     
-                    // ===============================================
-                    // [핵심] 1. 지역 그룹화 (필터링용)
-                    // ===============================================
-                    let regionGroup = '그 외'; // 기본값 (부산, 대구 등은 여기로 들어감)
-                    if (evt.region === '서울') {
-                        regionGroup = '서울';
-                    } else if (evt.region === '경기' || evt.region === '인천') {
-                        regionGroup = '경기'; // 인천은 경기와 같은 그룹으로 묶음
-                    }
+                    let regionGroup = '그 외'; 
+                    if (evt.region === '서울') regionGroup = '서울';
+                    else if (evt.region === '경기' || evt.region === '인천') regionGroup = '경기';
                     
-                    // ===============================================
-                    // [핵심] 2. 화면 표시용 (원본 지역명 유지) & 색상
-                    // ===============================================
-                    let rClass = 'txt-blue';
-                    if (['서울', '경기', '인천'].includes(evt.region)) {
-                        rClass = 'txt-red';
-                    }
-                    
-                    const rText = `(${evt.region})`; // 예: (부산), (서울)
-
-                    // 데이터셋 저장 (regionGroup은 필터링에 사용)
                     div.dataset.regionGroup = regionGroup; 
                     div.dataset.region = evt.region; 
                     div.dataset.genre = evt.genre;
@@ -509,25 +447,33 @@
                     div.dataset.date = evt.date;
                     div.dataset.place = evt.place;
                     div.dataset.poster = evt.poster;
-                    
                     div.dataset.link1 = evt.link1 || '';
                     div.dataset.link2 = evt.link2 || '';
                     div.dataset.link3 = evt.link3 || '';
                     div.dataset.link4 = evt.link4 || '';
                     div.dataset.link5 = evt.link5 || '';
-                    
                     div.dataset.youtube = evt['youtube search'] || '';
 
                     div.onclick = function() { openModal(this); };
 
                     const timeStr = evt.date.split(' ')[1] || '';
+                    let rClass = 'txt-blue';
+                    if (['서울', '경기', '인천'].includes(evt.region)) rClass = 'txt-red';
+                    const rText = `(${evt.region})`;
+
+                    // [수정] 포스터 이미지 추가 (있을 경우만)
+                    let posterHtml = '';
+                    if (evt.poster && evt.poster.trim() !== '') {
+                        posterHtml = `<img src="${evt.poster}" class="event-poster-thumb" alt="${evt.title}" loading="lazy">`;
+                    }
                     
                     const htmlContent = `
+                        ${posterHtml}
                         <div class="event-header">
                             <div><span style="color:#212529; font-weight:800;">${timeStr}</span></div>
                             <div><span class="${rClass}">${rText}</span></div>
                         </div>
-                        <span class="box-line2"><span style="color:#495057; font-weight:500;">${evt.title}</span></span>
+                        <span class="box-line2"><span style="color:#495057; font-weight:700; font-size: 1.05em;">${evt.title}</span></span>
                     `;
                     div.innerHTML = htmlContent;
 
@@ -539,9 +485,6 @@
             applyFilter();
         }
 
-        // ========================================================
-        // 팝업 열기
-        // ========================================================
         function openModal(element) {
             const ds = element.dataset;
             currentEventData = {
@@ -584,7 +527,6 @@
                 htmlContent += `</div>`;
             }
 
-            // [수정 2] 텍스트 변경
             htmlContent += `<div class="btn-row">`;
             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">예매일정 추가</button>`;
             
@@ -641,50 +583,31 @@
             }
         }
 
-        // --- [수정 4] 이미지 확대 기능 개선 (no-scroll 잠시 해제) ---
         function openZoomOverlay(imgSrc) {
             const overlay = document.getElementById('imageZoomOverlay');
             const zoomedImg = document.getElementById('zoomedImage');
             zoomedImg.src = imgSrc;
             overlay.style.display = 'block';
-            
-            // [핵심] 확대 중에는 body의 스크롤 잠금을 풀어야 핀치줌이 동작함 (일부 모바일 브라우저 이슈 해결)
             document.body.classList.remove('no-scroll');
-
             const viewport = document.getElementById('viewport-meta');
-            if(viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
-            }
+            if(viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
         }
 
         function closeZoomOverlay() {
             const overlay = document.getElementById('imageZoomOverlay');
             overlay.style.display = 'none';
-            
-            // 닫으면 다시 스크롤 잠금 (팝업이 떠 있는 상태이므로)
-            if (modal.style.display === 'flex') {
-                document.body.classList.add('no-scroll');
-            }
-
+            if (modal.style.display === 'flex') document.body.classList.add('no-scroll');
             const viewport = document.getElementById('viewport-meta');
-            if(viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-            }
+            if(viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
         }
-
 
         function realDownload() {
             history.back(); 
-
             const title = (currentEventData.title || "공연 관람") + " 예매";
             const rawDate = currentEventData.date;
             const nums = rawDate.match(/\d+/g); 
             
-            let year = 2026;
-            let month = '01';
-            let day = '01';
-            let hour = '12';
-            let min = '00';
+            let year = 2026; let month = '01'; let day = '01'; let hour = '12'; let min = '00';
 
             if (nums) {
                 if (nums[0].length === 4) { 
@@ -720,7 +643,6 @@ END:VCALENDAR`;
             document.body.removeChild(linkElem);
         }
 
-        // --- 캘린더 로직 ---
         function showPage(index) {
             pages.forEach((page, idx) => {
                 if (idx === index) {
@@ -764,7 +686,6 @@ END:VCALENDAR`;
                 let hasVisible = false;
                 
                 boxes.forEach(box => {
-                    // [수정] dataset.regionGroup을 사용하여 필터링 (원본 지역명 대신 그룹명으로 확인)
                     if (selectedRegions.includes(box.dataset.regionGroup) && selectedGenres.includes(box.dataset.genre)) {
                         box.style.display = 'block';
                         hasVisible = true;
@@ -814,13 +735,11 @@ END:VCALENDAR`;
         regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        // [초기화 실행]
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
         isAllChecked = true;
         btnReset.innerText = "모두해제";
 
-        // 마지막에 Supabase 데이터 로드 시작
         fetchEvents();
         
     </script>
