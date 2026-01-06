@@ -293,9 +293,9 @@
         <div class="filter-group">
             <span class="group-title">지역 :</span>
             <div class="chk-list">
-                <label><input type="checkbox" class="region-chk" value="seoul"> <span class="txt-red">서울</span></label>
-                <label><input type="checkbox" class="region-chk" value="gyeonggi"> <span class="txt-red">경기/인천</span></label>
-                <label><input type="checkbox" class="region-chk" value="others"> <span class="txt-blue">그 외 지역</span></label>
+                <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
             </div>
         </div>
         
@@ -400,31 +400,26 @@
             }
             
             events = data;
-            // ==========================================================
-            // [추가된 부분] 자바스크립트로 정렬 (시간 오름차순 -> 제목 오름차순)
-            // ==========================================================
+            
+            // 시간 오름차순 -> 제목 오름차순 정렬
             events.sort((a, b) => {
-                // 1. 날짜 문자열에서 '시간(HH:MM)' 부분만 추출하는 함수
                 const getTime = (str) => {
-                    // 숫자2개:숫자2개 (예: 19:30) 패턴을 찾음
                     const match = str.match(/\d{2}:\d{2}/);
-                    return match ? match[0] : '99:99'; // 시간이 없으면 맨 뒤로
+                    return match ? match[0] : '99:99';
                 };
 
-                 const timeA = getTime(a.date);
-                 const timeB = getTime(b.date);
+                const timeA = getTime(a.date);
+                const timeB = getTime(b.date);
 
-                 // 2. 시간 비교 (오름차순: 작은 시간이 먼저)
-                 if (timeA < timeB) return -1;
-                 if (timeA > timeB) return 1;
+                if (timeA < timeB) return -1;
+                if (timeA > timeB) return 1;
 
-                 // 3. 시간이 같으면? 제목 비교 (가나다순)
-                 if (a.title < b.title) return -1;
-                 if (a.title > b.title) return 1;
+                if (a.title < b.title) return -1;
+                if (a.title > b.title) return 1;
 
-                 return 0;
-             });
-             // ==========================================================
+                return 0;
+            });
+            
             console.log("Supabase 데이터:", events);
             
             renderEvents();
@@ -456,21 +451,6 @@
         let currentEventData = {}; 
         let isModalOpen = false; 
 
-        function getRegionHtml(region, fullDate) {
-            const timePart = fullDate.split(' ')[1] || '';
-            let colorClass = 'txt-blue';
-            let regionText = '(지역)';
-
-            if (region === 'seoul') {
-                colorClass = 'txt-red';
-                regionText = '(서울)';
-            } else if (region === 'gyeonggi') {
-                colorClass = 'txt-red';
-                regionText = '(경기)';
-            }
-            return { colorClass, regionText };
-        }
-        
         function renderEvents() {
             document.querySelectorAll('.event-box').forEach(el => el.remove());
             document.querySelectorAll('td').forEach(td => {
@@ -501,7 +481,29 @@
                     const div = document.createElement('div');
                     div.className = 'event-box';
                     
-                    div.dataset.region = evt.region;
+                    // ===============================================
+                    // [핵심] 1. 지역 그룹화 (필터링용)
+                    // ===============================================
+                    let regionGroup = '그 외'; // 기본값 (부산, 대구 등은 여기로 들어감)
+                    if (evt.region === '서울') {
+                        regionGroup = '서울';
+                    } else if (evt.region === '경기' || evt.region === '인천') {
+                        regionGroup = '경기'; // 인천은 경기와 같은 그룹으로 묶음
+                    }
+                    
+                    // ===============================================
+                    // [핵심] 2. 화면 표시용 (원본 지역명 유지) & 색상
+                    // ===============================================
+                    let rClass = 'txt-blue';
+                    if (['서울', '경기', '인천'].includes(evt.region)) {
+                        rClass = 'txt-red';
+                    }
+                    
+                    const rText = `(${evt.region})`; // 예: (부산), (서울)
+
+                    // 데이터셋 저장 (regionGroup은 필터링에 사용)
+                    div.dataset.regionGroup = regionGroup; 
+                    div.dataset.region = evt.region; 
                     div.dataset.genre = evt.genre;
                     div.dataset.title = evt.title;
                     div.dataset.date = evt.date;
@@ -519,25 +521,6 @@
                     div.onclick = function() { openModal(this); };
 
                     const timeStr = evt.date.split(' ')[1] || '';
-                    
-                    let rClass = 'txt-blue';
-                    let rText = '(지역)';
-                    if(evt.region === 'seoul') { rClass = 'txt-red'; rText = '(서울)'; }
-                    else if(evt.region === 'gyeonggi') { 
-                        rClass = 'txt-red'; rText = '(경기)'; 
-                    }
-                    else {
-                         if(evt.title.includes('부산') || evt.place.includes('부산')) rText = '(부산)';
-                        else if(evt.title.includes('대구') || evt.place.includes('대구')) rText = '(대구)';
-                        else if(evt.title.includes('창원') || evt.place.includes('창원')) rText = '(경남)';
-                        else if(evt.title.includes('광주') || evt.place.includes('광주')) rText = '(광주)';
-                        else if(evt.title.includes('대전') || evt.place.includes('대전')) rText = '(대전)';
-                        else if(evt.title.includes('울산') || evt.place.includes('울산')) rText = '(울산)';
-                        else if(evt.title.includes('인천') || evt.place.includes('인천')) {
-                            rClass = 'txt-red';
-                            rText = '(인천)';
-                        }
-                    }
                     
                     const htmlContent = `
                         <div class="event-header">
@@ -781,7 +764,8 @@ END:VCALENDAR`;
                 let hasVisible = false;
                 
                 boxes.forEach(box => {
-                    if (selectedRegions.includes(box.dataset.region) && selectedGenres.includes(box.dataset.genre)) {
+                    // [수정] dataset.regionGroup을 사용하여 필터링 (원본 지역명 대신 그룹명으로 확인)
+                    if (selectedRegions.includes(box.dataset.regionGroup) && selectedGenres.includes(box.dataset.genre)) {
                         box.style.display = 'block';
                         hasVisible = true;
                     } else {
