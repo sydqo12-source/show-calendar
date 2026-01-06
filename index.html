@@ -82,27 +82,26 @@
             overflow: hidden; 
             border: 1px solid #dee2e6; /* 전체 외곽선 */
             margin-bottom: 30px;
-            border-collapse: separate; /* 중요: 경계선 겹침 방지 */
-            border-spacing: 0; /* 중요 */
+            border-collapse: separate; 
+            border-spacing: 0; 
         }
 
         thead { display: none; }
         tbody, th, tr { display: block; }
         tr { margin-bottom: 0; }
         
-        /* [수정 1] 날짜 칸(td) 디자인 - 경계선 강화 */
+        /* [수정] 날짜 칸(td) 디자인 - 토요일 밑줄 살리기 */
         td { 
             display: block; 
             height: auto !important; 
             border: none; 
-            /* 경계선 색상을 조금 더 진하게 변경하여 사라져 보이지 않게 함 */
-            border-bottom: 1px solid #e9ecef !important; 
+            border-bottom: 1px solid #e9ecef !important; /* 모든 칸에 밑줄 적용 */
             position: relative; 
             text-align: left !important; 
             padding: 10px 15px !important; 
         }
         
-        td:last-child { border-bottom: none !important; } /* 마지막 칸만 선 제거 */
+        /* td:last-child { border-bottom: none !important; }  <-- 이 줄을 삭제했습니다 (토요일 밑줄 복구) */
         td:empty { display: none; } 
 
         /* 날짜 숫자 스타일 */
@@ -118,7 +117,6 @@
         
         /* 1. 공연 있는 날 (Active) */
         td.day-active {
-            /* 바닥 여백을 줘서 경계선과 내용물 사이에 공간 확보 */
             padding: 20px 15px 20px 15px !important; 
         }
         td.day-active .date-num { 
@@ -140,7 +138,6 @@
             display: none; 
             font-size: 16px !important; 
             padding: 15px; 
-            /* 마지막 박스의 마진을 제거하여 td 패딩과 겹치지 않게 함 */
             margin-bottom: 25px; 
             border-radius: 10px;
             background-color: #fff; 
@@ -152,7 +149,6 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* 마지막 공연 박스는 마진을 줄여서 경계선과 너무 멀어지지 않게 함 */
         .event-box:last-child {
             margin-bottom: 0;
         }
@@ -163,20 +159,14 @@
             border-color: #adb5bd; 
         }
 
-        /* [수정 2] 포스터 이미지 비율 원본 유지 */
+        /* 포스터 이미지 비율 원본 유지 */
         .event-poster-thumb {
             width: 100%;
-            height: auto; /* 높이를 자동으로 설정하여 원본 비율 유지 */
-            /* max-height 제거: 이미지가 길어도 다 보여줌 */
-            /* aspect-ratio 제거: 원본 비율 사용 */
-            /* object-fit 제거: 원본 그대로 표시 */
-            
+            height: auto; 
             border-radius: 6px;
             margin-bottom: 12px;
             display: block;
             background-color: #f1f3f5;
-            
-            /* 이미지 길게 누르기 방지 */
             -webkit-touch-callout: none;
             -webkit-user-drag: none;
             user-select: none;
