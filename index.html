@@ -12,8 +12,9 @@
         body { 
             font-family: 'Pretendard', sans-serif; 
             background-color: #ffffff; 
-            padding: 15px; /* 모바일 패딩으로 통일 */
+            padding: 15px; 
             user-select: none; 
+            -webkit-user-select: none; /* 사파리 텍스트 선택 방지 */
         }
         
         body.no-scroll { overflow: hidden; touch-action: none; }
@@ -68,24 +69,39 @@
         .txt-black { color: #495057; font-weight: 500; }
 
         /* ==========================================================================
-           [중요] 리스트형 캘린더 스타일 (PC 테이블 스타일 제거됨)
+           [중요] 리스트형 캘린더 스타일 (테두리 디자인 복구됨)
            ========================================================================== */
-        table, thead, tbody, th, td, tr { display: block; }
-        thead { display: none; } /* 요일 헤더 숨김 */
+        
+        /* 1. 테이블 전체를 감싸는 카드 디자인 복구 */
+        table { 
+            display: block; 
+            width: 100%; 
+            background: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* 그림자 복구 */
+            border-radius: 12px; /* 둥근 모서리 복구 */
+            overflow: hidden; 
+            border: 1px solid #dee2e6; /* 외곽선 복구 */
+            margin-bottom: 30px;
+        }
+
+        thead { display: none; }
+        tbody, th, tr { display: block; }
         tr { margin-bottom: 0; }
         
         td { 
+            display: block; /* 중요: 칸을 블록으로 만들어 세로 배치 */
             height: auto !important; 
             border: none; 
-            border-bottom: 1px solid #eee; 
+            border-bottom: 1px solid #f1f3f5; /* 칸 사이 구분선 */
             position: relative; 
             text-align: left !important; 
-            /* 기본 패딩 (비활성 날짜용) */
-            padding: 10px 5px !important; 
+            padding: 10px 15px !important; /* 좌우 여백 조금 더 줌 */
         }
-        td:empty { display: none; } /* 빈 날짜 숨김 */
+        
+        td:last-child { border-bottom: none; } /* 마지막 칸 선 제거 */
+        td:empty { display: none; } 
 
-        /* 날짜 숫자 스타일 (리스트형) */
+        /* 날짜 숫자 스타일 */
         .date-num { 
             display: inline-block; width: auto; font-size: 16px; 
             margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; 
@@ -97,18 +113,17 @@
         /* [상태별 스타일] */
         /* 1. 공연 있는 날 (Active) */
         td.day-active {
-            /* 바닥 여백 0 (마지막 박스의 margin이 간격 역할) */
-            padding: 15px 5px 0px 5px !important;
+            padding: 20px 15px 5px 15px !important; /* 바닥 여백 줄임 (박스 마진 활용) */
         }
         td.day-active .date-num { 
-            font-size: 24px; margin-bottom: 12px; padding-bottom: 2px; color: #212529; font-weight: 800; 
+            font-size: 24px; margin-bottom: 15px; padding-bottom: 2px; color: #212529; font-weight: 800; 
         }
         td.day-active.sun .date-num { color: #e03131 !important; } 
         td.day-active.sat .date-num { color: #1971c2 !important; }
 
         /* 2. 공연 없는 날 (Inactive) */
         td.day-inactive {
-            padding: 10px 5px 10px 5px !important;
+            padding: 12px 15px !important;
         }
         td.day-inactive .date-num { font-size: 16px; color: #ced4da; }
         td.day-inactive.sun .date-num { color: #ffc9c9; }
@@ -116,10 +131,10 @@
 
         /* [공연 박스 디자인] */
         .event-box { 
-            display: none; /* 필터링 전 숨김 */
+            display: none; 
             font-size: 16px !important; 
             padding: 15px; 
-            margin-bottom: 20px; /* 박스 간격 */
+            margin-bottom: 20px; 
             border-radius: 10px;
             background-color: #fff; 
             border: 1px solid #ced4da; 
@@ -127,6 +142,7 @@
             cursor: pointer; 
             overflow: hidden; 
             transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent; /* 터치 하이라이트 제거 */
         }
         
         .event-box:hover { 
@@ -139,14 +155,20 @@
         .event-poster-thumb {
             width: 100%;
             height: auto;
-            max-height: 400px; /* 너무 길어지지 않게 제한 */
-            aspect-ratio: 3 / 4; /* 포스터 비율 유지 시도 (선택사항) */
+            max-height: 450px; 
+            aspect-ratio: 3 / 4; 
             object-fit: cover;
             object-position: top;
             border-radius: 6px;
             margin-bottom: 12px;
             display: block;
             background-color: #f1f3f5;
+            
+            /* [수정] 이미지 길게 누르기 방지 (CSS) */
+            -webkit-touch-callout: none; /* iOS 팝업 방지 */
+            -webkit-user-drag: none; /* 드래그 방지 */
+            user-select: none;
+            pointer-events: auto; /* 클릭은 가능해야 함 (모달 열기 위해) */
         }
 
         .event-header { 
@@ -188,7 +210,10 @@
             display: flex; justify-content: center; align-items: center;
             overflow: hidden; border-bottom: 1px solid #eee;
         }
-        .modal-poster-area img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
+        .modal-poster-area img { 
+            width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; 
+            -webkit-touch-callout: none; /* 팝업 방지 */
+        }
         .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
 
         .modal-body { padding: 15px; text-align: center; }
@@ -236,6 +261,7 @@
         #zoomedImage {
             margin: auto; display: block; max-width: 95%; max-height: 90vh; 
             object-fit: contain; animation: zoomAnim 0.3s;
+            -webkit-touch-callout: none; /* 팝업 방지 */
         }
         @keyframes zoomAnim { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
         .close-zoom {
@@ -310,7 +336,7 @@
     <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-poster-area">
-                <img id="modalPoster" src="" alt="공연 포스터" style="display:none;">
+                <img id="modalPoster" src="" alt="공연 포스터" style="display:none;" oncontextmenu="return false;">
                 <span id="noPosterText" class="no-poster-text" style="display:none;">이미지 없음</span>
             </div>
             <div class="modal-body">
@@ -335,7 +361,7 @@
 
     <div id="imageZoomOverlay" onclick="closeZoomOverlay()">
         <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
-        <img id="zoomedImage" src="">
+        <img id="zoomedImage" src="" oncontextmenu="return false;">
     </div>
 
     <script>
@@ -461,10 +487,10 @@
                     if (['서울', '경기', '인천'].includes(evt.region)) rClass = 'txt-red';
                     const rText = `(${evt.region})`;
 
-                    // [수정] 포스터 이미지 추가 (있을 경우만)
                     let posterHtml = '';
                     if (evt.poster && evt.poster.trim() !== '') {
-                        posterHtml = `<img src="${evt.poster}" class="event-poster-thumb" alt="${evt.title}" loading="lazy">`;
+                        // [수정] 이미지 우클릭/길게누르기 방지 (oncontextmenu)
+                        posterHtml = `<img src="${evt.poster}" class="event-poster-thumb" alt="${evt.title}" loading="lazy" oncontextmenu="return false;">`;
                     }
                     
                     const htmlContent = `
