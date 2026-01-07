@@ -375,8 +375,8 @@
         transform: scale(0.9);
      }
      .bottom-nav-container {
-            margin-top: 30px !important;    /* 위쪽 달력과의 간격 */
-            margin-bottom: 80px !important; /* 페이지 맨 바닥과의 간격 */
+            margin-top: 15px !important;    /* 위쪽 달력과의 간격 */
+            margin-bottom: 15px !important; /* 페이지 맨 바닥과의 간격 */
             width: 100%;
             display: flex;
             justify-content: center;
@@ -811,18 +811,30 @@ END:VCALENDAR`;
                 if (idx === index) {
                     page.style.display = 'block';
                     titleEl.innerText = page.dataset.title;
+                    // 하단 연도/월 텍스트 동기화
                     document.getElementById('calendar-title-bottom').innerText = page.dataset.title;
                 } else {
                     page.style.display = 'none';
                 }
             });
             
+            // [상단] 버튼 상태 제어
             if (index === 0) prevBtn.classList.add('disabled');
             else prevBtn.classList.remove('disabled');
 
             if (index === totalPages - 1) nextBtn.classList.add('disabled');
             else nextBtn.classList.remove('disabled');
 
+            // ▼▼▼ [추가] 하단 버튼도 상단과 똑같이 비활성화 처리 ▼▼▼
+            const prevBtnBottom = document.getElementById('prev-btn-bottom');
+            const nextBtnBottom = document.getElementById('next-btn-bottom');
+
+            if (index === 0) prevBtnBottom.classList.add('disabled');
+            else prevBtnBottom.classList.remove('disabled');
+
+            if (index === totalPages - 1) nextBtnBottom.classList.add('disabled');
+            else nextBtnBottom.classList.remove('disabled');
+        
             applyFilter();
         }
 
