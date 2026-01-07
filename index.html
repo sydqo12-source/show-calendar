@@ -292,22 +292,11 @@
             display: flex; 
             justify-content: center; 
             align-items: center;
-    
-            /* 사라질 때 부드럽게 */
-            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
          }
 
          /* 중앙 이모지 스타일 */
         .splash-icon {
-        font-size: 80px; /* 적당히 큰 크기 */
-        animation: pulse 1.5s infinite; /* 살짝 두근거리는 효과 (선택사항) */
-     }
-
-     /* 두근거리는 애니메이션 */
-     @keyframes pulse {
-         0% { transform: scale(1); }
-         50% { transform: scale(1.1); }
-         100% { transform: scale(1); }
+        font-size: 40px; /* 적당히 큰 크기 */
      }
 
      /* 화면을 숨길 때 사용하는 클래스 */
