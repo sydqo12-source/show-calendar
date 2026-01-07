@@ -374,6 +374,20 @@
      #btn-back-to-top:active {
         transform: scale(0.9);
      }
+     .bottom-nav-container {
+            margin-top: 30px !important;    /* 위쪽 달력과의 간격 */
+            margin-bottom: 80px !important; /* 페이지 맨 바닥과의 간격 */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 하단 제목 폰트 크기 강제 적용 (상단과 동일하게) */
+        #calendar-title-bottom {
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #495057;
+        }
     </style>
 </head>
 <body class="initial-mode">
@@ -444,6 +458,15 @@
                     </tbody>
                 </table>
             </div>
+    </div>
+    <div class="header-wrapper bottom-nav-container">
+        <div class="nav-row">
+            <div class="nav-btn" id="prev-btn-bottom">&lt;</div>
+            
+            <div class="sub-title" id="calendar-title-bottom">Loading...</div>
+            
+            <div class="nav-btn" id="next-btn-bottom">&gt;</div>
+        </div>
     </div>
 
     <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
@@ -788,6 +811,7 @@ END:VCALENDAR`;
                 if (idx === index) {
                     page.style.display = 'block';
                     titleEl.innerText = page.dataset.title;
+                    document.getElementById('calendar-title-bottom').innerText = page.dataset.title;
                 } else {
                     page.style.display = 'none';
                 }
@@ -908,6 +932,14 @@ END:VCALENDAR`;
                  }
                };
          };
+         // ▼▼▼ [추가] 하단 버튼 클릭 시 상단 버튼 동작 실행 ▼▼▼
+        document.getElementById('prev-btn-bottom').addEventListener('click', () => {
+            document.getElementById('prev-btn').click();
+        });
+
+        document.getElementById('next-btn-bottom').addEventListener('click', () => {
+            document.getElementById('next-btn').click();
+        });
     </script>
 </body>
 </html>
