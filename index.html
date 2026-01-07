@@ -229,7 +229,8 @@
             padding: 0; height: 45px; border-radius: 8px; font-size: 18px; font-weight: 700;
             text-align: center; cursor: pointer; text-decoration: none; border: none;
             display: flex; justify-content: center; align-items: center; 
-            transition: opacity 0.2s;
+            transition: opacity 0.2s; -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important; user-select: none !important;
         }
         .modal-btn:hover { opacity: 0.9; }
         .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
@@ -238,7 +239,7 @@
             background-color: white; color: black; border: 1px solid #ced4da;
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-youtube-custom:hover { background-color: #f8f9fa; }
+        .btn-youtube-custom:hover { background-color: white !important; }
         .yt-icon { width: 28px; height: auto; display: block; }
 
         /* [확인창 및 이미지 확대] */
@@ -550,18 +551,18 @@
             if (links.length > 0) {
                 htmlContent += `<div class="btn-row">`;
                 links.forEach(link => {
-                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black">${link.name}</a>`;
+                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black" oncontextmenu="return false">${link.name}</a>`;
                 });
                 htmlContent += `</div>`;
             }
 
             htmlContent += `<div class="btn-row">`;
-            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red">예매일정 추가</button>`;
+            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
             
             if (ds.youtube && ds.youtube.trim() !== '') {
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
                 htmlContent += `
-                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom">
+                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom" oncontextmenu="return false">
                         <img src="yt.png" alt="Youtube" class="yt-icon">
                         유튜브 검색
                     </a>`;
