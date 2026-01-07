@@ -343,6 +343,37 @@
      #calendar-container {
          padding-top: 15px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
      }
+     #btn-back-to-top {
+        position: fixed;
+        bottom: 25px;       /* 바닥에서 25px 띄움 */
+        right: 25px;        /* 오른쪽에서 25px 띄움 */
+        width: 45px;        /* 버튼 너비 */
+        height: 45px;       /* 버튼 높이 */
+    
+        background-color: #343a40; /* 버튼 색상 (진한 회색) */
+        color: white;       /* 화살표 색상 */
+        border-radius: 50%; /* 완전한 원형 */
+    
+        display: none;      /* 처음엔 숨김 (자바스크립트로 스크롤 내리면 보여줌) */
+        justify-content: center;
+        align-items: center;
+    
+        font-size: 24px;    /* 화살표 크기 */
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 5000;      /* 팝업보단 아래, 내용물보단 위에 */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* 그림자 효과 */
+    
+        /* 모바일 터치 시 깜빡임 방지 */
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        transition: transform 0.2s, opacity 0.3s;
+     }
+
+     /* 눌렀을 때 살짝 작아지는 효과 */
+     #btn-back-to-top:active {
+        transform: scale(0.9);
+     }
     </style>
 </head>
 <body class="initial-mode">
@@ -857,8 +888,27 @@ END:VCALENDAR`;
              setTimeout(() => {
                  splash.classList.add('hidden');
              }, 1500);
-         };
+             // [추가] 스크롤 이벤트 감지 (버튼 보이기/숨기기)
+             const topBtn = document.getElementById("btn-back-to-top");
+    
+             window.onscroll = function() {
+             // 스크롤을 200px 이상 내렸을 때만 버튼을 보여줌
+              if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                   topBtn.style.display = "flex";
+                 } else {
+                  topBtn.style.display = "none";
+                 }
+               };
 
+             // [추가] 맨 위로 부드럽게 이동하는 함수
+             function scrollToTop() {
+                window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+             });
+           }  
+         };
+    <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
     </script>
 </body>
 </html>
