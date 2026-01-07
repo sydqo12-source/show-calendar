@@ -476,6 +476,7 @@
         <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
         <img id="zoomedImage" src="" oncontextmenu="return false;">
     </div>
+    <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
 
     <script>
         const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
@@ -880,6 +881,13 @@ END:VCALENDAR`;
         btnReset.innerText = "모두해제";
 
         fetchEvents();
+        // [추가] 맨 위로 부드럽게 이동하는 함수
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }  
         // ▼ [추가] 스플래시 스크린 타이머 설정
          window.onload = function() {
              const splash = document.getElementById('splash-screen');
@@ -899,16 +907,7 @@ END:VCALENDAR`;
                   topBtn.style.display = "none";
                  }
                };
-
-             // [추가] 맨 위로 부드럽게 이동하는 함수
-             function scrollToTop() {
-                window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-             });
-           }  
          };
-    <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
     </script>
 </body>
 </html>
