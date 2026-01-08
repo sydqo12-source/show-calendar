@@ -343,6 +343,43 @@
      #calendar-container {
          padding-top: 15px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
      }
+     /* [추가] 오늘 이동 버튼 (플로팅 스타일) */
+        .btn-floating-today {
+            position: fixed;
+            
+            /* 위치 계산: Top버튼위치(25px) + 버튼높이(45px) + 간격(10px) = 80px */
+            bottom: 80px; 
+            right: 25px;            /* Top 버튼과 같은 라인 */
+            
+            width: 45px;            /* Top 버튼과 동일 크기 */
+            height: 45px;
+            
+            background-color: #ffffff; /* 하얀색 배경 */
+            color: #343a40;            /* 글자색은 진한 회색 (가독성) */
+            border: 1px solid #dee2e6; /* 얇은 테두리로 깔끔하게 */
+            border-radius: 50%;        /* 완전한 원형 */
+            
+            display: none;             /* 자바스크립트가 조건 맞을 때만 보여줌 (flex로 변경됨) */
+            justify-content: center;   /* 글자 가운데 정렬 */
+            align-items: center;
+            
+            font-size: 14px;           /* 글자 크기 */
+            font-weight: 800;          /* 굵게 */
+            cursor: pointer;
+            z-index: 4999;             /* Top 버튼(5000)보다는 살짝 아래 레이어 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* 그림자로 입체감 */
+            
+            /* 모바일 터치 깜빡임 방지 및 애니메이션 */
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        /* 눌렀을 때 효과 */
+        .btn-floating-today:active {
+            transform: scale(0.9);      /* 살짝 작아짐 */
+            background-color: #f8f9fa;  /* 아주 살짝 어두워짐 */
+        }
      #btn-back-to-top {
         position: fixed;
         bottom: 25px;       /* 바닥에서 25px 띄움 */
@@ -376,7 +413,7 @@
      }
      .bottom-nav-container {
             margin-top: 15px !important;    /* 위쪽 달력과의 간격 */
-            margin-bottom: 4px !important; /* 페이지 맨 바닥과의 간격 */
+            margin-bottom: 5px !important; /* 페이지 맨 바닥과의 간격 */
             width: 100%;
             display: flex;
             justify-content: center;
@@ -499,6 +536,7 @@
         <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
         <img id="zoomedImage" src="" oncontextmenu="return false;">
     </div>
+    <div id="btn-go-today" class="btn-floating-today">오늘</div>
     <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
 
     <script>
@@ -813,6 +851,7 @@ END:VCALENDAR`;
                     titleEl.innerText = page.dataset.title;
                     // 하단 연도/월 텍스트 동기화
                     document.getElementById('calendar-title-bottom').innerText = page.dataset.title;
+                    checkTodayButtonVisibility(page.dataset.title);
                 } else {
                     page.style.display = 'none';
                 }
@@ -952,6 +991,72 @@ END:VCALENDAR`;
         document.getElementById('next-btn-bottom').addEventListener('click', () => {
             document.getElementById('next-btn').click();
         });
+        
+    // ==========================================
+    // [추가 기능] 오늘 날짜 이동 & 버튼 제어 로직
+    // ==========================================
+
+    const btnGoToday = document.getElementById('btn-go-today');
+
+    // 1. 버튼 보이기/숨기기 결정 함수
+    function checkTodayButtonVisibility(pageTitle) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const realTodayTitle = `${year}년 ${month}월`; // 예: "2026년 1월"
+
+        // 달력 제목(pageTitle)과 실제 오늘 날짜(realTodayTitle)가 같으면 버튼 표시
+        if (pageTitle === realTodayTitle) {
+            btnGoToday.style.display = 'flex';
+        } else {
+            btnGoToday.style.display = 'none';
+        }
+    }
+
+    // 2. 버튼 클릭 시 스크롤 이동 함수
+    btnGoToday.addEventListener('click', () => {
+        const now = new Date();
+        const todayDate = now.getDate(); // 오늘 날짜 (숫자)
+
+        // 현재 보이는 페이지에서 '오늘 날짜 숫자'를 가진 요소를 찾음
+        const visiblePage = pages[currentIndex];
+        const dateSpans = visiblePage.querySelectorAll('.date-num');
+        
+        let targetElement = null;
+        for (let span of dateSpans) {
+            if (parseInt(span.innerText, 10) === todayDate) {
+                // 숫자를 감싸고 있는 칸(td)을 타겟으로 잡음
+                targetElement = span.closest('td'); 
+                break;
+            }
+        }
+
+        if (targetElement) {
+            // 스티키 헤더의 높이를 구함 (이만큼 빼고 스크롤해야 안 가려짐)
+            const headerHeight = document.getElementById('sticky-header').offsetHeight;
+            
+            // 타겟 요소의 절대 위치 계산
+            const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+            
+            // [계산] 요소 위치 - 헤더 높이 = 헤더 바로 아래에 딱 붙음
+            // (살짝 여유를 주고 싶다면 -10 정도 더 빼도 됨)
+            const offsetPosition = elementPosition - headerHeight;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth' // 부드럽게 스크롤
+            });
+            
+            // (선택사항) 깜빡임 효과로 위치 알려주기
+            targetElement.style.transition = 'background-color 0.5s';
+            targetElement.style.backgroundColor = '#fff9db'; // 연한 노란색
+            setTimeout(() => {
+                targetElement.style.backgroundColor = ''; // 원래대로 복구
+            }, 1000);
+        } else {
+            alert("오늘 날짜를 찾을 수 없습니다.");
+        }
+    });
     </script>
 </body>
 </html>
