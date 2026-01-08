@@ -114,15 +114,35 @@
         .sat .date-num { color: #a5d8ff; }
 
         /* [상태별 스타일] */
-        /* [수정] 지난 날짜 스타일: 단순 흐림 처리 */
+        /* [수정] 지난 날짜(과거) 스타일: 경계선은 건드리지 않음 */
         td.day-past {
-            opacity: 0.4;              /* 전체를 40% 농도로 흐리게 (수치 조절 가능: 0.1~1.0) */
-            transition: opacity 0.3s;  /* 부드러운 전환 효과 */
+            /* td 자체에는 투명도를 주지 않음 -> 경계선(border) 선명하게 유지됨 */
+            opacity: 1 !important; 
+            background-color: transparent !important;
         }
 
-        /* 지난 날짜라도 마우스 올리면 선명하게 (내용 확인용) */
-        td.day-past:hover {
-            opacity: 1;                /* 마우스 올리면 100% 선명해짐 */
+        /* 1. 지난 날짜의 '숫자'를 '공연 없는 날'과 똑같이 강제 변경 */
+        td.day-past .date-num {
+            font-size: 16px !important;    /* 작게 (기본 크기) */
+            font-weight: 500 !important;   /* 얇게 */
+            color: #ced4da !important;     /* 흐린 회색 */
+        }
+        /* 일요일/토요일 색상도 '공연 없는 날' 기준(파스텔톤)으로 복구 */
+        td.day-past.sun .date-num { color: #ffc9c9 !important; }
+        td.day-past.sat .date-num { color: #a5d8ff !important; }
+
+        /* 2. 지난 날짜의 '공연 박스'만 따로 흐리게 처리 */
+        td.day-past .event-box {
+            opacity: 0.4 !important;       /* 박스만 40% 투명하게 */
+            filter: grayscale(100%) !important; /* 흑백 처리 */
+        }
+
+        /* 3. 클릭하거나 마우스 올려도 흐림 효과가 유지되도록 설정 */
+        td.day-past .event-box:hover,
+        td.day-past .event-box:active {
+            opacity: 0.4 !important;       /* 마우스 올려도 투명도 유지 */
+            filter: grayscale(100%) !important; /* 흑백 유지 */
+            transform: none !important;    /* 떠오르는 효과 제거 (선택사항) */
         }
         /* 1. 공연 있는 날 (Active) */
         td.day-active {
@@ -894,6 +914,7 @@ END:VCALENDAR`;
             const visiblePage = pages[currentIndex];
             const tds = visiblePage.querySelectorAll('td');
 
+            // 1. 모든 필터가 꺼져있을 때 처리
             if (selectedRegions.length === 0) {
                 document.body.classList.add('initial-mode');
                 visiblePage.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
@@ -901,11 +922,15 @@ END:VCALENDAR`;
                     td.classList.remove('day-active');
                     td.classList.add('day-inactive');
                 });
+                
+                // [중요] 필터 다 꺼졌으니 버튼도 숨김 체크
+                checkTodayButtonVisibility(); 
                 return;
             } else {
                 document.body.classList.remove('initial-mode');
             }
 
+            // 2. 필터링 로직
             tds.forEach(td => {
                 const boxes = td.querySelectorAll('.event-box');
                 let hasVisible = false;
@@ -927,6 +952,8 @@ END:VCALENDAR`;
                     td.classList.add('day-inactive');
                 }
             });
+
+            // [중요] 필터 적용이 끝난 후, 버튼 표시 여부를 결정해야 정확함
             checkTodayButtonVisibility();
         }
 
