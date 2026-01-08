@@ -15,6 +15,8 @@
             padding: 15px; 
             user-select: none; 
             -webkit-user-select: none; 
+
+            overscroll-behavior: none;
         }
         
         body.no-scroll { overflow: hidden; touch-action: none; }
@@ -30,6 +32,9 @@
             border-radius: 4px; color: #868e96; font-size: 16px; font-weight: 700;
             display: flex; justify-content: center; align-items: center; cursor: pointer;
             transition: all 0.2s; user-select: none;
+
+            -webkit-tap-highlight-color: transparent; 
+            outline: none;
         }
         .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
         .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
