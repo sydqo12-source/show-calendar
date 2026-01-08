@@ -121,9 +121,10 @@
             background-color: transparent !important;
         }
 
-        /* 1. 지난 날짜의 '숫자'를 '공연 없는 날'과 똑같이 강제 변경 */
-        td.day-past .date-num {
-            opacity: 0.5 !important; /* 숫자만 30% 정도로 아주 흐리게 */
+        /* 2. [수정됨] 날짜 숫자: '과거'이면서 동시에 '활성화된(공연있는)' 날짜에만 투명도 적용 */
+        /* 공연이 없는 날(day-inactive)은 이 규칙이 적용되지 않아 원래 색상 그대로 나옵니다 */
+        td.day-past.day-active .date-num {
+            opacity: 0.5 !important;
         }
         /* 일요일/토요일 색상도 '공연 없는 날' 기준(파스텔톤)으로 복구 */
         /* td.day-past.sun .date-num { color: #ffc9c9 !important; } */
