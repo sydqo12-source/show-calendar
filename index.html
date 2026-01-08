@@ -363,7 +363,7 @@
             justify-content: center;   /* 글자 가운데 정렬 */
             align-items: center;
             
-            font-size: 14px;           /* 글자 크기 */
+            font-size: 18px;           /* 글자 크기 */
             font-weight: 800;          /* 굵게 */
             cursor: pointer;
             z-index: 4999;             /* Top 버튼(5000)보다는 살짝 아래 레이어 */
@@ -851,7 +851,6 @@ END:VCALENDAR`;
                     titleEl.innerText = page.dataset.title;
                     // 하단 연도/월 텍스트 동기화
                     document.getElementById('calendar-title-bottom').innerText = page.dataset.title;
-                    checkTodayButtonVisibility(page.dataset.title);
                 } else {
                     page.style.display = 'none';
                 }
@@ -917,6 +916,7 @@ END:VCALENDAR`;
                     td.classList.add('day-inactive');
                 }
             });
+            checkTodayButtonVisibility();
         }
 
         prevBtn.addEventListener('click', () => {
@@ -998,21 +998,33 @@ END:VCALENDAR`;
 
     const btnGoToday = document.getElementById('btn-go-today');
 
-    // 1. 버튼 보이기/숨기기 결정 함수
-    function checkTodayButtonVisibility(pageTitle) {
+    // 1. 버튼 보이기/숨기기 결정 함수 (수정됨)
+    function checkTodayButtonVisibility() {
+        const visiblePage = pages[currentIndex]; // 현재 보이는 페이지 가져오기
+        const pageTitle = visiblePage.dataset.title; // 예: "2026년 1월"
+
+        // [조건 1] 날짜 확인: 이번 달이 맞는가?
         const now = new Date();
         const year = now.getFullYear();
         const month = now.getMonth() + 1;
-        const realTodayTitle = `${year}년 ${month}월`; // 예: "2026년 1월"
+        const realTodayTitle = `${year}년 ${month}월`;
 
-        // 달력 제목(pageTitle)과 실제 오늘 날짜(realTodayTitle)가 같으면 버튼 표시
-        if (pageTitle === realTodayTitle) {
-            btnGoToday.style.display = 'flex';
-        } else {
+        if (pageTitle !== realTodayTitle) {
+            // 이번 달이 아니면 무조건 숨김
             btnGoToday.style.display = 'none';
+            return; 
+        }
+
+        // [조건 2] 공연 확인: 활성화된(공연 있는) 날짜가 하나라도 있는가?
+        // applyFilter가 실행된 후, 공연이 있는 날은 'day-active' 클래스를 가집니다.
+        const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
+
+        if (hasActiveEvents) {
+            btnGoToday.style.display = 'flex'; // 조건 만족 시 보임
+        } else {
+            btnGoToday.style.display = 'none'; // 공연 없으면 숨김
         }
     }
-
     // 2. 버튼 클릭 시 스크롤 이동 함수
     btnGoToday.addEventListener('click', () => {
         const now = new Date();
