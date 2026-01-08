@@ -114,7 +114,32 @@
         .sat .date-num { color: #a5d8ff; }
 
         /* [상태별 스타일] */
-        
+        /* [수정] 지난 날짜(과거) 스타일 */
+        td.day-past {
+            background-color: #f8f9fa; /* 배경은 연한 회색 */
+            /* pointer-events: none;  <-- 이 줄을 삭제해서 클릭 가능하게 만들었습니다! */
+        }
+
+        /* [중요] 지난 날짜는 '공연이 있어도' 날짜 숫자를 흐리게(작게) 변경 */
+        td.day-past .date-num {
+            color: #ced4da !important;   /* 흐린 회색 */
+            font-weight: 500 !important; /* 얇은 글씨 */
+            font-size: 16px !important;  /* 작은 크기 (원래대로 축소) */
+        }
+
+        /* [중요] 지난 공연 박스 스타일: 흑백이지만 눌리는 느낌 유지 */
+        td.day-past .event-box {
+            filter: grayscale(100%);     /* 흑백 처리 */
+            opacity: 0.7;                /* 약간 투명하게 */
+            border-color: #e9ecef;
+            cursor: pointer;             /* 마우스 올리면 손가락 모양 유지 */
+        }
+
+        /* 지난 공연이라도 마우스 올리면 반응하기 (선택사항) */
+        td.day-past .event-box:hover {
+            opacity: 1;                  /* 마우스 올리면 선명해짐 */
+            transform: translateY(-2px); /* 살짝 떠오름 */
+        }
         /* 1. 공연 있는 날 (Active) */
         td.day-active {
             padding: 7px 7px 0px 7px !important; 
@@ -363,7 +388,7 @@
             justify-content: center;   /* 글자 가운데 정렬 */
             align-items: center;
             
-            font-size: 18px;           /* 글자 크기 */
+            font-size: 16px;           /* 글자 크기 */
             font-weight: 800;          /* 굵게 */
             cursor: pointer;
             z-index: 4999;             /* Top 버튼(5000)보다는 살짝 아래 레이어 */
@@ -582,6 +607,8 @@
             console.log("Supabase 데이터:", events);
             
             renderEvents();
+            markPastDays();
+
             showPage(0); 
         }
 
@@ -1024,6 +1051,42 @@ END:VCALENDAR`;
         } else {
             btnGoToday.style.display = 'none'; // 공연 없으면 숨김
         }
+    }
+    // [추가] 과거 날짜 흐리게 처리하는 함수
+    // [수정] 과거 날짜 처리 함수
+    function markPastDays() {
+        const now = new Date();
+        // 시간은 무시하고 '날짜'만 비교하기 위해 0시 0분으로 설정
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        pages.forEach(page => {
+            const title = page.dataset.title;
+            const matches = title.match(/(\d+)년 (\d+)월/);
+            if (!matches) return;
+            
+            const year = parseInt(matches[1], 10);
+            const month = parseInt(matches[2], 10) - 1; 
+
+            const dateSpans = page.querySelectorAll('.date-num');
+            dateSpans.forEach(span => {
+                const day = parseInt(span.innerText, 10);
+                if (isNaN(day)) return;
+
+                const cellDate = new Date(year, month, day);
+
+                // 오늘보다 날짜가 작으면(과거이면)
+                if (cellDate < todayStart) {
+                    const td = span.closest('td');
+                    if (td) {
+                        td.classList.add('day-past'); // 디자인용 클래스만 추가
+                        
+                        // [삭제됨] td.classList.remove('day-active'); 
+                        // -> 이 줄을 지웠으므로, 데이터 상으로는 여전히 '활성' 상태입니다.
+                        // -> 덕분에 CSS에서 디자인만 바꾸고 클릭 기능은 살아있게 됩니다.
+                    }
+                }
+            });
+        });
     }
     // 2. 버튼 클릭 시 스크롤 이동 함수
     btnGoToday.addEventListener('click', () => {
