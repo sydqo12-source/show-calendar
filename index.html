@@ -114,31 +114,15 @@
         .sat .date-num { color: #a5d8ff; }
 
         /* [상태별 스타일] */
-        /* [수정] 지난 날짜(과거) 스타일 */
+        /* [수정] 지난 날짜 스타일: 단순 흐림 처리 */
         td.day-past {
-            background-color: #f8f9fa; /* 배경은 연한 회색 */
-            /* pointer-events: none;  <-- 이 줄을 삭제해서 클릭 가능하게 만들었습니다! */
+            opacity: 0.4;              /* 전체를 40% 농도로 흐리게 (수치 조절 가능: 0.1~1.0) */
+            transition: opacity 0.3s;  /* 부드러운 전환 효과 */
         }
 
-        /* [중요] 지난 날짜는 '공연이 있어도' 날짜 숫자를 흐리게(작게) 변경 */
-        td.day-past .date-num {
-            color: #ced4da !important;   /* 흐린 회색 */
-            font-weight: 500 !important; /* 얇은 글씨 */
-            font-size: 16px !important;  /* 작은 크기 (원래대로 축소) */
-        }
-
-        /* [중요] 지난 공연 박스 스타일: 흑백이지만 눌리는 느낌 유지 */
-        td.day-past .event-box {
-            filter: grayscale(100%);     /* 흑백 처리 */
-            opacity: 0.7;                /* 약간 투명하게 */
-            border-color: #e9ecef;
-            cursor: pointer;             /* 마우스 올리면 손가락 모양 유지 */
-        }
-
-        /* 지난 공연이라도 마우스 올리면 반응하기 (선택사항) */
-        td.day-past .event-box:hover {
-            opacity: 1;                  /* 마우스 올리면 선명해짐 */
-            transform: translateY(-2px); /* 살짝 떠오름 */
+        /* 지난 날짜라도 마우스 올리면 선명하게 (내용 확인용) */
+        td.day-past:hover {
+            opacity: 1;                /* 마우스 올리면 100% 선명해짐 */
         }
         /* 1. 공연 있는 날 (Active) */
         td.day-active {
