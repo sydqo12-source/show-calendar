@@ -16,6 +16,7 @@
             user-select: none; 
             -webkit-user-select: none; 
 
+            touch-action: pan-y;
             overscroll-behavior: none;
         }
         
@@ -455,6 +456,41 @@
             font-weight: 800; 
             color: #495057;
         }
+        /* [추가] 모든 이미지 드래그 방지 (PC 마우스 드래그 차단) */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            user-select: none;
+        }
+
+        /* [추가] PC 버전 레이아웃 보정 (모바일 앱처럼 가운데 정렬) */
+        @media (min-width: 768px) {
+            body {
+                max-width: 480px;       /* 너비 제한 (너무 넓어지지 않게) */
+                margin: 0 auto;         /* 화면 중앙 정렬 */
+                box-shadow: 0 0 30px rgba(0,0,0,0.1); /* 양옆에 그림자 줘서 고급스럽게 */
+                min-height: 100vh;      /* 화면 꽉 채우기 */
+                border-left: 1px solid #f1f3f5;  /* 양옆 테두리 */
+                border-right: 1px solid #f1f3f5;
+            }
+
+            /* 스티키 헤더도 몸통 너비에 맞게 조정 */
+            #sticky-header {
+                max-width: 480px;
+                left: 50%;
+                transform: translateX(-50%); /* 정확히 중앙에 고정 */
+            }
+
+            /* 플로팅 버튼들이 화면 구석이 아니라 달력 옆에 붙도록 조정 */
+            #btn-back-to-top, 
+            .btn-floating-today {
+                /* (화면전체 50%) - (몸통절반 240px) + (원하는여백 20px) = 오른쪽 여백 계산 */
+                right: calc(50% - 240px + 20px); 
+            }
+        }
     </style>
 </head>
 <body class="initial-mode">
@@ -752,22 +788,29 @@
             if(ds.link4) links.push({name: '티켓링크', url: ds.link4});
             if(ds.link5) links.push({name: '예매처', url: ds.link5});
 
+            // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
             if (links.length > 0) {
                 htmlContent += `<div class="btn-row">`;
                 links.forEach(link => {
-                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black" oncontextmenu="return false">${link.name}</a>`;
+                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black" 
+                        oncontextmenu="return false" 
+                        draggable="false" ondragstart="return false;">${link.name}</a>`;
                 });
                 htmlContent += `</div>`;
             }
 
             htmlContent += `<div class="btn-row">`;
+            // 예매일정 추가 버튼 (이건 원래 잘 되므로 그대로 유지)
             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
             
+            // [수정] 유튜브 버튼 생성 부분 (드래그 방지 속성 추가)
             if (ds.youtube && ds.youtube.trim() !== '') {
                 const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
                 htmlContent += `
-                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom" oncontextmenu="return false">
-                        <img src="yt.png" alt="Youtube" class="yt-icon">
+                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom" 
+                        oncontextmenu="return false" 
+                        draggable="false" ondragstart="return false;">
+                        <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
                         유튜브 검색
                     </a>`;
             }
