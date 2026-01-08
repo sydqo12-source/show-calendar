@@ -482,6 +482,7 @@
                 max-width: 480px;     /* 몸통 크기와 똑같이 */
                 width: 100% !important; 
                 
+                box-sizing: border-box !important;
                 /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
                 margin-left: 0 !important;  
                 margin-right: 0 !important;
@@ -498,7 +499,7 @@
                 right: auto !important; /* 기존 오른쪽 기준 위치 무시 */
                 
                 /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
-                left: calc(50% + 240px + 20px) !important; 
+                left: calc(50% + 240px + 22px) !important; 
             }
         }
     </style>
