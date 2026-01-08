@@ -123,7 +123,7 @@
 
         /* 1. 지난 날짜의 '숫자'를 '공연 없는 날'과 똑같이 강제 변경 */
         td.day-past .date-num {
-            opacity: 0.3 !important; /* 숫자만 30% 정도로 아주 흐리게 */
+            opacity: 0 !important; /* 숫자만 30% 정도로 아주 흐리게 */
         }
         /* 일요일/토요일 색상도 '공연 없는 날' 기준(파스텔톤)으로 복구 */
         /* td.day-past.sun .date-num { color: #ffc9c9 !important; } */
@@ -131,13 +131,13 @@
 
         /* 2. 지난 날짜의 '공연 박스'만 따로 흐리게 처리 */
         td.day-past .event-box {
-            opacity: 0.4 !important;       /* 박스만 40% 투명하게 */
+            opacity: 0.3 !important;       /* 박스만 40% 투명하게 */
         }
 
         /* 3. 클릭하거나 마우스 올려도 흐림 효과가 유지되도록 설정 */
         td.day-past .event-box:hover,
         td.day-past .event-box:active {
-            opacity: 0.4 !important;       /* 마우스 올려도 투명도 유지 */
+            opacity: 0.3 !important;       /* 마우스 올려도 투명도 유지 */
         }
         /* 1. 공연 있는 날 (Active) */
         td.day-active {
