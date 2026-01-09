@@ -39,7 +39,7 @@
 
             touch-action: pan-y;
             overscroll-behavior: none;
-        }
+        } 
         
         body.no-scroll { overflow: hidden; touch-action: none; }
 
@@ -1091,14 +1091,14 @@ END:VCALENDAR`;
                 behavior: "smooth"
             });
         }  
-        // ▼ [추가] 스플래시 스크린 타이머 설정
+        /* ▼ [추가] 스플래시 스크린 타이머 설정 */
          window.onload = function() {
-             const splash = document.getElementById('splash-screen');
+             /*const splash = document.getElementById('splash-screen'); 
         
              // 1500ms (1.5초) 뒤에 사라지게 설정 (원하는 시간으로 숫자 변경 가능)
              setTimeout(() => {
                  splash.classList.add('hidden');
-             }, 1500);
+             }, 1500); */
              // [추가] 스크롤 이벤트 감지 (버튼 보이기/숨기기)
              const topBtn = document.getElementById("btn-back-to-top");
     
