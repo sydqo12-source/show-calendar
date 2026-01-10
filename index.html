@@ -593,6 +593,45 @@
         .confirm-btn:hover {
             opacity: 0.9;
         }
+        /* [추가] 키워드 알림 버튼 스타일 */
+        #btn-keyword-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px; 
+            width: 40px; height: 40px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; cursor: pointer; z-index: 1001; /* 헤더보다 위에 */
+            transition: transform 0.2s;
+        }
+        #btn-keyword-alert:active { transform: scale(0.9); }
+        
+        @media (min-width: 768px) {
+            #btn-keyword-alert {
+                /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
+                right: auto !important;
+                left: calc(50% + 240px + 20px) !important;
+                top: 80px;
+            }
+        }
+
+        /* [추가] 입력창 스타일 */
+        .custom-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box; 
+        }
+        .custom-input:focus {
+            border-color: #343a40;
+            border-width: 2px;
+            padding: 11px; 
+        }
     </style>
 </head>
 <body class="initial-mode">
@@ -710,7 +749,32 @@
         <div class="confirm-content notice-box" onclick="event.stopPropagation()">
             <div class="notice-header">📢 알림</div>
             
-        <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
+            <div class="notice-list">
+                <div class="notice-item">
+                    <span class="notice-icon">🎫</span>
+                    <span class="notice-text">
+                        <b>선예매</b>가 있는 공연의<br>
+                        이후 예매 일정(일반예매)은<br>
+                        캘린더에 넣지 않습니다!
+                    </span>
+                </div>
+
+                <div id="pwa-msg" class="notice-item" style="display: none;">
+                    <span class="notice-icon">👇</span>
+                    <span class="notice-text">
+                        스크롤을 내리면 로딩이 금방되니<br>
+                        몇초만 기다려주세요!
+                    </span>
+                </div>
+            </div>
+
+            <button onclick="closeMainNotice()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
+        </div>
+    </div>
+
+    <div id="btn-keyword-alert" onclick="openKeywordModal()">🔔</div>
+
+    <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
             <div class="modal-header" style="margin-bottom: 15px;">
                 <span style="font-size: 20px; font-weight: 800;">🔔 보고 싶은 공연이 있나요?</span>
@@ -729,7 +793,7 @@
                 키워드 등록
             </button>
         </div>
-        </div>
+    </div>
             <div class="notice-list">
                 <div class="notice-item">
                     <span class="notice-icon">🎫</span>
