@@ -913,23 +913,22 @@
             let htmlContent = '';
 
             const links = [];
-            if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1});
-            if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2});
-            if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3});
-            if(ds.link4) links.push({name: '티켓링크', url: ds.link4});
-            if(ds.link5) links.push({name: '예매처', url: ds.link5});
+            // [수정] 각 데이터 컬럼(link1~5)에 고정 색상을 매칭합니다.
+            // 데이터가 있는 경우에만 리스트에 담되, 색상 정보도 같이 담습니다.
+            if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1, color: '#4154FF'});
+            if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2, color: '#FF3804'});
+            if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3, color: '#00CD3C'});
+            if(ds.link4) links.push({name: '티켓링크', url: ds.link4, color: '#e03131'});
+            if(ds.link5) links.push({name: '예매처', url: ds.link5, color: '#e03131'});
 
             // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
             if (links.length > 0) {
-                const borderColors = ['#4154FF', '#FF3804', '#00CD3C', '#1971c2', '#7048e8'];
                 htmlContent += `<div class="btn-row">`;
-                links.forEach((link, index) => {
-                    // 2. 순서에 맞는 색상 가져오기 (버튼이 5개 넘어가면 색상 반복)
-                    const myColor = borderColors[index % borderColors.length];
-
-                    // 3. 스타일 적용: 배경은 흰색, 테두리와 글자색은 지정된 색상
+                links.forEach(link => {
+                    // 이제 순서(index)가 아니라, 위에서 정한 고정 색상(link.color)을 사용합니다.
+                    // 스타일: 배경을 색상으로 채우고(background-color), 글자는 흰색(white), 테두리 없음(none)
                     htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
-                        style="background-color: white; border: 1px solid ${myColor}; color: ${myColor}; flex: 1;"
+                        style="background-color: ${link.color}; color: white; border: none; flex: 1;"
                         oncontextmenu="return false" 
                         draggable="false" ondragstart="return false;">${link.name}</a>`;
                 });
