@@ -710,6 +710,26 @@
         <div class="confirm-content notice-box" onclick="event.stopPropagation()">
             <div class="notice-header">📢 알림</div>
             
+        <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
+            <div class="modal-header" style="margin-bottom: 15px;">
+                <span style="font-size: 20px; font-weight: 800;">🔔 보고 싶은 공연이 있나요?</span>
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 20px; color: #495057; line-height: 1.4;">
+                찾으시는 공연 키워드를 남겨주세요.<br>
+                일정 추가 시 참고하겠습니다!
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 박효신)">
+            </div>
+
+            <button onclick="submitKeyword()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 20px; background-color: #fa5252;">
+                키워드 등록
+            </button>
+        </div>
+        </div>
             <div class="notice-list">
                 <div class="notice-item">
                     <span class="notice-icon">🎫</span>
@@ -778,6 +798,55 @@
             markPastDays();
 
             showPage(0); 
+        }
+        // ▼▼▼ [추가] 키워드 알림 관련 로직 ▼▼▼
+        
+        const keywordModal = document.getElementById('keywordModal');
+        
+        function openKeywordModal() {
+            keywordModal.style.display = 'flex';
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeKeywordModal(e) {
+            keywordModal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }
+
+        // [수정됨] 키워드 전송 함수
+        async function submitKeyword() {
+            const keyword = document.getElementById('input-keyword').value.trim();
+
+            // 유효성 검사 (키워드만 확인)
+            if (!keyword) {
+                alert("키워드를 입력해주세요.");
+                return;
+            }
+
+            // 버튼 비활성화 (중복 클릭 방지)
+            const btn = document.querySelector('#keywordModal .confirm-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "저장 중...";
+            btn.disabled = true;
+
+            // Supabase에 저장 (연락처 없이 키워드만)
+            const { data, error } = await client
+                .from('keyword_alerts')
+                .insert([{ keyword: keyword }]);
+
+            if (error) {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다. 다시 시도해주세요.");
+            } else {
+                alert(`소중한 의견 감사합니다!\n[${keyword}] 일정을 주시하겠습니다.`);
+                closeKeywordModal();
+                // 입력창 초기화
+                document.getElementById('input-keyword').value = '';
+            }
+            
+            // 버튼 복구
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
 
         const regionChks = document.querySelectorAll('.region-chk');
