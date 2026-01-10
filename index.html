@@ -921,12 +921,19 @@
 
             // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
             if (links.length > 0) {
+                const borderColors = ['#4154FF', '#FF3804', '#00CD3C', '#1971c2', '#7048e8'];
                 htmlContent += `<div class="btn-row">`;
-                links.forEach(link => {
-                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn btn-link-black" 
+                links.forEach((link, index) => {
+                    // 2. 순서에 맞는 색상 가져오기 (버튼이 5개 넘어가면 색상 반복)
+                    const myColor = borderColors[index % borderColors.length];
+
+                    // 3. 스타일 적용: 배경은 흰색, 테두리와 글자색은 지정된 색상
+                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
+                        style="background-color: white; border: 1px solid ${myColor}; color: ${myColor}; flex: 1;"
                         oncontextmenu="return false" 
                         draggable="false" ondragstart="return false;">${link.name}</a>`;
                 });
+                
                 htmlContent += `</div>`;
             }
 
