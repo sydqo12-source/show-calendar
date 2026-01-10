@@ -635,6 +635,89 @@
             border-width: 2px;
             padding: 11px; 
         }
+        /* [추가/수정] 키워드 모달 내부 버튼 스타일 */
+        .keyword-btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* 흰색 버튼 (등록한 키워드 확인용) */
+        .btn-white {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #343a40;
+            border: 1px solid #ced4da;
+            transition: all 0.2s;
+        }
+        .btn-white:hover { background-color: #f8f9fa; }
+        
+        /* 빨간 버튼 (등록용) */
+        .btn-red {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            background-color: #fa5252;
+            color: white;
+            border: none;
+        }
+        .btn-red:hover { opacity: 0.9; }
+
+        /* [추가] 내 키워드 리스트 스타일 */
+        #my-keyword-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px; /* 너무 길어지면 스크롤 */
+            overflow-y: auto;
+            text-align: left;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+            display: none; /* 처음엔 숨김 */
+        }
+        .my-keyword-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5px;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 16px;
+            color: #495057;
+        }
+        .btn-delete-keyword {
+            background: none;
+            border: none;
+            color: #adb5bd;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .btn-delete-keyword:hover { color: #fa5252; }
+
+        /* [추가] 커스텀 알림창 (Alert 대체) */
+        #customAlertModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); z-index: 30000;
+            justify-content: center; align-items: center;
+        }
+        .custom-alert-content {
+            background: white; width: 80%; max-width: 300px;
+            border-radius: 12px; padding: 25px 20px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .custom-alert-msg { font-size: 17px; font-weight: 600; color: #343a40; margin-bottom: 20px; word-break: keep-all; line-height: 1.5; }
+        .btn-alert-ok {
+            width: 100%; padding: 10px 0; background-color: #343a40; color: white;
+            border: none; border-radius: 6px; font-size: 16px; font-weight: 700; cursor: pointer;
+        }
     </style>
 </head>
 <body class="initial-mode">
@@ -778,24 +861,37 @@
     <div id="btn-keyword-alert" onclick="openKeywordModal()">🔔</div>
 
     <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
+        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 25px 20px;">
             <div class="modal-header" style="margin-bottom: 15px; text-align: center;">
                 <span style="font-size: 22px; font-weight: 800;">🔔 공연 일정 알림</span>
             </div>
             
-            <div style="text-align: left; margin-bottom: 10px; color: #495057; line-height: 1.4; font-size: 18px; margin-left: 10px;">
-                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
+            <div style="text-align: left; margin-bottom: 15px; color: #495057; line-height: 1.5; font-size: 17px; padding: 0 5px;">
+                보고싶은 공연의 키워드를 등록해주세요.<br>
+                <span style="font-size: 15px; color:#868e96;">(예: 지킬앤하이드, 성시경, 내한)</span><br>
                 일정이 추가되면 알림을 보내드릴게요.
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 성시경, 흠뻑쇼)">
+                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력" style="background-color: #f8f9fa;">
             </div>
 
-            <button onclick="submitKeyword()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 10px; background-color: #fa5252;">
-                키워드 등록
-            </button>
+            <div class="keyword-btn-row">
+                <button onclick="viewMyKeywords()" class="btn-white">등록한 키워드</button>
+                <button onclick="submitKeyword()" class="confirm-btn btn-red">등록하기</button>
+            </div>
+
+            <ul id="my-keyword-list">
+                </ul>
         </div>
+    </div>
+
+    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()">
+        <div class="custom-alert-content" onclick="event.stopPropagation()">
+            <div id="customAlertMsg" class="custom-alert-msg">알림 메시지</div>
+            <button onclick="closeCustomAlert()" class="btn-alert-ok">확인</button>
+        </div>
+    </div>
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -824,32 +920,44 @@
         
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // [추가] 커스텀 알림창 띄우기 함수
+        function openCustomAlert(msg) {
+            document.getElementById('customAlertMsg').innerHTML = msg; // innerHTML로 줄바꿈 허용
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').style.display = 'none';
+        }
+
+        // [수정] 키워드 등록 함수 (Alert 대신 커스텀 알림 사용)
         async function submitKeyword() {
-            const keyword = document.getElementById('input-keyword').value.trim();
+            const keywordInput = document.getElementById('input-keyword');
+            const keyword = keywordInput.value.trim();
+            const listArea = document.getElementById('my-keyword-list');
+
+            // 리스트가 열려있으면 닫기 (깔끔하게)
+            listArea.style.display = 'none';
 
             if (!keyword) {
-                alert("키워드를 입력해주세요.");
+                openCustomAlert("키워드를 입력해주세요!");
                 return;
             }
 
-            // 버튼 글자 바꾸고 비활성화
-            const btn = document.querySelector('#keywordModal .confirm-btn');
+            const btn = document.querySelector('#keywordModal .btn-red');
             const originalText = btn.innerText;
-            btn.innerText = "권한 확인 중...";
+            btn.innerText = "저장 중...";
             btn.disabled = true;
 
             try {
-                // 1. 알림 권한 요청하기
+                // 1. 권한 확인
                 const permission = await Notification.requestPermission();
                 if (permission !== 'granted') {
-                    alert("알림 권한을 허용해야만 알림을 보낼 수 있습니다!");
+                    openCustomAlert("알림 권한을 허용해야<br>알림을 받을 수 있어요!");
                     throw new Error("권한 거부됨");
                 }
 
-                btn.innerText = "알림 설정 중...";
-
-                // 2. 토큰(주소) 가져오기
-                // ★★★ 아래 따옴표 안에 아까 복사한 긴 VAPID 키를 넣으세요! ★★★
+                // 2. 토큰 가져오기 (이미 있으면 캐시된 것 가져옴)
                 const token = await window.getToken(window.messaging, {
                     vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
                     serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
@@ -857,32 +965,108 @@
 
                 if (!token) throw new Error("토큰 생성 실패");
 
-                console.log("알림 토큰:", token);
-                btn.innerText = "저장 중...";
-
-                // 3. Supabase에 저장 (키워드 + 토큰)
+                // 3. Supabase 저장
                 const { data, error } = await client
                     .from('keyword_alerts')
-                    .insert([{ 
-                        keyword: keyword,
-                        fcm_token: token 
-                    }]);
+                    .insert([{ keyword: keyword, fcm_token: token }]);
 
                 if (error) throw error;
 
-                alert(`등록되었습니다.\n${keyword}에 대한 일정이 추가되면\n알림을 보내드릴게요.`);
-                closeKeywordModal();
-                document.getElementById('input-keyword').value = '';
+                openCustomAlert(`<b>[${keyword}]</b><br>알림 키워드로 등록되었어요!🎉`);
+                keywordInput.value = '';
 
             } catch (err) {
-                console.error('에러:', err);
+                console.error(err);
                 if (err.message !== "권한 거부됨") {
-                    alert("오류가 발생했습니다. (콘솔 확인)");
+                    openCustomAlert("오류가 발생했어요.<br>잠시 후 다시 시도해주세요.");
                 }
             } finally {
-                // 버튼 원상복구
                 btn.innerText = originalText;
                 btn.disabled = false;
+            }
+        }
+
+        // [추가] 내가 등록한 키워드 조회 함수
+        async function viewMyKeywords() {
+            const listArea = document.getElementById('my-keyword-list');
+            const btn = document.querySelector('#keywordModal .btn-white');
+            
+            // 이미 열려있으면 닫기 (토글 기능)
+            if (listArea.style.display === 'block') {
+                listArea.style.display = 'none';
+                return;
+            }
+
+            const originalText = btn.innerText;
+            btn.innerText = "로딩 중...";
+            btn.disabled = true;
+
+            try {
+                // 토큰이 있어야 내 키워드를 찾을 수 있음
+                const token = await window.getToken(window.messaging, {
+                    vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
+                    serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
+                });
+
+                if (!token) {
+                    openCustomAlert("알림 권한이 필요합니다.");
+                    return;
+                }
+
+                // 내 토큰으로 등록된 키워드 검색
+                const { data, error } = await client
+                    .from('keyword_alerts')
+                    .select('*')
+                    .eq('fcm_token', token)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                listArea.innerHTML = ''; // 초기화
+
+                if (data.length === 0) {
+                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                } else {
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'my-keyword-item';
+                        li.innerHTML = `
+                            <span>${item.keyword}</span>
+                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>
+                        `;
+                        listArea.appendChild(li);
+                    });
+                }
+                listArea.style.display = 'block'; // 리스트 보여주기
+
+            } catch (err) {
+                console.error(err);
+                openCustomAlert("목록을 불러오지 못했어요.");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // [추가] 키워드 삭제 함수
+        async function deleteKeyword(id) {
+            if(!confirm("이 키워드 알림을 삭제할까요?")) return;
+
+            try {
+                const { error } = await client
+                    .from('keyword_alerts')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                // 삭제 후 목록 새로고침을 위해 닫았다가 다시 여는 효과 or 리스트 갱신
+                // 여기서는 간단하게 해당 항목을 화면에서 지움
+                viewMyKeywords(); // 목록 다시 불러오기
+                
+            } catch (err) {
+                console.error(err);
+                openCustomAlert("삭제 실패");
             }
         }
 
