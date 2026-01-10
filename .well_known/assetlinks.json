@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.ddobinga.showkok",
+        "sha256_cert_fingerprints": ["44:2B:BA:EF:9E:6E:60:DC:2E:26:CE:FC:84:21:41:9F:58:07:12:16:F7:46:0A:0A:92:FE:B7:99:EF:32:7B:82"]
+      }
+    }]
