@@ -587,7 +587,11 @@
         .confirm-btn {
             font-size: 18px;
             -webkit-tap-highlight-color: transparent; /* 아이폰 터치 하이라이트 제거 */
-            outline: none;
+            outline: none; transition: opacity 0.2s, transform 0.1s;
+        }
+        
+        .confirm-btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
