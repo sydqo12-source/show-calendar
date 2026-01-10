@@ -777,16 +777,17 @@
     <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
             <div class="modal-header" style="margin-bottom: 15px;">
-                <span style="font-size: 20px; font-weight: 800;">🔔 보고 싶은 공연이 있나요?</span>
+                <span style="font-size: 20px; font-weight: 800;">🔔 공연 일정 알림</span>
             </div>
             
             <div style="text-align: left; margin-bottom: 20px; color: #495057; line-height: 1.4;">
-                찾으시는 공연 키워드를 남겨주세요.<br>
-                일정 추가 시 참고하겠습니다!
+                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
+                일정이 추가되면 카톡 알림 보내드릴게요!<br>
+                잘못 등록하셔도 괜찮습니다. 다시 해주세요!
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 박효신)">
+                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 성시경, 흠뻑쇼)">
             </div>
 
             <button onclick="submitKeyword()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 20px; background-color: #fa5252;">
