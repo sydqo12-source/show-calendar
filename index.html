@@ -866,19 +866,18 @@
                 <span style="font-size: 22px; font-weight: 800;">🔔 공연 일정 알림</span>
             </div>
             
-            <div style="text-align: left; margin-bottom: 15px; color: #495057; line-height: 1.5; font-size: 17px; padding: 0 5px;">
-                보고싶은 공연의 키워드를 등록해주세요.<br>
-                <span style="font-size: 15px; color:#868e96;">(예: 지킬앤하이드, 성시경, 내한)</span><br>
+            <div style="text-align: left; margin-bottom: 15px; color: #495057; line-height: 1.5; font-size: 18px; padding: 0 5px;">
+                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
                 일정이 추가되면 알림을 보내드릴게요.
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력" style="background-color: #f8f9fa;">
+                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 성시경, 내한)" style="background-color: #f8f9fa;">
             </div>
 
             <div class="keyword-btn-row">
-                <button onclick="viewMyKeywords()" class="btn-white">등록한 키워드</button>
-                <button onclick="submitKeyword()" class="confirm-btn btn-red">등록하기</button>
+                <button onclick="viewMyKeywords()" class="btn-white">내 키워드</button>
+                <button onclick="submitKeyword()" class="confirm-btn btn-red">키워드 등록</button>
             </div>
 
             <ul id="my-keyword-list">
