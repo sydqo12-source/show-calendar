@@ -654,6 +654,9 @@
             color: #343a40;
             border: 1px solid #ced4da;
             transition: all 0.2s;
+
+            -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 파란 박스 제거 */
+            outline: none; /* 클릭 시 파란 테두리(Focus Ring) 제거 */
         }
         .btn-white:hover { background-color: #f8f9fa; }
         
@@ -971,7 +974,7 @@
 
                 if (error) throw error;
 
-                openCustomAlert(`<b>[${keyword}]</b><br>알림 키워드로 등록되었어요!🎉`);
+                openCustomAlert(`알림 키워드로 등록되었어요🎉<br><b>${keyword}</b>에 대한 공연 일정이 추가되면<br>알림을 보내드릴게요`);
                 keywordInput.value = '';
 
             } catch (err) {
