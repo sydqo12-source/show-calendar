@@ -541,16 +541,21 @@
             }
         }
         /* [추가] 공지 팝업 전용 스타일 */
+        body.no-scroll {
+            overflow: hidden;
+            touch-action: none; /* 모바일에서 터치 스크롤도 방지 */
+        }
+
         .notice-box {
             text-align: left; /* 글자 왼쪽 정렬 */
-            padding: 25px 20px;
+            padding: 15px 15px;
             max-width: 340px; /* 조금 더 넓게 */
         }
         .notice-header {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: #212529;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-align: center; /* 제목만 가운데 */
         }
         .notice-list {
@@ -561,21 +566,29 @@
         .notice-item {
             display: flex;
             align-items: flex-start; /* 아이콘과 글자 높이 맞춤 */
-            gap: 10px;
+            gap: 5px;
             background-color: #f8f9fa;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 18px;
             color: #495057;
             line-height: 1.5;
         }
         .notice-icon {
-            font-size: 20px;
+            font-size: 22px;
             padding-top: 2px; /* 아이콘 위치 미세 조정 */
         }
         .notice-text b {
             color: #e03131; /* 강조색 (빨강) */
             font-weight: 700;
+        }
+        /* 2. 버튼 눌렀을 때 파란색 깜빡임 제거 */
+        .confirm-btn {
+            -webkit-tap-highlight-color: transparent; /* 아이폰 터치 하이라이트 제거 */
+            outline: none;
+        }
+        .confirm-btn:active {
+            background-color: #339af0; /* 눌렀을 때 살짝 진해지는 효과만 유지 */
         }
     </style>
 </head>
@@ -1303,31 +1316,35 @@ END:VCALENDAR`;
             alert("오늘 날짜를 찾을 수 없습니다.");
         }
     });
-    // ▼▼▼ [추가] 공지 팝업 및 PWA 감지 로직 ▼▼▼
+        // ▼▼▼ [수정] 공지 팝업 및 스크롤 잠금 로직 ▼▼▼
         
+        // 페이지가 로딩되자마자 스크롤 잠그기 (팝업이 떠 있으니까)
+        document.body.classList.add('no-scroll');
+
         // 1. 팝업 닫기 함수
         function closeMainNotice() {
-            document.getElementById('mainNoticeModal').style.display = 'none';
+            const modal = document.getElementById('mainNoticeModal');
+            modal.style.display = 'none';
+            
+            // 팝업 닫을 때 스크롤 잠금 해제!
+            document.body.classList.remove('no-scroll');
         }
 
         // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
         function checkDisplayMode() {
             const pwaMsg = document.getElementById('pwa-msg');
-            
-            // 앱 모드인지 감지 (아이폰, 안드로이드 모두 포함)
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
             if (isStandalone) {
-                // 앱으로 실행 중이면 -> 설치 권유 메시지 숨김 (이미 display: none 상태)
+                // 앱 모드: 설치 권유 메시지 숨김
                 console.log("앱 모드로 실행 중입니다.");
             } else {
-                // 웹으로 실행 중이면 -> 설치 권유 메시지 보여줌
+                // 웹 모드: 설치 권유 메시지 보임
                 pwaMsg.style.display = 'flex';
                 console.log("브라우저 모드로 실행 중입니다.");
             }
         }
 
-        // 실행
         checkDisplayMode();
     </script>
 </body>
