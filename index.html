@@ -540,6 +540,43 @@
                 left: calc(50% + 240px + 22px) !important; 
             }
         }
+        /* [추가] 공지 팝업 전용 스타일 */
+        .notice-box {
+            text-align: left; /* 글자 왼쪽 정렬 */
+            padding: 25px 20px;
+            max-width: 340px; /* 조금 더 넓게 */
+        }
+        .notice-header {
+            font-size: 20px;
+            font-weight: 800;
+            color: #212529;
+            margin-bottom: 20px;
+            text-align: center; /* 제목만 가운데 */
+        }
+        .notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .notice-item {
+            display: flex;
+            align-items: flex-start; /* 아이콘과 글자 높이 맞춤 */
+            gap: 10px;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #495057;
+            line-height: 1.5;
+        }
+        .notice-icon {
+            font-size: 20px;
+            padding-top: 2px; /* 아이콘 위치 미세 조정 */
+        }
+        .notice-text b {
+            color: #e03131; /* 강조색 (빨강) */
+            font-weight: 700;
+        }
     </style>
 </head>
 <body class="initial-mode">
@@ -653,6 +690,33 @@
     <div id="btn-go-today" class="btn-floating-today">오늘</div>
     <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
 
+    <div id="mainNoticeModal" class="modal-overlay" style="z-index: 20000; display: flex;">
+        <div class="confirm-content notice-box" onclick="event.stopPropagation()">
+            <div class="notice-header">📢 쇼콕 알림</div>
+            
+            <div class="notice-list">
+                <div class="notice-item">
+                    <span class="notice-icon">🎫</span>
+                    <span class="notice-text">
+                        <b>선예매</b>가 있는 공연은<br>
+                        이후 예매 일정(일반예매)은<br>
+                        되도록 캘린더에 넣지 않습니다!
+                    </span>
+                </div>
+
+                <div id="pwa-msg" class="notice-item" style="display: none;">
+                    <span class="notice-icon">📲</span>
+                    <span class="notice-text">
+                        브라우저 메뉴에서<br>
+                        <b>'홈 화면에 추가'</b> 하시면<br>
+                        앱 설치가 가능합니다!
+                    </span>
+                </div>
+            </div>
+
+            <button onclick="closeMainNotice()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 20px;">확인</button>
+        </div>
+    </div>
     <script>
         const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
@@ -1239,6 +1303,32 @@ END:VCALENDAR`;
             alert("오늘 날짜를 찾을 수 없습니다.");
         }
     });
+    // ▼▼▼ [추가] 공지 팝업 및 PWA 감지 로직 ▼▼▼
+        
+        // 1. 팝업 닫기 함수
+        function closeMainNotice() {
+            document.getElementById('mainNoticeModal').style.display = 'none';
+        }
+
+        // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
+        function checkDisplayMode() {
+            const pwaMsg = document.getElementById('pwa-msg');
+            
+            // 앱 모드인지 감지 (아이폰, 안드로이드 모두 포함)
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+            if (isStandalone) {
+                // 앱으로 실행 중이면 -> 설치 권유 메시지 숨김 (이미 display: none 상태)
+                console.log("앱 모드로 실행 중입니다.");
+            } else {
+                // 웹으로 실행 중이면 -> 설치 권유 메시지 보여줌
+                pwaMsg.style.display = 'flex';
+                console.log("브라우저 모드로 실행 중입니다.");
+            }
+        }
+
+        // 실행
+        checkDisplayMode();
     </script>
 </body>
 </html>
