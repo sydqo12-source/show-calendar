@@ -925,10 +925,8 @@
             if (links.length > 0) {
                 htmlContent += `<div class="btn-row">`;
                 links.forEach(link => {
-                    // 이제 순서(index)가 아니라, 위에서 정한 고정 색상(link.color)을 사용합니다.
-                    // 스타일: 배경을 색상으로 채우고(background-color), 글자는 흰색(white), 테두리 없음(none)
                     htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
-                        style="background-color: ${link.color}; color: white; border: none; flex: 1;"
+                        style="background-color: #343a40; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
                         oncontextmenu="return false" 
                         draggable="false" ondragstart="return false;">${link.name}</a>`;
                 });
