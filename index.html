@@ -605,6 +605,9 @@
             display: flex; justify-content: center; align-items: center;
             font-size: 20px; cursor: pointer; z-index: 1001; /* 헤더보다 위에 */
             transition: transform 0.2s;
+
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
         }
         #btn-keyword-alert:active { transform: scale(0.9); }
         
@@ -776,13 +779,13 @@
 
     <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
-            <div class="modal-header" style="margin-bottom: 15px;">
+            <div class="modal-header" style="margin-bottom: 15px; text-align: center;">
                 <span style="font-size: 20px; font-weight: 800;">🔔 공연 일정 알림</span>
             </div>
             
-            <div style="text-align: left; margin-bottom: 20px; color: #495057; line-height: 1.4;">
-                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
-                일정이 추가되면 카톡 알림 보내드릴게요!<br>
+            <div style="text-align: left; margin-bottom: 10px; color: #495057; line-height: 1.4; font-size: 18px; margin-left: 10px;">
+                보고싶은 공연의 키워드를 등록해주세요. (장르X)<br>
+                일정이 추가되면 알림을 보내드립니다.<br>
                 잘못 등록하셔도 괜찮습니다. 다시 해주세요!
             </div>
 
@@ -790,7 +793,7 @@
                 <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 성시경, 흠뻑쇼)">
             </div>
 
-            <button onclick="submitKeyword()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 20px; background-color: #fa5252;">
+            <button onclick="submitKeyword()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 10px; background-color: #fa5252;">
                 키워드 등록
             </button>
         </div>
