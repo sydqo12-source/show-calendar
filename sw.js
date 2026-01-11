@@ -35,7 +35,7 @@ messaging.onBackgroundMessage(function(payload) {
 // ==========================================
 // 2. 기존 캐싱 로직 (원래 있던 코드 유지)
 // ==========================================
-const CACHE_NAME = 'showkok-v1';
+const CACHE_NAME = 'showkok-v2';
 const urlsToCache = [
   '/',
   '/index.html',
