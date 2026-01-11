@@ -1006,12 +1006,12 @@
         }
 
         // [추가] 내가 등록한 키워드 조회 함수
-        async function viewMyKeywords() {
+        async function viewMyKeywords(isRefresh = false) {
             const listArea = document.getElementById('my-keyword-list');
             const btn = document.querySelector('#keywordModal .btn-white');
             
-            // 이미 열려있으면 닫기 (토글 기능)
-            if (listArea.style.display === 'block') {
+            // [수정] 새로고침(isRefresh)이 아닐 때만 토글(닫기) 기능 작동
+            if (!isRefresh && listArea.style.display === 'block') {
                 listArea.style.display = 'none';
                 return;
             }
@@ -1079,9 +1079,8 @@
 
                 if (error) throw error;
 
-                // 삭제 후 목록 새로고침을 위해 닫았다가 다시 여는 효과 or 리스트 갱신
                 // 여기서는 간단하게 해당 항목을 화면에서 지움
-                viewMyKeywords(); // 목록 다시 불러오기
+                viewMyKeywords(true);
                 
             } catch (err) {
                 console.error(err);
