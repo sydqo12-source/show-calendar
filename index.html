@@ -1191,13 +1191,23 @@
         // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
         async function openKeywordModal() {
             try {
-                // 1. 권한 요청
-                const permission = await Notification.requestPermission();
+                // 1. 현재 권한 상태 확인
+                let permission = Notification.permission;
 
-                // 2. 권한이 '허용'된 경우에만 실행
+                // 2. 이미 '차단(denied)'된 상태라면 -> 이건 설정 가서 풀어야 하므로 안내
+                if (permission === 'denied') {
+                    alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
+                    return; 
+                }
+
+                // 3. 아직 결정 안 함(default) 상태라면 -> 팝업 띄워서 물어보기
+                if (permission === 'default') {
+                    permission = await Notification.requestPermission();
+                }
+
+                // 4. 결과 확인
                 if (permission === 'granted') {
-                    
-                    // (1) 토큰 및 채널 생성 (이 과정은 백그라운드에서 진행)
+                    // (1) 허용함: 토큰 발급 및 채널 생성 시도
                     try {
                         const registration = await navigator.serviceWorker.register('/sw.js');
                         await window.getToken(window.messaging, {
@@ -1205,22 +1215,20 @@
                             serviceWorkerRegistration: registration
                         });
                     } catch (e) {
-                        console.error("토큰 갱신 중 오류 (무시 가능):", e);
+                        console.error("토큰 생성 실패(무시 가능):", e);
                     }
 
-                    // (2) ★★★ 여기서 모달을 띄웁니다! ★★★
+                    // (2) 모달 열기
                     const keywordModal = document.getElementById('keywordModal');
                     keywordModal.style.display = 'flex';
                     document.body.classList.add('no-scroll');
-                    
-                } else {
-                    // 3. 권한이 없으면(거부 또는 닫음) 경고창만 띄우고 모달은 안 엽니다.
-                    alert("알림 권한을 허용해야 키워드 알림을 받을 수 있습니다.\n[설정]에서 알림을 켜주세요.");
-                }
+                } 
+                
+                // 5. 그냥 닫았을 때(default)는 아무 코드도 없으므로 조용히 함수 종료됨.
+                // -> 덕분에 다음에 버튼 누르면 다시 3번으로 가서 또 물어봅니다.
 
             } catch (error) {
-                console.error("권한 요청 중 오류:", error);
-                alert("알림 기능을 실행할 수 없는 환경입니다.");
+                console.error("오류:", error);
             }
         }
 
