@@ -953,11 +953,7 @@
         async function submitKeyword() {
             const keywordInput = document.getElementById('input-keyword');
             const keyword = keywordInput.value.trim();
-            const listArea = document.getElementById('my-keyword-list');
-
-            // 리스트가 열려있으면 닫기 (깔끔하게)
-            listArea.style.display = 'none';
-
+            
             if (!keyword) {
                 openCustomAlert("키워드를 입력해주세요!");
                 return;
@@ -990,6 +986,8 @@
                     .insert([{ keyword: keyword, fcm_token: token }]);
 
                 if (error) throw error;
+
+                viewMyKeywords(true)
 
                 openCustomAlert(`알림 키워드로 등록되었어요🎉<br><b>${keyword}</b>에 대한 공연 일정이 추가되면<br>알림을 보내드릴게요`);
                 keywordInput.value = '';
