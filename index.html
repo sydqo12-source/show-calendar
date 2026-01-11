@@ -1191,30 +1191,37 @@
         // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
         async function openKeywordModal() {
             try {
-                // 1. 버튼을 누르는 순간 권한을 요청합니다. (사용자 제스처 필수)
+                // 1. 권한 요청
                 const permission = await Notification.requestPermission();
 
+                // 2. 권한이 '허용'된 경우에만 실행
                 if (permission === 'granted') {
-                    // 2. 권한을 허용했다면, 즉시 토큰을 요청하여 시스템에 '알림 채널'을 생성합니다.
-                    // 서비스 워커가 등록되어 있어야 하므로 아래 register 코드를 사용합니다.
-                    const registration = await navigator.serviceWorker.register('/sw.js');
                     
-                    await window.getToken(window.messaging, {
-                        vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
-                        serviceWorkerRegistration: registration
-                    });
-                    // 여기까지 실행되면 안드로이드 설정에 알림 카테고리가 생성됩니다.
-                    
-                } else if (permission === 'denied') {
-                    alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
-                }
-            } catch (error) {
-                console.error("알림 권한 요청 중 오류:", error);
-            }
+                    // (1) 토큰 및 채널 생성 (이 과정은 백그라운드에서 진행)
+                    try {
+                        const registration = await navigator.serviceWorker.register('/sw.js');
+                        await window.getToken(window.messaging, {
+                            vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
+                            serviceWorkerRegistration: registration
+                        });
+                    } catch (e) {
+                        console.error("토큰 갱신 중 오류 (무시 가능):", e);
+                    }
 
-            // 3. 권한 성공/실패 여부와 상관없이 키워드 입력창(모달)은 띄워줍니다.
-            keywordModal.style.display = 'flex';
-            document.body.classList.add('no-scroll');
+                    // (2) ★★★ 여기서 모달을 띄웁니다! ★★★
+                    const keywordModal = document.getElementById('keywordModal');
+                    keywordModal.style.display = 'flex';
+                    document.body.classList.add('no-scroll');
+                    
+                } else {
+                    // 3. 권한이 없으면(거부 또는 닫음) 경고창만 띄우고 모달은 안 엽니다.
+                    alert("알림 권한을 허용해야 키워드 알림을 받을 수 있습니다.\n[설정]에서 알림을 켜주세요.");
+                }
+
+            } catch (error) {
+                console.error("권한 요청 중 오류:", error);
+                alert("알림 기능을 실행할 수 없는 환경입니다.");
+            }
         }
 
         function closeKeywordModal(e) {
