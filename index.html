@@ -1065,44 +1065,66 @@
             }
         }
 
-        // [추가] 삭제할 키워드 ID를 잠시 저장하는 변수
-        let targetDeleteId = null;
+        // [수정] "window."을 붙여서 브라우저 전체가 기억하게 만듭니다 (절대 안 까먹음)
+        window.targetDeleteId = null;
 
-        // [수정] 1. '삭제' 버튼 눌렀을 때 -> 팝업창만 띄움 (기존 confirm 제거)
+        // 1. 삭제 버튼 클릭 (ID를 window에 문신처럼 새겨둠)
         function deleteKeyword(id) {
-            targetDeleteId = id; // 지울 ID 기억해두기
+            console.log("삭제 요청 들어온 ID:", id); // F12 콘솔 확인용
+            window.targetDeleteId = id; 
             
             const modal = document.getElementById('keywordDeleteModal');
-            modal.style.display = 'flex'; // 커스텀 팝업 열기
+            modal.style.display = 'flex';
         }
 
-        // [추가] 2. 팝업창 닫기 함수
+        // 2. 팝업 닫기
         function closeKeywordDeleteModal() {
             const modal = document.getElementById('keywordDeleteModal');
             modal.style.display = 'none';
-            targetDeleteId = null; // ID 초기화
+            // 닫을 때는 ID를 비우지 않고 놔둡니다 (혹시 모를 오류 방지)
         }
 
-        // [추가] 3. 커스텀 팝업에서 '확인' 눌렀을 때 -> 진짜 삭제 실행
+        // 3. 진짜 삭제 (window에 적힌 ID를 보고 삭제)
         async function realDeleteKeyword() {
-            closeKeywordDeleteModal(); // 팝업 닫기
+            // 팝업 먼저 닫기
+            closeKeywordDeleteModal(); 
 
-            if (!targetDeleteId) return; // ID가 없으면 종료
+            // 저장된 ID 가져오기
+            const idToDelete = window.targetDeleteId;
+            console.log("진짜 삭제할 ID:", idToDelete); // F12 콘솔 확인용
+
+            if (!idToDelete) {
+                openCustomAlert("삭제할 대상을 찾지 못했어요.");
+                return;
+            }
 
             try {
+                // Supabase에 삭제 요청
                 const { error } = await client
                     .from('keyword_alerts')
                     .delete()
-                    .eq('id', targetDeleteId);
+                    .eq('id', idToDelete);
 
                 if (error) throw error;
 
-                // 삭제 성공 시 목록 갱신 (true = 목록 닫지 않고 유지)
-                viewMyKeywords(true); 
-                
+                // [성공 시] 화면에서 해당 줄(List Item) 즉시 제거
+                const itemToRemove = document.getElementById(`keyword-item-${idToDelete}`);
+                if (itemToRemove) {
+                    itemToRemove.remove();
+                }
+
+                // 목록이 텅 비었으면 '없습니다' 메시지 표시
+                const listArea = document.getElementById('my-keyword-list');
+                if (listArea.children.length === 0) {
+                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                }
+
+                // 다 쓴 ID 초기화
+                window.targetDeleteId = null;
+
             } catch (err) {
-                console.error(err);
-                openCustomAlert("삭제 실패");
+                console.error("삭제 에러:", err);
+                openCustomAlert("삭제 실패: " + err.message);
             }
         }
 
