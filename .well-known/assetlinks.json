@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "com.ddobinga.showkok",
-        "sha256_cert_fingerprints": ["44:2B:BA:EF:9E:6E:60:DC:2E:26:CE:FC:84:21:41:9F:58:07:12:16:F7:46:0A:0A:92:FE:B7:99:EF:32:7B:82"]
+        "package_name": "com.showkok.twa",
+        "sha256_cert_fingerprints": ["D7:34:3E:BE:0B:88:DF:B2:A4:58:A0:02:BF:DA:DD:2F:DF:6C:F5:2B:1C:F6:A7:F5:24:FA:FA:24:54:3B:26:6F"]
       }
     }]
