@@ -1,7 +1,7 @@
 {
   "name": "쇼콕! - 2026 티켓팅 캘린더, 공연 예매일정",
   "short_name": "쇼콕!",
-  "start_url": "https://showkok.com/",
+  "start_url": "https://showkok.com",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
