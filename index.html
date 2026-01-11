@@ -1188,7 +1188,31 @@
         
         const keywordModal = document.getElementById('keywordModal');
         
-        function openKeywordModal() {
+        // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
+        async function openKeywordModal() {
+            try {
+                // 1. 버튼을 누르는 순간 권한을 요청합니다. (사용자 제스처 필수)
+                const permission = await Notification.requestPermission();
+
+                if (permission === 'granted') {
+                    // 2. 권한을 허용했다면, 즉시 토큰을 요청하여 시스템에 '알림 채널'을 생성합니다.
+                    // 서비스 워커가 등록되어 있어야 하므로 아래 register 코드를 사용합니다.
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    
+                    await window.getToken(window.messaging, {
+                        vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
+                        serviceWorkerRegistration: registration
+                    });
+                    // 여기까지 실행되면 안드로이드 설정에 알림 카테고리가 생성됩니다.
+                    
+                } else if (permission === 'denied') {
+                    alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
+                }
+            } catch (error) {
+                console.error("알림 권한 요청 중 오류:", error);
+            }
+
+            // 3. 권한 성공/실패 여부와 상관없이 키워드 입력창(모달)은 띄워줍니다.
             keywordModal.style.display = 'flex';
             document.body.classList.add('no-scroll');
         }
@@ -1771,7 +1795,7 @@ END:VCALENDAR`;
 
         checkDisplayMode();
         // ▼▼▼ [추가] 서비스 워커 등록 (앱으로 만들기 위한 필수 절차) ▼▼▼
-        /* if ('serviceWorker' in navigator) {
+          if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -1779,7 +1803,7 @@ END:VCALENDAR`;
                     console.log('ServiceWorker registration failed: ', err);
                 });
             });
-        } */
+        } 
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
