@@ -1065,20 +1065,40 @@
             }
         }
 
-        // [추가] 키워드 삭제 함수
-        async function deleteKeyword(id) {
-            if(!confirm("이 키워드 알림을 삭제할까요?")) return;
+        // [추가] 삭제할 키워드 ID를 잠시 저장하는 변수
+        let targetDeleteId = null;
+
+        // [수정] 1. '삭제' 버튼 눌렀을 때 -> 팝업창만 띄움 (기존 confirm 제거)
+        function deleteKeyword(id) {
+            targetDeleteId = id; // 지울 ID 기억해두기
+            
+            const modal = document.getElementById('keywordDeleteModal');
+            modal.style.display = 'flex'; // 커스텀 팝업 열기
+        }
+
+        // [추가] 2. 팝업창 닫기 함수
+        function closeKeywordDeleteModal() {
+            const modal = document.getElementById('keywordDeleteModal');
+            modal.style.display = 'none';
+            targetDeleteId = null; // ID 초기화
+        }
+
+        // [추가] 3. 커스텀 팝업에서 '확인' 눌렀을 때 -> 진짜 삭제 실행
+        async function realDeleteKeyword() {
+            closeKeywordDeleteModal(); // 팝업 닫기
+
+            if (!targetDeleteId) return; // ID가 없으면 종료
 
             try {
                 const { error } = await client
                     .from('keyword_alerts')
                     .delete()
-                    .eq('id', id);
+                    .eq('id', targetDeleteId);
 
                 if (error) throw error;
 
-                // 여기서는 간단하게 해당 항목을 화면에서 지움
-                viewMyKeywords(true);
+                // 삭제 성공 시 목록 갱신 (true = 목록 닫지 않고 유지)
+                viewMyKeywords(true); 
                 
             } catch (err) {
                 console.error(err);
@@ -1724,5 +1744,16 @@ END:VCALENDAR`;
             });
         } */
     </script>
+    <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
+        <div class="confirm-content" onclick="event.stopPropagation()">
+            <div class="confirm-text">
+                이 키워드 알림을<br>삭제하시겠습니까?
+            </div>
+            <div class="confirm-btn-group">
+                <button onclick="closeKeywordDeleteModal()" class="confirm-btn btn-no">취소</button>
+                <button onclick="realDeleteKeyword()" class="confirm-btn btn-yes">확인</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
