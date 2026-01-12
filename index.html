@@ -367,7 +367,7 @@
         }
         .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
         .top-logo {
-             position: fixed;
+             position: absolute;
              top: 15px;            /* 위에서 15px */
              left: 15px;           /* 왼쪽에서 15px */
              font-size: 30px;      /* 작게 (원하는 크기로 조절 가능) */
@@ -1899,25 +1899,40 @@ END:VCALENDAR`;
             });
         } 
                 
+        // 1. 알림 팝업 닫기 (head에 있더라도 안전장치로 한번 더 확인)
+        window.closeMainNotice = function() {
+            const noticeModal = document.getElementById('mainNoticeModal');
+            if (noticeModal) {
+                noticeModal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+            }
+        };
+
         // 2. 조건(필터) 팝업 제어
         const filterModal = document.getElementById('filterModal');
         function openFilterModal() {
-            filterModal.style.display = 'flex';
-            document.body.classList.add('no-scroll');
+            if(filterModal) {
+                filterModal.style.display = 'flex';
+                document.body.classList.add('no-scroll');
+            }
         }
         function closeFilterModal(e) {
-            filterModal.style.display = 'none';
-            document.body.classList.remove('no-scroll');
-            // 닫을 때 버튼 상태 업데이트
-            if(typeof checkTodayButtonVisibility === 'function') {
-                checkTodayButtonVisibility();
+            if(filterModal) {
+                filterModal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+                // 닫을 때 버튼 상태 업데이트 (함수가 있을 때만 실행)
+                if(typeof checkTodayButtonVisibility === 'function') {
+                    checkTodayButtonVisibility();
+                }
             }
         }
 
         // 3. 필터 이벤트 연결
         const regionBoxes = document.querySelectorAll('.region-chk');
         const genreBoxes = document.querySelectorAll('.genre-chk');
-        if (regionBoxes.length > 0) {
+        
+        // applyFilter 함수가 정의되어 있는지 확인 후 실행
+        if (typeof applyFilter === 'function') {
             regionBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
             genreBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
         }
@@ -1931,8 +1946,9 @@ END:VCALENDAR`;
             }
         }
 
-        // 5. [핵심] 데이터 로딩 시작 (이게 실행돼야 Loading 문구가 사라짐)
-        fetchEvents();
+        // 5. [핵심] 데이터 로딩 시작! (이 줄이 있어야 연도/월이 뜹니다)
+        console.log("데이터 로딩 시작...");
+        fetchEvents(); 
 
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
