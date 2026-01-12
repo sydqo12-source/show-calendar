@@ -396,12 +396,12 @@
             top: 0;
             
             /* 버튼들이 들어갈 윗공간 확보를 위해 높이와 여백 조정 */
-            height: 70px; 
+            height: 105px; 
             padding: 0 15px 5px 15px; 
             
             background-color: rgba(255, 255, 255, 0.9); /* 가독성 위해 투명도 낮춤 */
-            -webkit-backdrop-filter: blur(5px);
-            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(1px);
+            backdrop-filter: blur(1px);
             z-index: 1000;
             
             margin-left: -15px;
@@ -426,14 +426,14 @@
         /* [추가] 상단 고정 버튼 공통 스타일 (종 버튼, 필터 버튼) */
         .fixed-top-btn {
             position: fixed;
-            top: 15px; /* [핵심] 두 버튼의 세로 높이(Top)를 똑같이 맞춤 */
+            top: 20px; /* [핵심] 두 버튼의 세로 높이(Top)를 똑같이 맞춤 */
             width: 40px; 
             height: 40px;
             
             background-color: #ffffff;
             border-radius: 50%;
-            border: 1px solid #ced4da; /* 테두리 */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* [핵심] 그림자 추가 */
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             
             display: flex; 
             justify-content: center; 
