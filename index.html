@@ -396,8 +396,8 @@
             top: 0;
             
             /* 버튼들이 들어갈 윗공간 확보를 위해 높이와 여백 조정 */
-            height: 105px; 
-            padding: 0 15px 5px 15px; 
+            height: 120px; 
+            padding: 0 15px 10px 15px; 
             
             background-color: rgba(255, 255, 255, 0.9); /* 가독성 위해 투명도 낮춤 */
             -webkit-backdrop-filter: blur(1px);
@@ -432,7 +432,6 @@
             
             background-color: #ffffff;
             border-radius: 50%;
-            border: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             
             display: flex; 
@@ -682,24 +681,7 @@
         .confirm-btn:hover {
             opacity: 0.9;
         }
-        /* [추가] 키워드 알림 버튼 스타일 */
-        #btn-keyword-alert {
-            position: fixed;
-            top: 20px;
-            right: 20px; 
-            width: 40px; height: 40px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 20px; cursor: pointer; z-index: 1001; /* 헤더보다 위에 */
-            transition: transform 0.2s;
-
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-        }
-        #btn-keyword-alert:active { transform: scale(0.9); }
-        
+                
         @media (min-width: 768px) {
             #btn-keyword-alert {
                 /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
@@ -822,7 +804,7 @@
     
     <div class="top-logo">📌</div> 
 
-    <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">⚙️</div>
+    <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">☰</div>
     <div id="btn-keyword-alert" class="fixed-top-btn" onclick="openKeywordModal()">🔔</div>
 
     <div id="sticky-header">
