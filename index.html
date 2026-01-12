@@ -10,6 +10,15 @@
     gtag('js', new Date());
 
     gtag('config', 'G-KJCTM7H6PT');
+
+    // 1. 알림 팝업 닫기 함수 (이게 없어서 확인 버튼이 안 눌렸음)
+        function closeMainNotice() {
+            const noticeModal = document.getElementById('mainNoticeModal');
+            if (noticeModal) {
+                noticeModal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+            }
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="viewport-meta">
@@ -1862,16 +1871,7 @@ END:VCALENDAR`;
         
         // 페이지가 로딩되자마자 스크롤 잠그기 (팝업이 떠 있으니까)
         document.body.classList.add('no-scroll');
-
-        // 1. 팝업 닫기 함수
-        function closeMainNotice() {
-            const modal = document.getElementById('mainNoticeModal');
-            modal.style.display = 'none';
-            
-            // 팝업 닫을 때 스크롤 잠금 해제!
-            document.body.classList.remove('no-scroll');
-        }
-
+        
         // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
         function checkDisplayMode() {
             const pwaMsg = document.getElementById('pwa-msg');
@@ -1898,19 +1898,7 @@ END:VCALENDAR`;
                 });
             });
         } 
-        /* --- [여기서부터 덮어씌우세요] --- */
-
-        // [오류 해결] 이 코드가 있어야 버튼들이 작동합니다!
-        
-        // 1. 알림 팝업 닫기 함수 (이게 없어서 확인 버튼이 안 눌렸음)
-        function closeMainNotice() {
-            const noticeModal = document.getElementById('mainNoticeModal');
-            if (noticeModal) {
-                noticeModal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-            }
-        }
-
+                
         // 2. 조건(필터) 팝업 제어
         const filterModal = document.getElementById('filterModal');
         function openFilterModal() {
