@@ -368,9 +368,9 @@
         .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
         .top-logo {
              position: absolute;
-             top: 15px;            /* 위에서 15px */
-             left: 15px;           /* 왼쪽에서 15px */
-             font-size: 30px;      /* 작게 (원하는 크기로 조절 가능) */
+             top: 20px;            /* 위에서 15px */
+             left: 20px;           /* 왼쪽에서 15px */
+             font-size: 28px;      /* 작게 (원하는 크기로 조절 가능) */
              z-index: 5000 !important;          /* 다른 요소보다 위에 표시 */
              line-height: 1;
              margin-bottom: 5px;
@@ -924,8 +924,6 @@
             <button onclick="closeMainNotice()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
         </div>
     </div>
-
-    <div id="btn-keyword-alert" onclick="openKeywordModal()">🔔</div>
 
     <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 15px 15px;">
