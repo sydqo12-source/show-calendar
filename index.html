@@ -1317,8 +1317,9 @@
 
                     let posterHtml = '';
                     if (evt.poster && evt.poster.trim() !== '') {
-                        // [수정] 이미지 우클릭/길게누르기 방지 (oncontextmenu)
-                        posterHtml = `<img src="${evt.poster}" class="event-poster-thumb" alt="${evt.title}" loading="lazy" oncontextmenu="return false;">`;
+                        // [수정 후] (복사해서 덮어쓰세요)
+                        // src에는 빈 이미지를 넣고, 진짜 주소는 data-src에 넣습니다.
+                        posterHtml = `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${evt.poster}" class="event-poster-thumb lazy-img" alt="${evt.title}" decoding="async" oncontextmenu="return false;">`;
                     }
                     
                     const htmlContent = `
@@ -1337,6 +1338,35 @@
                 }
             });
             applyFilter();
+
+            // [renderEvents 함수 내부의 맨 끝부분에 추가]
+        
+        // 1. 이미지 로딩 관찰자 설정 (미리 로딩 기술)
+        const imgObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                // 화면에 보이기 800px 전부터 로딩 시작!
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    // 숨겨둔 진짜 주소(data-src)를 src로 옮김
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src'); // 처리 후 꼬리표 떼기
+                    }
+                    observer.unobserve(img); // 한 번 로딩했으면 감시 끝
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '800px 0px', // ★핵심★: 화면 아래 800px까지 미리 감지해라! (이 숫자를 늘리면 더 빨리 로딩함)
+            threshold: 0
+        });
+
+        // 2. 모든 이미지에게 관찰자 붙이기
+        const lazyImages = document.querySelectorAll('img.lazy-img');
+        lazyImages.forEach(img => {
+            imgObserver.observe(img);
+        });
+
         }
 
         function openModal(element) {
