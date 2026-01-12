@@ -998,6 +998,7 @@
     <div class="top-logo">📌</div>
 
     <div id="sticky-header">
+
         <div class="header-wrapper">
             <div class="nav-row">
                 <div class="nav-btn" id="prev-btn">&lt;</div>
@@ -1005,8 +1006,33 @@
                 <div class="nav-btn" id="next-btn">&gt;</div>
             </div>
         </div>
-    </div>
 
+        <div class="control-bar">
+            <div class="filter-group">
+                <span class="group-title">지역 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <span class="group-title">장르 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+                    <button id="btn-reset" class="btn-reset">모두해제</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
     <div id="calendar-container">
         <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
             <table>
@@ -1106,7 +1132,7 @@
     </div>
 
     <div id="floating-group">
-        <button class="round-btn btn-txt-style" onclick="openFilterModal()">
+        <button class="round-btn btn-txt-style" onclick="alert('조건 설정 기능은 준비 중입니다.')">
             ☰
         </button>
 
@@ -1186,17 +1212,6 @@
 
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // [추가] 조건(필터) 팝업 열기
-        function openFilterModal() {
-            document.getElementById('filterModal').style.display = 'flex';
-            document.body.classList.add('no-scroll'); // 배경 스크롤 막기
-        }
-
-        // [추가] 조건(필터) 팝업 닫기
-        function closeFilterModal(e) {
-            document.getElementById('filterModal').style.display = 'none';
-            document.body.classList.remove('no-scroll');
-        }
         // [추가] 커스텀 알림창 띄우기 함수
         function openCustomAlert(msg) {
             document.getElementById('customAlertMsg').innerHTML = msg; // innerHTML로 줄바꿈 허용
@@ -2100,48 +2115,5 @@ END:VCALENDAR`;
             </div>
         </div>
     </div>
-    <div id="filterModal" class="modal-overlay" onclick="closeFilterModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
-        
-        <div style="text-align: center; margin-bottom: 20px;">
-            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
-        </div>
-
-        <div class="control-bar" style="display: flex; flex-direction: column; gap: 20px;">
-            
-            <div class="filter-group" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <span class="group-title" style="margin-bottom: 5px;">지역</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
-                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
-                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
-                </div>
-            </div>
-
-            <div style="height: 1px; background-color: #e9ecef; width: 100%;"></div>
-
-            <div class="filter-group" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <span class="group-title" style="margin-bottom: 5px;">장르</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-                </div>
-                <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 5px;">
-                    <button id="btn-reset" class="btn-reset" style="margin: 0; padding: 5px 10px; border: 1px solid #dee2e6;">🔄 모두해제</button>
-                </div>
-            </div>
-
-        </div>
-
-        <div style="margin-top: 25px;">
-            <button onclick="closeFilterModal(event)" class="confirm-btn btn-yes" style="width: 100%;">확인</button>
-        </div>
-    </div>
-</div>
 </body>
 </html>
