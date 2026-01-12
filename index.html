@@ -389,39 +389,108 @@
          visibility: hidden; /* 완전히 사라져서 클릭 방해 안 함 */
      
      }    
-     /* 2. 끈적이는 헤더 (스크롤 하다가 천장에 닿으면 붙음) */
-     #sticky-header {
-         position: -webkit-sticky; /* 사파리(아이폰) 호환 */
-         position: sticky;         /* 핵심 코드 */
-         top: 0;                   /* 천장에 딱 붙음 */
-    
-         background-color: rgba(255, 255, 255, 0.5); /* 살짝 투명하게 해서 고급스럽게 */
-         -webkit-backdrop-filter: blur(1px);
-         backdrop-filter: blur(1px); /* 뒤에 내용물 흐리게 비침 */
-         z-index: 1000;
-    
-         margin-left: -15px;   /* 왼쪽 여백(15px) 무시하고 꽉 채우기 */
-         margin-right: -15px;  /* 오른쪽 여백(15px) 무시하고 꽉 채우기 */
-         padding: 10px 15px 5px 25px;
-     }
+     /* [수정] 끈적이는 헤더: 높이를 키우고, 내부 요소를 아래쪽(flex-end)으로 정렬 */
+        #sticky-header {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            
+            /* 버튼들이 들어갈 윗공간 확보를 위해 높이와 여백 조정 */
+            height: 80px; 
+            padding: 10px 15px 15px 15px; 
+            
+            background-color: rgba(255, 255, 255, 0.9); /* 가독성 위해 투명도 낮춤 */
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            
+            margin-left: -15px;
+            margin-right: -15px;
+            
+            /* 내용물(연도/월)을 아래쪽에 배치 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            
+            border-bottom: 1px solid #f1f3f5;
+        }
 
-     /* 3. 헤더 내부 정렬 (기존 margin-top 제거) */
-     .header-wrapper {
-         margin-top: 0; 
-         margin-bottom: 10px;
-         display: flex; 
-         flex-direction: column; 
-         align-items: center;
-     }
+        /* [수정] 헤더 내부 정렬 (기존 margin 제거) */
+        .header-wrapper {
+            margin: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-    .control-bar {
-        margin-bottom: 0;
-        display: flex; 
-        flex-direction: column; 
-        align-items: flex-start; 
-        gap: 12px; 
-        font-size: 18px; 
-     }
+        /* [추가] 상단 고정 버튼 공통 스타일 (종 버튼, 필터 버튼) */
+        .fixed-top-btn {
+            position: fixed;
+            top: 15px; /* 헤더 상단 여백에 맞춤 */
+            width: 40px; 
+            height: 40px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            font-size: 20px; 
+            cursor: pointer; 
+            z-index: 1001; /* 헤더보다 위에 */
+            transition: transform 0.2s;
+            border: 1px solid #eee;
+            
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+        .fixed-top-btn:active { transform: scale(0.9); }
+
+        /* [수정] 종 버튼 위치 (오른쪽 끝) */
+        #btn-keyword-alert {
+            right: 20px;
+        }
+
+        /* [추가] 조건(필터) 버튼 위치 (종 버튼 왼쪽) */
+        #btn-filter-mode {
+            right: 70px; /* 20px(기본) + 40px(버튼크기) + 10px(간격) */
+        }
+
+        /* PC 버전 위치 보정 */
+        @media (min-width: 768px) {
+            #sticky-header {
+                max-width: 480px;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                left: auto !important;
+            }
+            #btn-keyword-alert {
+                right: auto !important;
+                left: calc(50% + 240px + 24px) !important;
+            }
+            #btn-filter-mode {
+                right: auto !important;
+                left: calc(50% + 240px + 24px - 55px) !important; /* 종 버튼 왼쪽으로 이동 */
+            }
+        }
+
+        /* [추가] 필터 모달 내부 스타일 */
+        .filter-modal-body {
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* 기존 .control-bar 스타일을 모달 내부용으로 재사용 */
+        .control-bar {
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            font-size: 18px;
+        }
 
      /* (중요) 캘린더 컨테이너의 불필요한 여백 제거 */
      #calendar-container {
@@ -748,44 +817,19 @@
 </head>
 <body class="initial-mode">
   
-    <div class="top-logo">📌</div>
+    <div class="top-logo" style="display:none;">📌</div> <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">⚙️</div>
+    <div id="btn-keyword-alert" class="fixed-top-btn" onclick="openKeywordModal()">🔔</div>
 
     <div id="sticky-header">
-    
-    <div class="header-wrapper">
-        <div class="nav-row">
-            <div class="nav-btn" id="prev-btn">&lt;</div>
-            <div class="sub-title" id="calendar-title">Loading...</div>
-            <div class="nav-btn" id="next-btn">&gt;</div>
-        </div>
-    </div>
-    
-    <div class="control-bar">
-        <div class="filter-group">
-            <span class="group-title">지역 :</span>
-            <div class="chk-list">
-                <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
-                <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
-                <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
-            </div>
-        </div>
-        
-        <div class="filter-group">
-            <span class="group-title">장르 :</span>
-            <div class="chk-list">
-                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-                <button id="btn-reset" class="btn-reset">모두해제</button>
+        <div class="header-wrapper">
+            <div class="nav-row">
+                <div class="nav-btn" id="prev-btn">&lt;</div>
+                <div class="sub-title" id="calendar-title">Loading...</div>
+                <div class="nav-btn" id="next-btn">&gt;</div>
             </div>
         </div>
     </div>
 
-    </div>
     <div id="calendar-container">
             <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
                 <table>
@@ -1230,6 +1274,23 @@
             } catch (error) {
                 console.error("오류:", error);
             }
+        }
+
+        // [추가] 필터 모달 제어 함수
+        const filterModal = document.getElementById('filterModal');
+
+        function openFilterModal() {
+            filterModal.style.display = 'flex';
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeFilterModal(e) {
+            // 확인 버튼을 누르거나 배경을 눌렀을 때 닫기
+            filterModal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            
+            // 닫을 때 필터가 적용된 상태이므로, '오늘 이동' 버튼 표시 여부 재확인
+            checkTodayButtonVisibility();
         }
 
         function closeKeywordModal(e) {
@@ -1859,6 +1920,42 @@ END:VCALENDAR`;
                 <button onclick="closeKeywordDeleteModal()" class="confirm-btn btn-no">취소</button>
                 <button onclick="realDeleteKeyword()" class="confirm-btn btn-yes">확인</button>
             </div>
+        </div>
+    </div>
+    <div id="filterModal" class="modal-overlay" onclick="closeFilterModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
+            <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
+                <span style="font-size: 22px; font-weight: 800;">⚙️ 조건 설정</span>
+            </div>
+
+            <div class="filter-modal-body">
+                <div class="control-bar">
+                    <div class="filter-group">
+                        <span class="group-title">지역 :</span>
+                        <div class="chk-list">
+                            <label><input type="checkbox" class="region-chk" value="서울" checked> <span class="txt-red">서울</span></label>
+                            <label><input type="checkbox" class="region-chk" value="경기" checked> <span class="txt-red">경기/인천</span></label>
+                            <label><input type="checkbox" class="region-chk" value="그 외" checked> <span class="txt-blue">그 외 지역</span></label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <span class="group-title">장르 :</span>
+                        <div class="chk-list">
+                            <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> 
+                            <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> 
+                            <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> 
+                            <label><input type="checkbox" class="genre-chk" value="클래식"> <span class="txt-black">클래식</span></label> 
+                            <label><input type="checkbox" class="genre-chk" value="행사(전시)"> <span class="txt-black">행사(전시)</span></label> 
+                            <label><input type="checkbox" class="genre-chk" value="마술"> <span class="txt-black">마술</span></label>
+                            <label><input type="checkbox" class="genre-chk" value="가족"> <span class="txt-black">가족</span></label>
+                            <button id="btn-reset" class="btn-reset">모두해제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeFilterModal(event)" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인 (적용)</button>
         </div>
     </div>
 </body>
