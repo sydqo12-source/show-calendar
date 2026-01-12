@@ -408,7 +408,7 @@
             height: 120px; 
             padding: 0 15px 10px 15px; 
             
-            background-color: rgba(255, 255, 255, 0.7); /* 가독성 위해 투명도 낮춤 */
+            background-color: rgba(255, 255, 255, 0.6); /* 가독성 위해 투명도 낮춤 */
             -webkit-backdrop-filter: blur(1px);
             backdrop-filter: blur(1px);
             z-index: 1000;
@@ -506,7 +506,7 @@
 
      /* (중요) 캘린더 컨테이너의 불필요한 여백 제거 */
      #calendar-container {
-         padding-top: 15px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
+         padding-top: 50px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
      }
      /* [추가] 오늘 이동 버튼 (플로팅 스타일) */
         .btn-floating-today {
@@ -1897,7 +1897,72 @@ END:VCALENDAR`;
             });
         } 
                 
-        // 1. 알림 팝업 닫기 (head에 있더라도 안전장치로 한번 더 확인)
+        // [복구] 오늘 날짜 버튼 표시 여부 체크 함수 (이게 없어서 로딩이 멈췄습니다!)
+        function checkTodayButtonVisibility() {
+            const btnGoToday = document.getElementById('btn-go-today');
+            if (!btnGoToday || !pages[currentIndex]) return;
+
+            const visiblePage = pages[currentIndex];
+            const pageTitle = visiblePage.dataset.title;
+            const now = new Date();
+            const realTodayTitle = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
+
+            // 이번 달이고, 활성화된 공연이 있을 때만 버튼 보임
+            const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
+
+            if (pageTitle === realTodayTitle && hasActiveEvents) {
+                btnGoToday.style.display = 'flex';
+            } else {
+                btnGoToday.style.display = 'none';
+            }
+        }
+
+        // [복구] 오늘 날짜로 이동하는 함수
+        function moveFocusToToday(isInitial = false) {
+            const now = new Date();
+            const todayDate = now.getDate();
+            const visiblePage = pages[currentIndex];
+            if(!visiblePage) return;
+            
+            const dateSpans = visiblePage.querySelectorAll('.date-num');
+            let targetElement = null;
+            
+            for (let span of dateSpans) {
+                if (parseInt(span.innerText, 10) === todayDate) {
+                    targetElement = span.closest('td'); 
+                    break;
+                }
+            }
+
+            if (targetElement) {
+                const headerHeight = document.getElementById('sticky-header').offsetHeight;
+                const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - headerHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: isInitial ? 'auto' : 'smooth'
+                });
+                
+                if (!isInitial) {
+                    targetElement.style.transition = 'background-color 0.5s';
+                    targetElement.style.backgroundColor = '#fff9db';
+                    setTimeout(() => { targetElement.style.backgroundColor = ''; }, 1000);
+                }
+            }
+        }
+
+        // [기존 로직 유지] 오늘 버튼 클릭 이벤트
+        const btnGoToday = document.getElementById('btn-go-today');
+        if(btnGoToday) {
+            btnGoToday.addEventListener('click', () => moveFocusToToday(false));
+        }
+
+        /* -------------------------------------------------------- */
+        /* 아래는 아까 드린 필수 코드들입니다 (다시 한 번 확인용) */
+        /* -------------------------------------------------------- */
+
+        // 1. 알림 팝업 닫기
         window.closeMainNotice = function() {
             const noticeModal = document.getElementById('mainNoticeModal');
             if (noticeModal) {
@@ -1907,35 +1972,31 @@ END:VCALENDAR`;
         };
 
         // 2. 조건(필터) 팝업 제어
-        const filterModal = document.getElementById('filterModal');
         function openFilterModal() {
+            const filterModal = document.getElementById('filterModal');
             if(filterModal) {
                 filterModal.style.display = 'flex';
                 document.body.classList.add('no-scroll');
             }
         }
         function closeFilterModal(e) {
+            const filterModal = document.getElementById('filterModal');
             if(filterModal) {
                 filterModal.style.display = 'none';
                 document.body.classList.remove('no-scroll');
-                // 닫을 때 버튼 상태 업데이트 (함수가 있을 때만 실행)
-                if(typeof checkTodayButtonVisibility === 'function') {
-                    checkTodayButtonVisibility();
-                }
+                checkTodayButtonVisibility(); // 닫을 때 버튼 체크
             }
         }
 
         // 3. 필터 이벤트 연결
         const regionBoxes = document.querySelectorAll('.region-chk');
         const genreBoxes = document.querySelectorAll('.genre-chk');
-        
-        // applyFilter 함수가 정의되어 있는지 확인 후 실행
         if (typeof applyFilter === 'function') {
             regionBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
             genreBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
         }
 
-        // 4. 초기화 버튼 텍스트 설정
+        // 4. 초기화 버튼 텍스트
         if (genreBoxes.length > 0) {
             const unchecked = Array.from(genreBoxes).some(chk => !chk.checked);
             const resetBtn = document.getElementById('btn-reset');
@@ -1944,9 +2005,14 @@ END:VCALENDAR`;
             }
         }
 
-        // 5. [핵심] 데이터 로딩 시작! (이 줄이 있어야 연도/월이 뜹니다)
+        // 5. 데이터 로딩 시작
         console.log("데이터 로딩 시작...");
         fetchEvents(); 
+
+        // 6. 앱 시작 시 오늘 날짜로 자동 이동 (로딩 후 약간 딜레이)
+        setTimeout(() => {
+            moveFocusToToday(true);
+        }, 300);
 
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
@@ -1960,6 +2026,7 @@ END:VCALENDAR`;
             </div>
         </div>
     </div>
+
     <div id="filterModal" class="modal-overlay" onclick="closeFilterModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 20px;">
             <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
