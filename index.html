@@ -1898,6 +1898,41 @@ END:VCALENDAR`;
                 });
             });
         } 
+        /* ========== [여기서부터 새로 추가/수정된 코드입니다] ========== */
+
+        // 1. 조건(필터) 팝업 열기/닫기 기능 (이게 없어서 버튼이 안 눌렸던 것)
+        const filterModal = document.getElementById('filterModal');
+
+        function openFilterModal() {
+            filterModal.style.display = 'flex';
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeFilterModal(e) {
+            filterModal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            // 닫을 때 버튼(오늘 이동) 상태 업데이트
+            checkTodayButtonVisibility();
+        }
+
+        // 2. 필터 체크박스 이벤트 연결 (필터 바꿨을 때 바로 적용되도록)
+        regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
+
+        // 3. '모두해제' 버튼 초기 텍스트 설정
+        const uncheckedGenre = Array.from(genreChks).some(chk => !chk.checked);
+        if (uncheckedGenre) {
+            isAllChecked = false;
+            btnReset.innerText = "모두선택";
+        } else {
+            isAllChecked = true;
+            btnReset.innerText = "모두해제";
+        }
+
+        // 4. [가장 중요] 데이터 불러오기 시작! (이게 없어서 Loading... 에서 멈췄던 것)
+        fetchEvents(); 
+
+        /* ======================================================== */
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
