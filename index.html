@@ -396,8 +396,8 @@
             top: 0;
             
             /* 버튼들이 들어갈 윗공간 확보를 위해 높이와 여백 조정 */
-            height: 80px; 
-            padding: 10px 15px 15px 15px; 
+            height: 70px; 
+            padding: 0 15px 5px 15px; 
             
             background-color: rgba(255, 255, 255, 0.9); /* 가독성 위해 투명도 낮춤 */
             -webkit-backdrop-filter: blur(5px);
@@ -410,9 +410,9 @@
             /* 내용물(연도/월)을 아래쪽에 배치 */
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; 
+            justify-content: flex-end; /* [핵심] 연도월을 박스 맨 아래로 배치 */
             
-            border-bottom: 1px solid #f1f3f5;
+            border-bottom: none; /* [핵심] 하단 라인 제거 */
         }
 
         /* [수정] 헤더 내부 정렬 (기존 margin 제거) */
@@ -426,12 +426,15 @@
         /* [추가] 상단 고정 버튼 공통 스타일 (종 버튼, 필터 버튼) */
         .fixed-top-btn {
             position: fixed;
-            top: 15px; /* 헤더 상단 여백에 맞춤 */
+            top: 15px; /* [핵심] 두 버튼의 세로 높이(Top)를 똑같이 맞춤 */
             width: 40px; 
             height: 40px;
+            
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            border: 1px solid #ced4da; /* 테두리 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* [핵심] 그림자 추가 */
+            
             display: flex; 
             justify-content: center; 
             align-items: center;
@@ -439,11 +442,11 @@
             cursor: pointer; 
             z-index: 1001; /* 헤더보다 위에 */
             transition: transform 0.2s;
-            border: 1px solid #eee;
             
             -webkit-tap-highlight-color: transparent;
             outline: none;
         }
+
         .fixed-top-btn:active { transform: scale(0.9); }
 
         /* [수정] 종 버튼 위치 (오른쪽 끝) */
@@ -816,8 +819,10 @@
     </style>
 </head>
 <body class="initial-mode">
-  
-    <div class="top-logo" style="display:none;">📌</div> <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">⚙️</div>
+    
+    <div class="top-logo">📌</div> 
+
+    <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">⚙️</div>
     <div id="btn-keyword-alert" class="fixed-top-btn" onclick="openKeywordModal()">🔔</div>
 
     <div id="sticky-header">
