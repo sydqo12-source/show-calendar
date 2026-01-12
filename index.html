@@ -1,1527 +1,1539 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="mobile-web-app-capable" content="yes">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJCTM7H6PT"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    <meta name="mobile-web-app-capable" content="yes">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJCTM7H6PT"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KJCTM7H6PT');
 
-    gtag('config', 'G-KJCTM7H6PT');
-    </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="viewport-meta">
-    <title>쇼콕! - 2026 티켓팅 캘린더, 공연 예매일정</title>
+    // 1. 알림 팝업 닫기 함수
+    function closeMainNotice() {
+        const noticeModal = document.getElementById('mainNoticeModal');
+        if (noticeModal) {
+            noticeModal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }
+    }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="viewport-meta">
+    <title>쇼콕! - 2026 티켓팅 캘린더, 공연 예매일정</title>
 
-    <meta name="description" content="티켓팅 일정 체크를 편하게! 2026년 뮤지컬, 콘서트, 연극의 티켓팅 일정부터 놀티켓(인터파크), 예스24 등 예매처 확인까지 한번에! 티켓팅 캘린더 쇼콕(Showkok)!">
+    <meta name="description" content="티켓팅 일정 체크를 편하게! 2026년 뮤지컬, 콘서트, 연극의 티켓팅 일정부터 놀티켓(인터파크), 예스24 등 예매처 확인까지 한번에! 티켓팅 캘린더 쇼콕(Showkok)!">
+    <meta name="keywords" content="공연, 예매, 일정, 공연일정, 예매일정, 어린이, 어린이공연, 어린이 공연, 어린이 뮤지컬, 어린이뮤지컬, 가족뮤지컬, 가족 뮤지컬, 콘서트, 뮤지컬, 연극, 콘서트 일정, 뮤지컬 일정, 연극 일정, 놀티켓, 인터파크, 인터파크티켓, nol티켓, nol, 예스24티켓, 예스24, 예스24 티켓, 티켓오픈, 멜론티켓, 티켓링크, 티켓팅, 티켓팅 일정, 취켓팅, 콘서트 티켓팅, 뮤지컬 티켓팅, 연극 티켓팅, 최현우, 마술, 마술 일정, 마술 공연, 마술 예매, 예매달력, 티켓팅달력, 달력, 콘서트 예매, 콘서트예매, 뮤지컬 예매, 뮤지컬예매, 팬미팅, 팬미팅 예매, 팬미팅 일정, 팬예매, 팬카페, 선예매, 선예매 일정, 쇼콕, showkok, 2026공연일정, 공연달력">
 
-    <meta name="keywords" content="공연, 예매, 일정, 공연일정, 예매일정, 어린이, 어린이공연, 어린이 공연, 어린이 뮤지컬, 어린이뮤지컬, 가족뮤지컬, 가족 뮤지컬, 콘서트, 뮤지컬, 연극, 콘서트 일정, 뮤지컬 일정, 연극 일정, 놀티켓, 인터파크, 인터파크티켓, nol티켓, nol, 예스24티켓, 예스24, 예스24 티켓, 티켓오픈, 멜론티켓, 티켓링크, 티켓팅, 티켓팅 일정, 취켓팅, 콘서트 티켓팅, 뮤지컬 티켓팅, 연극 티켓팅, 최현우, 마술, 마술 일정, 마술 공연, 마술 예매, 예매달력, 티켓팅달력, 달력, 콘서트 예매, 콘서트예매, 뮤지컬 예매, 뮤지컬예매, 팬미팅, 팬미팅 예매, 팬미팅 일정, 팬예매, 팬카페, 선예매, 선예매 일정, 쇼콕, showkok, 2026공연일정, 공연달력">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://showkok.com/">
+    <meta property="og:title" content="쇼콕! - 2026 공연 티켓팅 캘린더">
+    <meta property="og:description" content="티켓팅 언제지? 티켓팅 일정 체크와 예매처 확인까지 한번에!">
+    <meta property="og:image" content="https://showkok.com/og-image.jpg">
+    <meta name="naver-site-verification" content="ce3acdb3f4cf9c86aa7822b6e7ddb75d6468776a" />
+    <meta name="google-site-verification" content="pJOl-0RpSmzuXBOI20_1imrQvVjgeFC04NbXUYCz7ik" />
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="쇼콕">
+    <link rel="apple-touch-icon" href="icon-192.png">
 
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://showkok.com/">
-    <meta property="og:title" content="쇼콕! - 2026 공연 티켓팅 캘린더">
-    <meta property="og:description" content="티켓팅 언제지? 티켓팅 일정 체크와 예매처 확인까지 한번에!">
-    <meta property="og:image" content="https://showkok.com/og-image.jpg">
-    <meta name="naver-site-verification" content="ce3acdb3f4cf9c86aa7822b6e7ddb75d6468776a" />
-    <meta name="google-site-verification" content="pJOl-0RpSmzuXBOI20_1imrQvVjgeFC04NbXUYCz7ik" />
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="쇼콕">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+         button {
+             -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
+             outline: none;          /* 포커스 테두리 제거 */
+             transition: opacity 0.2s; /* 부드러운 효과 */
+             cursor: pointer;        /* 마우스 손가락 모양 */
+         }
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        
-         button {
-             -webkit-tap-highlight-color: transparent; /* 터치 시 파란 박스 제거 */
-             outline: none;          /* 포커스 테두리 제거 */
-             transition: opacity 0.2s; /* 부드러운 효과 */
-             cursor: pointer;        /* 마우스 손가락 모양 */
-         }
+         button:hover {
+             opacity: 0.9; /* 마우스 올렸을 때 살짝 투명해짐 */
+         }
+        /* [기본 설정] */
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #ffffff; 
+            padding: 15px; 
+            user-select: none; 
+            -webkit-user-select: none; 
 
-         button:hover {
-             opacity: 0.9; /* 마우스 올렸을 때 살짝 투명해짐 */
-         }
-        /* [기본 설정] */
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            background-color: #ffffff; 
-            padding: 15px; 
-            user-select: none; 
-            -webkit-user-select: none; 
+            touch-action: pan-y;
+            overscroll-behavior: none;
+        } 
+        
+        body.no-scroll { overflow: hidden; touch-action: none; }
 
-            touch-action: pan-y;
-            overscroll-behavior: none;
-        } 
-        
-        body.no-scroll { overflow: hidden; touch-action: none; }
+        /* [헤더] */
+        .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-top: 25px; margin-bottom: 15px; position: relative; }
+        .sub-title { font-size: 32px; font-weight: 800; color: #495057; }
+        .nav-row { display: flex; align-items: center; gap: 8px; }
+        
+        .nav-btn {
+            width: 30px; height: 30px; background-color: #fff; border: 1px solid #ced4da;
+            border-radius: 4px; color: #868e96; font-size: 16px; font-weight: 700;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: all 0.2s; -webkit-user-select: none; /* [추가] 아이폰용 */ user-select: none;
 
-        /* [헤더] */
-        .header-wrapper { display: flex; flex-direction: column; align-items: center; margin-top: 25px; margin-bottom: 15px; position: relative; }
-        /*.main-title { font-size: 36px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; } */
-        .sub-title { font-size: 32px; font-weight: 800; color: #495057; }
-        .nav-row { display: flex; align-items: center; gap: 8px; }
-        
-        .nav-btn {
-            width: 30px; height: 30px; background-color: #fff; border: 1px solid #ced4da;
-            border-radius: 4px; color: #868e96; font-size: 16px; font-weight: 700;
-            display: flex; justify-content: center; align-items: center; cursor: pointer;
-            transition: all 0.2s; -webkit-user-select: none; /* [추가] 아이폰용 */ user-select: none;
+            -webkit-tap-highlight-color: transparent; 
+            outline: none;
+        }
+        .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
+        .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
+        
+        /* [컨트롤 바 (필터)] */
+        .control-bar { 
+            margin-bottom: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 12px; 
+            padding-left: 0;
+            font-size: 18px; 
+        }
+        
+        .filter-group { display: flex; align-items: flex-start; gap: 4px; width: 100%; }
+        .group-title { font-weight: 800; color: #212529; white-space: nowrap; font-size: 18px; margin-right: 4px; margin-top: 1px; }
+        .chk-list { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 4px; flex: 1; }
+        
+        label { cursor: pointer; display: flex; align-items: center; gap: 5px; margin-right: 5px; -webkit-tap-highlight-color: transparent; }
+        label:hover { opacity: 1; } 
+        input[type="checkbox"] { accent-color: #343a40; width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        
+        .btn-reset {
+            margin-left: -4px; background-color: transparent; border: 1px solid #adb5bd;
+            border-radius: 4px; padding: 2px 8px; font-size: 15px; font-weight: 600;
+            color: #495057; cursor: pointer; transition: all 0.2s; height: 28px;
+            display: flex; align-items: center; -webkit-tap-highlight-color: transparent;
+        }
+        .btn-reset:hover { background-color: #e9ecef; color: #212529; }
+        .btn-reset:active { background-color: transparent; color: #495057; border-color: #ced4da; }
 
-            -webkit-tap-highlight-color: transparent; 
-            outline: none;
-        }
-        .nav-btn:hover { background-color: #f1f3f5; color: #343a40; border-color: #adb5bd; }
-        .nav-btn.disabled { opacity: 0.3; pointer-events: none; }
-        
-        /* [컨트롤 바 (필터)] */
-        .control-bar { 
-            margin-bottom: 25px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start; 
-            gap: 12px; 
-            padding-left: 0;
-            font-size: 18px; 
-        }
-        
-        .filter-group { display: flex; align-items: flex-start; gap: 4px; width: 100%; }
-        .group-title { font-weight: 800; color: #212529; white-space: nowrap; font-size: 18px; margin-right: 4px; margin-top: 1px; }
-        .chk-list { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 4px; flex: 1; }
-        
-        label { cursor: pointer; display: flex; align-items: center; gap: 5px; margin-right: 5px; -webkit-tap-highlight-color: transparent; }
-        label:hover { opacity: 1; } 
-        input[type="checkbox"] { accent-color: #343a40; width: 18px; height: 18px; margin: 0; cursor: pointer; }
-        
-        .btn-reset {
-            margin-left: -4px; background-color: transparent; border: 1px solid #adb5bd;
-            border-radius: 4px; padding: 2px 8px; font-size: 15px; font-weight: 600;
-            color: #495057; cursor: pointer; transition: all 0.2s; height: 28px;
-            display: flex; align-items: center; -webkit-tap-highlight-color: transparent;
-        }
-        .btn-reset:hover { background-color: #e9ecef; color: #212529; }
-        .btn-reset:active { background-color: transparent; color: #495057; border-color: #ced4da; }
+        /* [텍스트 색상] */
+        .txt-red { color: #e03131; font-weight: 700; }
+        .txt-green { color: #2b8a3e; font-weight: 700; }
+        .txt-blue { color: #1971c2; font-weight: 700; }
+        .txt-black { color: #495057; font-weight: 500; }
 
-        /* [텍스트 색상] */
-        .txt-red { color: #e03131; font-weight: 700; }
-        .txt-green { color: #2b8a3e; font-weight: 700; }
-        .txt-blue { color: #1971c2; font-weight: 700; }
-        .txt-black { color: #495057; font-weight: 500; }
+        /* ==========================================================================
+           [중요] 리스트형 캘린더 스타일
+           ========================================================================== */
+        
+        /* 테이블 전체 스타일 (카드 형태) */
+        table { 
+            display: block; 
+            width: 100%; 
+            background: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid #dee2e6; /* 전체 외곽선 */
+            margin-bottom: 0;
+            border-collapse: separate; 
+            border-spacing: 0; 
+        }
 
-        /* ==========================================================================
-           [중요] 리스트형 캘린더 스타일
-           ========================================================================== */
-        
-        /* 테이블 전체 스타일 (카드 형태) */
-        table { 
-            display: block; 
-            width: 100%; 
-            background: white; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 1px solid #dee2e6; /* 전체 외곽선 */
-            margin-bottom: 0;
-            border-collapse: separate; 
-            border-spacing: 0; 
-        }
+        thead { display: none; }
+        tbody, th, tr { display: block; }
+        tr { margin-bottom: 0; }
+        
+        /* [수정] 날짜 칸(td) 디자인 - 토요일 밑줄 살리기 */
+        td { 
+            display: block; 
+            height: auto !important; 
+            border: none; 
+            border-bottom: 1px solid #e9ecef !important; /* 모든 칸에 밑줄 적용 */
+            position: relative; 
+            text-align: left !important; 
+            padding: 10px 15px !important; 
+        }
+        
+        td:empty { display: none; } 
 
-        thead { display: none; }
-        tbody, th, tr { display: block; }
-        tr { margin-bottom: 0; }
-        
-        /* [수정] 날짜 칸(td) 디자인 - 토요일 밑줄 살리기 */
-        td { 
-            display: block; 
-            height: auto !important; 
-            border: none; 
-            border-bottom: 1px solid #e9ecef !important; /* 모든 칸에 밑줄 적용 */
-            position: relative; 
-            text-align: left !important; 
-            padding: 10px 15px !important; 
-        }
-        
-        /* td:last-child { border-bottom: none !important; }  <-- 이 줄을 삭제했습니다 (토요일 밑줄 복구) */
-        td:empty { display: none; } 
+        /* 날짜 숫자 스타일 */
+        .date-num { 
+            display: inline-block; width: auto; font-size: 16px; 
+            margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; 
+        }
+        .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
+        .sun .date-num { color: #ffc9c9; } 
+        .sat .date-num { color: #a5d8ff; }
 
-        /* 날짜 숫자 스타일 */
-        .date-num { 
-            display: inline-block; width: auto; font-size: 16px; 
-            margin-bottom: 0; border-bottom: none; font-weight: 500; color: #ced4da; 
-        }
-        .date-num::after { content: "(" attr(data-dayname) ")"; font-size: inherit; color: inherit; font-weight: inherit; margin-left: 0; }
-        .sun .date-num { color: #ffc9c9; } 
-        .sat .date-num { color: #a5d8ff; }
+        /* [상태별 스타일] */
+        /* [수정] 지난 날짜(과거) 스타일: 경계선은 건드리지 않음 */
+        td.day-past {
+            opacity: 1 !important; 
+            background-color: transparent !important;
+        }
 
-        /* [상태별 스타일] */
-        /* [수정] 지난 날짜(과거) 스타일: 경계선은 건드리지 않음 */
-        td.day-past {
-            /* td 자체에는 투명도를 주지 않음 -> 경계선(border) 선명하게 유지됨 */
-            opacity: 1 !important; 
-            background-color: transparent !important;
-        }
+        td.day-past.day-active .date-num {
+            opacity: 0.5 !important;
+        }
 
-        /* 2. [수정됨] 날짜 숫자: '과거'이면서 동시에 '활성화된(공연있는)' 날짜에만 투명도 적용 */
-        /* 공연이 없는 날(day-inactive)은 이 규칙이 적용되지 않아 원래 색상 그대로 나옵니다 */
-        td.day-past.day-active .date-num {
-            opacity: 0.5 !important;
-        }
-        /* 일요일/토요일 색상도 '공연 없는 날' 기준(파스텔톤)으로 복구 */
-        /* td.day-past.sun .date-num { color: #ffc9c9 !important; } */
-        /* td.day-past.sat .date-num { color: #a5d8ff !important; } */
+        td.day-past .event-box {
+            opacity: 0.5 !important;       /* 박스만 40% 투명하게 */
+        }
 
-        /* 2. 지난 날짜의 '공연 박스'만 따로 흐리게 처리 */
-        td.day-past .event-box {
-            opacity: 0.5 !important;       /* 박스만 40% 투명하게 */
-        }
+        td.day-past .event-box:hover,
+        td.day-past .event-box:active {
+            opacity: 0.5 !important;       /* 마우스 올려도 투명도 유지 */
+        }
+        /* 1. 공연 있는 날 (Active) */
+        td.day-active {
+            padding: 7px 7px 0px 7px !important; 
+        }
+        td.day-active .date-num { 
+            font-size: 24px; margin-bottom: 2px; padding-bottom: 2px; color: #212529; font-weight: 800; 
+        }
+        td.day-active.sun .date-num { color: #e03131 !important; } 
+        td.day-active.sat .date-num { color: #1971c2 !important; }
 
-        /* 3. 클릭하거나 마우스 올려도 흐림 효과가 유지되도록 설정 */
-        td.day-past .event-box:hover,
-        td.day-past .event-box:active {
-            opacity: 0.5 !important;       /* 마우스 올려도 투명도 유지 */
-        }
-        /* 1. 공연 있는 날 (Active) */
-        td.day-active {
-            padding: 7px 7px 0px 7px !important; 
-        }
-        td.day-active .date-num { 
-            font-size: 24px; margin-bottom: 2px; padding-bottom: 2px; color: #212529; font-weight: 800; 
-        }
-        td.day-active.sun .date-num { color: #e03131 !important; } 
-        td.day-active.sat .date-num { color: #1971c2 !important; }
+        /* 2. 공연 없는 날 (Inactive) */
+        td.day-inactive {
+            padding: 7px 7px !important;
+        }
+        td.day-inactive .date-num { font-size: 16px; color: #ced4da; }
+        td.day-inactive.sun .date-num { color: #ffc9c9; }
+        td.day-inactive.sat .date-num { color: #a5d8ff; }
 
-        /* 2. 공연 없는 날 (Inactive) */
-        td.day-inactive {
-            padding: 7px 7px !important;
-        }
-        td.day-inactive .date-num { font-size: 16px; color: #ced4da; }
-        td.day-inactive.sun .date-num { color: #ffc9c9; }
-        td.day-inactive.sat .date-num { color: #a5d8ff; }
+        /* [공연 박스 디자인] */
+        .event-box { 
+            display: none; 
+            font-size: 16px !important; 
+            padding: 7px; 
+            margin-bottom: 7px; 
+            border-radius: 10px;
+            background-color: #fff; 
+            border: 1px solid #ced4da; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer; 
+            overflow: hidden; 
+            transition: transform 0.2s, box-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .event-box:last-child {
+            margin-bottom: 7;
+        }
+        
+        .event-box:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1); 
+            border-color: #adb5bd; 
+        }
 
-        /* [공연 박스 디자인] */
-        .event-box { 
-            display: none; 
-            font-size: 16px !important; 
-            padding: 7px; 
-            margin-bottom: 7px; 
-            border-radius: 10px;
-            background-color: #fff; 
-            border: 1px solid #ced4da; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            cursor: pointer; 
-            overflow: hidden; 
-            transition: transform 0.2s, box-shadow 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .event-box:last-child {
-            margin-bottom: 7;
-        }
-        
-        .event-box:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 12px rgba(0,0,0,0.1); 
-            border-color: #adb5bd; 
-        }
+        /* 포스터 이미지 비율 원본 유지 */
+        .event-poster-thumb {
+            width: 100%;
+            height: auto; 
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: block;
+            background-color: #f1f3f5;
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+            -webkit-user-select: none; /* [추가] 아이폰용 */
+            user-select: none;
+            pointer-events: auto;
+        }
 
-        /* 포스터 이미지 비율 원본 유지 */
-        .event-poster-thumb {
-            width: 100%;
-            height: auto; 
-            border-radius: 6px;
-            margin-bottom: 12px;
-            display: block;
-            background-color: #f1f3f5;
-            -webkit-touch-callout: none;
-            -webkit-user-drag: none;
-            -webkit-user-select: none; /* [추가] 아이폰용 */
-            user-select: none;
-            pointer-events: auto;
-        }
+        .event-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 6px; font-size: 18px;
+        }
+        
+        .box-line2 { 
+            display: block;
+            line-height: 1.4; 
+            margin-top: 8px; 
+            white-space: normal; 
+            word-break: keep-all; 
+        }
 
-        .event-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 6px; font-size: 18px;
-        }
-        
-        .box-line2 { 
-            display: block;
-            line-height: 1.4; 
-            margin-top: 8px; 
-            white-space: normal; 
-            word-break: keep-all; 
-        }
+        /* 초기 로딩 시 스타일 */
+        body.initial-mode td { border-bottom: 1px solid #e9ecef !important; }
+        body.initial-mode .date-num { font-size: 16px; font-weight: 500; color: #ced4da; }
+        body.initial-mode .sun .date-num { color: #ffc9c9; }
+        body.initial-mode .sat .date-num { color: #a5d8ff; }
 
-        /* 초기 로딩 시 스타일 */
-        body.initial-mode td { border-bottom: 1px solid #e9ecef !important; }
-        body.initial-mode .date-num { font-size: 16px; font-weight: 500; color: #ced4da; }
-        body.initial-mode .sun .date-num { color: #ffc9c9; }
-        body.initial-mode .sat .date-num { color: #a5d8ff; }
+        /* [팝업(모달) 스타일] */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); z-index: 9999;
+            justify-content: center; align-items: center; padding-top: 0; 
+            padding-bottom: 0; -webkit-backdrop-filter: blur(0px); /* [추가] 아이폰용 */
+            backdrop-filter: blur(0px); overflow-y: auto; 
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 350px;
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.2s ease-out; margin-bottom: 0;
+            border: 1px solid #ced4da; 
+        }
+        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-poster-area {
+            width: 100%; height: 400px; background-color: #f8f9fa;
+            display: none !important; justify-content: center; align-items: center;
+            overflow: hidden; border-bottom: 1px solid #eee;
+        }
+        .modal-poster-area img { 
+            width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; 
+            -webkit-touch-callout: none;
+        }
+        .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
 
-        /* [팝업(모달) 스타일] */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.3); z-index: 9999;
-            justify-content: center; align-items: center; padding-top: 0; 
-            padding-bottom: 0; -webkit-backdrop-filter: blur(0px); /* [추가] 아이폰용 */
-            backdrop-filter: blur(0px); overflow-y: auto; 
-        }
-        .modal-content {
-            background: white; width: 90%; max-width: 350px;
-            border-radius: 12px; overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: popUp 0.2s ease-out; margin-bottom: 0;
-            border: 1px solid #ced4da; 
-        }
-        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        .modal-poster-area {
-            width: 100%; height: 400px; background-color: #f8f9fa;
-            display: none !important; justify-content: center; align-items: center;
-            overflow: hidden; border-bottom: 1px solid #eee;
-        }
-        .modal-poster-area img { 
-            width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; 
-            -webkit-touch-callout: none;
-        }
-        .no-poster-text { color: #adb5bd; font-weight: 600; font-size: 14px; }
+        .modal-body { padding: 15px; text-align: center; }
+        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
+        .modal-info { font-size: 17px; color: #868e96; margin-bottom: 15px; }
+        
+        /* [추가] 팝업창 예매일정 텍스트 스타일 */
+        .modal-ticketing {
+            font-size: 18px;       /* 장소 정보와 비슷한 크기 */
+            color: #fa5252;        /* 강조색 (빨간색 계열) */
+            font-weight: 700;      /* 굵게 */
+            margin-top: -5px;      /* 장소 정보와 좀 더 가깝게 붙이기 */
+            margin-bottom: 10px;   /* 버튼들과는 간격 띄우기 */
+            word-break: keep-all;  /* 줄바꿈 깔끔하게 */
+        }
+        .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .btn-row { display: flex; width: 100%; gap: 8px; }
+        
+        .modal-btn {
+            padding: 0; height: 45px; border-radius: 8px; font-size: 18px; font-weight: 700;
+            text-align: center; cursor: pointer; text-decoration: none; border: none;
+            display: flex; justify-content: center; align-items: center; 
+            transition: opacity 0.2s; -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important; -webkit-user-select: none !important; user-select: none !important;
+        }
+        .modal-btn:hover { opacity: 0.9; }
+        .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
+        .btn-action-red { background-color: #fa5252; color: white; flex: 1; }
+        .btn-youtube-custom {
+            background-color: white; color: black; border: 1px solid #ced4da;
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-youtube-custom:hover { background-color:#f8f9fa; }
+        .yt-icon { width: 28px; height: auto; display: block; }
 
-        .modal-body { padding: 15px; text-align: center; }
-        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 5px; color: #212529; word-break: keep-all; }
-        .modal-info { font-size: 17px; color: #868e96; margin-bottom: 15px; }
-        
-        /* [추가] 팝업창 예매일정 텍스트 스타일 */
-        .modal-ticketing {
-            font-size: 18px;       /* 장소 정보와 비슷한 크기 */
-            color: #fa5252;        /* 강조색 (빨간색 계열) */
-            font-weight: 700;      /* 굵게 */
-            margin-top: -5px;     /* 장소 정보와 좀 더 가깝게 붙이기 */
-            margin-bottom: 10px;   /* 버튼들과는 간격 띄우기 */
-            word-break: keep-all;  /* 줄바꿈 깔끔하게 */
-        }
-        .modal-btn-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-        .btn-row { display: flex; width: 100%; gap: 8px; }
-        
-        .modal-btn {
-            padding: 0; height: 45px; border-radius: 8px; font-size: 18px; font-weight: 700;
-            text-align: center; cursor: pointer; text-decoration: none; border: none;
-            display: flex; justify-content: center; align-items: center; 
-            transition: opacity 0.2s; -webkit-tap-highlight-color: transparent !important;
-            -webkit-touch-callout: none !important; -webkit-user-select: none !important; user-select: none !important;
-        }
-        .modal-btn:hover { opacity: 0.9; }
-        .btn-link-black { background-color: #343a40; color: white; flex: 1; } 
-        .btn-action-red { background-color: #fa5252; color: white; flex: 1; }
-        .btn-youtube-custom {
-            background-color: white; color: black; border: 1px solid #ced4da;
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-youtube-custom:hover { background-color:#f8f9fa; }
-        .yt-icon { width: 28px; height: auto; display: block; }
+        /* [확인창 및 이미지 확대] */
+        .confirm-content {
+            background: white; width: 85%; max-width: 320px;
+            border-radius: 12px; padding: 20px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.2s ease-out; margin: 0;
+        }
+        .confirm-text { font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 15px; line-height: 1.6; word-break: keep-all; }
+        .confirm-btn-group { display: flex; gap: 10px; justify-content: center; }
+        .confirm-btn { flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
+        .btn-yes { background-color: #343a40; color: white; }
+        .btn-no { background-color: #f1f3f5; color: #495057; }
 
-        /* [확인창 및 이미지 확대] */
-        .confirm-content {
-            background: white; width: 85%; max-width: 320px;
-            border-radius: 12px; padding: 20px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: popUp 0.2s ease-out; margin: 0;
-        }
-        .confirm-text { font-size: 18px; font-weight: 700; color: #343a40; margin-bottom: 15px; line-height: 1.6; word-break: keep-all; }
-        .confirm-btn-group { display: flex; gap: 10px; justify-content: center; }
-        .confirm-btn { flex: 1; padding: 12px 0; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; }
-        .btn-yes { background-color: #343a40; color: white; }
-        .btn-no { background-color: #f1f3f5; color: #495057; }
+        #imageZoomOverlay {
+            display: none; position: fixed; z-index: 10001; 
+            padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
+            overflow: auto; background-color: rgba(0,0,0,0.9);
+            touch-action: pan-x pan-y pinch-zoom;
+        }
+        #zoomedImage {
+            margin: auto; display: block; max-width: 95%; max-height: 90vh; 
+            object-fit: contain; animation: zoomAnim 0.3s;
+            -webkit-touch-callout: none;
+        }
+        @keyframes zoomAnim { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+        .close-zoom {
+            position: absolute; top: 20px; right: 30px; 
+            color: #f1f1f1; font-size: 40px; font-weight: bold; 
+            transition: 0.3s; cursor: pointer; z-index: 10002;
+        }
+        .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
+        .top-logo {
+             position: absolute;
+             top: 10px;            /* 위에서 15px */
+             left: 5px;           /* 왼쪽에서 15px */
+             font-size: 30px;       /* 작게 (원하는 크기로 조절 가능) */
+             z-index: 10;           /* 다른 요소보다 위에 표시 */
+             line-height: 1;
+             margin-bottom: 5px;
+        }
+        #splash-screen {
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff; 
+            z-index: 99999; /* 모든 화면(팝업 포함)보다 제일 위에 */
+ 
+            /* 중앙 정렬 */
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+         }
 
-        #imageZoomOverlay {
-            display: none; position: fixed; z-index: 10001; 
-            padding-top: 20px; left: 0; top: 0; width: 100%; height: 100%; 
-            overflow: auto; background-color: rgba(0,0,0,0.9);
-            touch-action: pan-x pan-y pinch-zoom;
-        }
-        #zoomedImage {
-            margin: auto; display: block; max-width: 95%; max-height: 90vh; 
-            object-fit: contain; animation: zoomAnim 0.3s;
-            -webkit-touch-callout: none;
-        }
-        @keyframes zoomAnim { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
-        .close-zoom {
-            position: absolute; top: 20px; right: 30px; 
-            color: #f1f1f1; font-size: 40px; font-weight: bold; 
-            transition: 0.3s; cursor: pointer; z-index: 10002;
-        }
-        .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
-        .top-logo {
-             /*position: absolute;    화면 흐름과 상관없이 위치 고정 */
-             top: 10px;            /* 위에서 15px */
-             left: 5px;           /* 왼쪽에서 15px */
-             font-size: 30px;      /* 작게 (원하는 크기로 조절 가능) */
-             z-index: 10;          /* 다른 요소보다 위에 표시 */
-             line-height: 1;
-             margin-bottom: 5px;
-        }
-        #splash-screen {
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffffff; 
-            z-index: 99999; /* 모든 화면(팝업 포함)보다 제일 위에 */
-    
-            /* 중앙 정렬 */
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-         }
+         /* 중앙 이모지 스타일 */
+        .splash-icon {
+        font-size: 50px; /* 적당히 큰 크기 */
+     }
 
-         /* 중앙 이모지 스타일 */
-        .splash-icon {
-        font-size: 50px; /* 적당히 큰 크기 */
-     }
+     /* 화면을 숨길 때 사용하는 클래스 */
+     #splash-screen.hidden {
+         opacity: 0;
+         visibility: hidden; /* 완전히 사라져서 클릭 방해 안 함 */
+     
+     }    
+     /* 2. 끈적이는 헤더 (스크롤 하다가 천장에 닿으면 붙음) */
+     #sticky-header {
+         position: -webkit-sticky; /* 사파리(아이폰) 호환 */
+         position: sticky;          /* 핵심 코드 */
+         top: 0;                   /* 천장에 딱 붙음 */
+ 
+         background-color: rgba(255, 255, 255, 0.5); /* 살짝 투명하게 해서 고급스럽게 */
+         -webkit-backdrop-filter: blur(1px);
+         backdrop-filter: blur(1px); /* 뒤에 내용물 흐리게 비침 */
+         z-index: 1000;
+ 
+         margin-left: -15px;    /* 왼쪽 여백(15px) 무시하고 꽉 채우기 */
+         margin-right: -15px;   /* 오른쪽 여백(15px) 무시하고 꽉 채우기 */
+         padding: 10px 15px 5px 25px;
+     }
 
-     /* 화면을 숨길 때 사용하는 클래스 */
-     #splash-screen.hidden {
-         opacity: 0;
-         visibility: hidden; /* 완전히 사라져서 클릭 방해 안 함 */
-     
-     }    
-     /* 2. 끈적이는 헤더 (스크롤 하다가 천장에 닿으면 붙음) */
-     #sticky-header {
-         position: -webkit-sticky; /* 사파리(아이폰) 호환 */
-         position: sticky;         /* 핵심 코드 */
-         top: 0;                   /* 천장에 딱 붙음 */
-    
-         background-color: rgba(255, 255, 255, 0.5); /* 살짝 투명하게 해서 고급스럽게 */
-         -webkit-backdrop-filter: blur(1px);
-         backdrop-filter: blur(1px); /* 뒤에 내용물 흐리게 비침 */
-         z-index: 1000;
-    
-         margin-left: -15px;   /* 왼쪽 여백(15px) 무시하고 꽉 채우기 */
-         margin-right: -15px;  /* 오른쪽 여백(15px) 무시하고 꽉 채우기 */
-         padding: 10px 15px 5px 25px;
-     }
+     /* 3. 헤더 내부 정렬 (기존 margin-top 제거) */
+     .header-wrapper {
+         margin-top: 0; 
+         margin-bottom: 10px;
+         display: flex; 
+         flex-direction: column; 
+         align-items: center;
+     }
 
-     /* 3. 헤더 내부 정렬 (기존 margin-top 제거) */
-     .header-wrapper {
-         margin-top: 0; 
-         margin-bottom: 10px;
-         display: flex; 
-         flex-direction: column; 
-         align-items: center;
-     }
+    .control-bar {
+        margin-bottom: 0;
+        display: flex; 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 12px; 
+        font-size: 18px; 
+     }
 
-    .control-bar {
-        margin-bottom: 0;
-        display: flex; 
-        flex-direction: column; 
-        align-items: flex-start; 
-        gap: 12px; 
-        font-size: 18px; 
-     }
+     /* (중요) 캘린더 컨테이너의 불필요한 여백 제거 */
+     #calendar-container {
+         padding-top: 15px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
+     }
+     /* [추가] 오늘 이동 버튼 (플로팅 스타일) */
+        .btn-floating-today {
+            position: fixed;
+            
+            /* 위치 계산: Top버튼위치(25px) + 버튼높이(45px) + 간격(10px) = 80px */
+            bottom: 80px; 
+            right: 25px;            /* Top 버튼과 같은 라인 */
+            
+            width: 45px;            /* Top 버튼과 동일 크기 */
+            height: 45px;
+            
+            background-color: #ffffff; /* 하얀색 배경 */
+            color: #343a40;            /* 글자색은 진한 회색 (가독성) */
+            border: 1px solid #dee2e6; /* 얇은 테두리로 깔끔하게 */
+            border-radius: 50%;        /* 완전한 원형 */
+            
+            display: none;             /* 자바스크립트가 조건 맞을 때만 보여줌 (flex로 변경됨) */
+            justify-content: center;   /* 글자 가운데 정렬 */
+            align-items: center;
+            
+            font-size: 16px;           /* 글자 크기 */
+            font-weight: 800;          /* 굵게 */
+            cursor: pointer;
+            z-index: 4999;             /* Top 버튼(5000)보다는 살짝 아래 레이어 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* 그림자로 입체감 */
+            
+            /* 모바일 터치 깜빡임 방지 및 애니메이션 */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none; /* [추가] 아이폰용 */
+            user-select: none;
+            transition: transform 0.2s, background-color 0.2s;
+        }
 
-     /* (중요) 캘린더 컨테이너의 불필요한 여백 제거 */
-     #calendar-container {
-         padding-top: 15px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
-     }
-     /* [추가] 오늘 이동 버튼 (플로팅 스타일) */
-        .btn-floating-today {
-            position: fixed;
-            
-            /* 위치 계산: Top버튼위치(25px) + 버튼높이(45px) + 간격(10px) = 80px */
-            bottom: 80px; 
-            right: 25px;            /* Top 버튼과 같은 라인 */
-            
-            width: 45px;            /* Top 버튼과 동일 크기 */
-            height: 45px;
-            
-            background-color: #ffffff; /* 하얀색 배경 */
-            color: #343a40;            /* 글자색은 진한 회색 (가독성) */
-            border: 1px solid #dee2e6; /* 얇은 테두리로 깔끔하게 */
-            border-radius: 50%;        /* 완전한 원형 */
-            
-            display: none;             /* 자바스크립트가 조건 맞을 때만 보여줌 (flex로 변경됨) */
-            justify-content: center;   /* 글자 가운데 정렬 */
-            align-items: center;
-            
-            font-size: 16px;           /* 글자 크기 */
-            font-weight: 800;          /* 굵게 */
-            cursor: pointer;
-            z-index: 4999;             /* Top 버튼(5000)보다는 살짝 아래 레이어 */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* 그림자로 입체감 */
-            
-            /* 모바일 터치 깜빡임 방지 및 애니메이션 */
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none; /* [추가] 아이폰용 */
-            user-select: none;
-            transition: transform 0.2s, background-color 0.2s;
-        }
+        /* 눌렀을 때 효과 */
+        .btn-floating-today:active {
+            transform: scale(0.9);       /* 살짝 작아짐 */
+            background-color: #f8f9fa;   /* 아주 살짝 어두워짐 */
+        }
+     #btn-back-to-top {
+        position: fixed;
+        bottom: 25px;       /* 바닥에서 25px 띄움 */
+        right: 25px;        /* 오른쪽에서 25px 띄움 */
+        width: 45px;        /* 버튼 너비 */
+        height: 45px;       /* 버튼 높이 */
+ 
+        background-color: #343a40; /* 버튼 색상 (진한 회색) */
+        color: white;       /* 화살표 색상 */
+        border-radius: 50%; /* 완전한 원형 */
+ 
+        display: none;      /* 처음엔 숨김 (자바스크립트로 스크롤 내리면 보여줌) */
+        justify-content: center;
+        align-items: center;
+ 
+        font-size: 24px;    /* 화살표 크기 */
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 5000;      /* 팝업보단 아래, 내용물보단 위에 */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* 그림자 효과 */
+ 
+        /* 모바일 터치 시 깜빡임 방지 */
+        -webkit-tap-highlight-color: transparent;
+        -webkit-user-select: none; /* [추가] 아이폰용 */
+        user-select: none;
+        transition: transform 0.2s, opacity 0.3s;
+     }
 
-        /* 눌렀을 때 효과 */
-        .btn-floating-today:active {
-            transform: scale(0.9);      /* 살짝 작아짐 */
-            background-color: #f8f9fa;  /* 아주 살짝 어두워짐 */
-        }
-     #btn-back-to-top {
-        position: fixed;
-        bottom: 25px;       /* 바닥에서 25px 띄움 */
-        right: 25px;        /* 오른쪽에서 25px 띄움 */
-        width: 45px;        /* 버튼 너비 */
-        height: 45px;       /* 버튼 높이 */
-    
-        background-color: #343a40; /* 버튼 색상 (진한 회색) */
-        color: white;       /* 화살표 색상 */
-        border-radius: 50%; /* 완전한 원형 */
-    
-        display: none;      /* 처음엔 숨김 (자바스크립트로 스크롤 내리면 보여줌) */
-        justify-content: center;
-        align-items: center;
-    
-        font-size: 24px;    /* 화살표 크기 */
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 5000;      /* 팝업보단 아래, 내용물보단 위에 */
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* 그림자 효과 */
-    
-        /* 모바일 터치 시 깜빡임 방지 */
-        -webkit-tap-highlight-color: transparent;
-        -webkit-user-select: none; /* [추가] 아이폰용 */
-        user-select: none;
-        transition: transform 0.2s, opacity 0.3s;
-     }
+     /* 눌렀을 때 살짝 작아지는 효과 */
+     #btn-back-to-top:active {
+        transform: scale(0.9);
+     }
+     .bottom-nav-container {
+            margin-top: 15px !important;    /* 위쪽 달력과의 간격 */
+            margin-bottom: 5px !important; /* 페이지 맨 바닥과의 간격 */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* 하단 제목 폰트 크기 강제 적용 (상단과 동일하게) */
+        #calendar-title-bottom {
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #495057;
+        }
+        /* [추가] 모든 이미지 드래그 방지 (PC 마우스 드래그 차단) */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            -webkit-user-select: none; /* [추가] 아이폰용 */
+            user-select: none;
+        }
 
-     /* 눌렀을 때 살짝 작아지는 효과 */
-     #btn-back-to-top:active {
-        transform: scale(0.9);
-     }
-     .bottom-nav-container {
-            margin-top: 15px !important;    /* 위쪽 달력과의 간격 */
-            margin-bottom: 5px !important; /* 페이지 맨 바닥과의 간격 */
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        
-        /* 하단 제목 폰트 크기 강제 적용 (상단과 동일하게) */
-        #calendar-title-bottom {
-            font-size: 32px; 
-            font-weight: 800; 
-            color: #495057;
-        }
-        /* [추가] 모든 이미지 드래그 방지 (PC 마우스 드래그 차단) */
-        img {
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            -webkit-user-select: none; /* [추가] 아이폰용 */
-            user-select: none;
-        }
+        /* [추가] PC 버전 레이아웃 보정 (모바일 앱처럼 가운데 정렬) */
+        @media (min-width: 768px) {
+            body {
+                max-width: 480px;       /* 너비 제한 (너무 넓어지지 않게) */
+                margin: 0 auto;         /* 화면 중앙 정렬 */
+                box-shadow: 0 0 30px rgba(0,0,0,0.1); /* 양옆에 그림자 줘서 고급스럽게 */
+                min-height: 100vh;      /* 화면 꽉 채우기 */
+                border-left: 1px solid #f1f3f5;  /* 양옆 테두리 */
+                border-right: 1px solid #f1f3f5;
+            }
 
-        /* [추가] PC 버전 레이아웃 보정 (모바일 앱처럼 가운데 정렬) */
-        @media (min-width: 768px) {
-            body {
-                max-width: 480px;       /* 너비 제한 (너무 넓어지지 않게) */
-                margin: 0 auto;         /* 화면 중앙 정렬 */
-                box-shadow: 0 0 30px rgba(0,0,0,0.1); /* 양옆에 그림자 줘서 고급스럽게 */
-                min-height: 100vh;      /* 화면 꽉 채우기 */
-                border-left: 1px solid #f1f3f5;  /* 양옆 테두리 */
-                border-right: 1px solid #f1f3f5;
-            }
+            /* 2. 스티키 헤더 위치 교정 (왼쪽 튀어나옴 해결) */
+            #sticky-header {
+                max-width: 480px;     /* 몸통 크기와 똑같이 */
+                width: 100% !important; 
 
-            /* 2. 스티키 헤더 위치 교정 (왼쪽 튀어나옴 해결) */
-            #sticky-header {
-                max-width: 480px;     /* 몸통 크기와 똑같이 */
-                width: 100% !important; 
+                box-sizing: border-box !important;
+                /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
+                margin-left: 0 !important;  
+                margin-right: 0 !important;
+                padding-left: 20px !important; /* 내부 여백 재조정 */
+                padding-right: 20px !important;
 
-                box-sizing: border-box !important;
-                /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
-                margin-left: 0 !important;  
-                margin-right: 0 !important;
-                padding-left: 20px !important; /* 내부 여백 재조정 */
-                padding-right: 20px !important;
+                left: auto !important;
+                transform: none !important;
+            }
 
-                left: auto !important;
-                transform: none !important;
-            }
+            /* 3. 플로팅 버튼들을 캘린더 '바깥 오른쪽'으로 이동 */
+            #btn-back-to-top, 
+            .btn-floating-today {
+                right: auto !important; /* 기존 오른쪽 기준 위치 무시 */
+                
+                /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
+                left: calc(50% + 240px + 22px) !important; 
+            }
+        }
+        /* [추가] 공지 팝업 전용 스타일 */
+        body.no-scroll {
+            overflow: hidden;
+            touch-action: none; /* 모바일에서 터치 스크롤도 방지 */
+        }
 
-            /* 3. 플로팅 버튼들을 캘린더 '바깥 오른쪽'으로 이동 */
-            #btn-back-to-top, 
-            .btn-floating-today {
-                right: auto !important; /* 기존 오른쪽 기준 위치 무시 */
-                
-                /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
-                left: calc(50% + 240px + 22px) !important; 
-            }
-        }
-        /* [추가] 공지 팝업 전용 스타일 */
-        body.no-scroll {
-            overflow: hidden;
-            touch-action: none; /* 모바일에서 터치 스크롤도 방지 */
-        }
+        .notice-box {
+            text-align: left; /* 글자 왼쪽 정렬 */
+            padding: 15px 15px;
+            max-width: 340px; /* 조금 더 넓게 */
+        }
+        .notice-header {
+            font-size: 22px;
+            font-weight: 800;
+            color: #212529;
+            margin-bottom: 10px;
+            text-align: center; /* 제목만 가운데 */
+        }
+        .notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .notice-item {
+            display: flex;
+            align-items: flex-start; /* 아이콘과 글자 높이 맞춤 */
+            gap: 10px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            color: #495057;
+            line-height: 1.3;
+            font-weight: 500;
+        }
+        .notice-icon {
+            font-size: 22px;
+            padding-top: 2px; /* 아이콘 위치 미세 조정 */
+        }
+        .notice-text b {
+            color: #e03131; /* 강조색 (빨강) */
+            font-weight: 700;
+        }
+        /* 2. 버튼 눌렀을 때 파란색 깜빡임 제거 */
+        .confirm-btn {
+            font-size: 18px;
+            -webkit-tap-highlight-color: transparent; /* 아이폰 터치 하이라이트 제거 */
+            outline: none; transition: opacity 0.2s, transform 0.1s;
+        }
 
-        .notice-box {
-            text-align: left; /* 글자 왼쪽 정렬 */
-            padding: 15px 15px;
-            max-width: 340px; /* 조금 더 넓게 */
-        }
-        .notice-header {
-            font-size: 22px;
-            font-weight: 800;
-            color: #212529;
-            margin-bottom: 10px;
-            text-align: center; /* 제목만 가운데 */
-        }
-        .notice-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .notice-item {
-            display: flex;
-            align-items: flex-start; /* 아이콘과 글자 높이 맞춤 */
-            gap: 10px;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 18px;
-            color: #495057;
-            line-height: 1.3;
-            font-weight: 500;
-        }
-        .notice-icon {
-            font-size: 22px;
-            padding-top: 2px; /* 아이콘 위치 미세 조정 */
-        }
-        .notice-text b {
-            color: #e03131; /* 강조색 (빨강) */
-            font-weight: 700;
-        }
-        /* 2. 버튼 눌렀을 때 파란색 깜빡임 제거 */
-        .confirm-btn {
-            font-size: 18px;
-            -webkit-tap-highlight-color: transparent; /* 아이폰 터치 하이라이트 제거 */
-            outline: none; transition: opacity 0.2s, transform 0.1s;
-        }
+        .confirm-btn:hover {
+            opacity: 0.9;
+        }
+        /* [추가] 키워드 알림 버튼 스타일 */
+        #btn-keyword-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px; 
+            width: 40px; height: 40px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; cursor: pointer; z-index: 1001; /* 헤더보다 위에 */
+            transition: transform 0.2s;
 
-        .confirm-btn:hover {
-            opacity: 0.9;
-        }
-        /* [추가] 키워드 알림 버튼 스타일 */
-        #btn-keyword-alert {
-            position: fixed;
-            top: 20px;
-            right: 20px; 
-            width: 40px; height: 40px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            display: flex; justify-content: center; align-items: center;
-            font-size: 20px; cursor: pointer; z-index: 1001; /* 헤더보다 위에 */
-            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+        #btn-keyword-alert:active { transform: scale(0.9); }
+        
+        @media (min-width: 768px) {
+            #btn-keyword-alert {
+                /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
+                right: auto !important;
+                left: calc(50% + 240px + 24px) !important;
+                top: 20px;
+            }
+        }
 
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-        }
-        #btn-keyword-alert:active { transform: scale(0.9); }
-        
-        @media (min-width: 768px) {
-            #btn-keyword-alert {
-                /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
-                right: auto !important;
-                left: calc(50% + 240px + 24px) !important;
-                top: 20px;
-            }
-        }
+        /* [추가] 입력창 스타일 */
+        .custom-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box; 
+        }
+        .custom-input:focus {
+            border-color: #343a40;
+            border-width: 2px;
+            padding: 11px; 
+        }
+        /* [추가/수정] 키워드 모달 내부 버튼 스타일 */
+        .keyword-btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-        /* [추가] 입력창 스타일 */
-        .custom-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            box-sizing: border-box; 
-        }
-        .custom-input:focus {
-            border-color: #343a40;
-            border-width: 2px;
-            padding: 11px; 
-        }
-        /* [추가/수정] 키워드 모달 내부 버튼 스타일 */
-        .keyword-btn-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
+        /* 흰색 버튼 (등록한 키워드 확인용) */
+        .btn-white {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 18px !important;
+            font-weight: 700;
+            cursor: pointer;
+            background-color: #ffffff;
+            color: #343a40;
+            border: 1px solid #ced4da;
+            transition: all 0.2s;
 
-        /* 흰색 버튼 (등록한 키워드 확인용) */
-        .btn-white {
-            flex: 1;
-            padding: 12px 0;
-            border-radius: 8px;
-            font-size: 18px !important;
-            font-weight: 700;
-            cursor: pointer;
-            background-color: #ffffff;
-            color: #343a40;
-            border: 1px solid #ced4da;
-            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 파란 박스 제거 */
+            outline: none; /* 클릭 시 파란 테두리(Focus Ring) 제거 */
+        }
+        .btn-white:hover { background-color: #f8f9fa; }
+        
+        /* 빨간 버튼 (등록용) */
+        .btn-red {
+            flex: 1;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 18px !important;
+            font-weight: 700;
+            cursor: pointer;
+            background-color: #fa5252;
+            color: white;
+            border: none;
+        }
+        .btn-red:hover { opacity: 0.9; }
 
-            -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 파란 박스 제거 */
-            outline: none; /* 클릭 시 파란 테두리(Focus Ring) 제거 */
-        }
-        .btn-white:hover { background-color: #f8f9fa; }
-        
-        /* 빨간 버튼 (등록용) */
-        .btn-red {
-            flex: 1;
-            padding: 12px 0;
-            border-radius: 8px;
-            font-size: 18px !important;
-            font-weight: 700;
-            cursor: pointer;
-            background-color: #fa5252;
-            color: white;
-            border: none;
-        }
-        .btn-red:hover { opacity: 0.9; }
+        /* [추가] 내 키워드 리스트 스타일 */
+        #my-keyword-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px; /* 너무 길어지면 스크롤 */
+            overflow-y: auto;
+            text-align: left;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+            display: none; /* 처음엔 숨김 */
+        }
+        .my-keyword-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5px;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 18px;
+            color: #495057;
+        }
+        .btn-delete-keyword {
+            background: none;
+            border: none;
+            color: #adb5bd;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+        }
 
-        /* [추가] 내 키워드 리스트 스타일 */
-        #my-keyword-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 200px; /* 너무 길어지면 스크롤 */
-            overflow-y: auto;
-            text-align: left;
-            border-top: 1px solid #eee;
-            margin-top: 10px;
-            display: none; /* 처음엔 숨김 */
-        }
-        .my-keyword-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 5px;
-            border-bottom: 1px solid #f1f3f5;
-            font-size: 18px;
-            color: #495057;
-        }
-        .btn-delete-keyword {
-            background: none;
-            border: none;
-            color: #adb5bd;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 5px;
-        }
+        /* [추가] 커스텀 알림창 (Alert 대체) */
+        #customAlertModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); z-index: 30000;
+            justify-content: center; align-items: center;
+        }
+        .custom-alert-content {
+            background: white; width: 80%; max-width: 300px;
+            border-radius: 12px; padding: 20px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .custom-alert-msg { font-size: 18px; font-weight: 600; color: #343a40; margin-bottom: 20px; word-break: keep-all; line-height: 1.5; }
+        .btn-alert-ok {
+            width: 100%; padding: 10px 0; background-color: #343a40; color: white;
+            border: none; border-radius: 6px; font-size: 18px; font-weight: 700; cursor: pointer;
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+            transition: opacity 0.2s; /* 부드러운 효과 */
+        }
 
-        /* [추가] 커스텀 알림창 (Alert 대체) */
-        #customAlertModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.3); z-index: 30000;
-            justify-content: center; align-items: center;
-        }
-        .custom-alert-content {
-            background: white; width: 80%; max-width: 300px;
-            border-radius: 12px; padding: 20px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .custom-alert-msg { font-size: 18px; font-weight: 600; color: #343a40; margin-bottom: 20px; word-break: keep-all; line-height: 1.5; }
-        .btn-alert-ok {
-            width: 100%; padding: 10px 0; background-color: #343a40; color: white;
-            border: none; border-radius: 6px; font-size: 18px; font-weight: 700; cursor: pointer;
-            -webkit-tap-highlight-color: transparent; 
-            outline: none; 
-            transition: opacity 0.2s; /* 부드러운 효과 */
-        }
-
-        .btn-alert-ok:hover {
-            opacity: 0.9;
-        }
-    </style>
+        .btn-alert-ok:hover {
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body class="initial-mode">
-  
-    <div class="top-logo">📌</div>
-
-    <div id="sticky-header">
-    
-    <div class="header-wrapper">
-        <div class="nav-row">
-            <div class="nav-btn" id="prev-btn">&lt;</div>
-            <div class="sub-title" id="calendar-title">Loading...</div>
-            <div class="nav-btn" id="next-btn">&gt;</div>
-        </div>
-    </div>
-    
-    <div class="control-bar">
-        <div class="filter-group">
-            <span class="group-title">지역 :</span>
-            <div class="chk-list">
-                <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
-                <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
-                <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
-            </div>
-        </div>
-        
-        <div class="filter-group">
-            <span class="group-title">장르 :</span>
-            <div class="chk-list">
-                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label> 
-                <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-                <button id="btn-reset" class="btn-reset">모두해제</button>
-            </div>
-        </div>
-    </div>
-
-    </div>
-    <div id="calendar-container">
-            <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
-                <table>
-                    <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
-                    <tbody>
-                        <tr><td class='sun'></td><td></td><td></td><td></td><td><span class='date-num' data-dayname='목'>1</span></td><td><span class='date-num' data-dayname='금'>2</span></td><td class='sat'><span class='date-num' data-dayname='토'>3</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>4</span></td><td><span class='date-num' data-dayname='월'>5</span></td><td><span class='date-num' data-dayname='화'>6</span></td><td><span class='date-num' data-dayname='수'>7</span></td><td><span class='date-num' data-dayname='목'>8</span></td><td><span class='date-num' data-dayname='금'>9</span></td><td class='sat'><span class='date-num' data-dayname='토'>10</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>11</span></td><td><span class='date-num' data-dayname='월'>12</span></td><td><span class='date-num' data-dayname='화'>13</span></td><td><span class='date-num' data-dayname='수'>14</span></td><td><span class='date-num' data-dayname='목'>15</span></td><td><span class='date-num' data-dayname='금'>16</span></td><td class='sat'><span class='date-num' data-dayname='토'>17</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>18</span></td><td><span class='date-num' data-dayname='월'>19</span></td><td><span class='date-num' data-dayname='화'>20</span></td><td><span class='date-num' data-dayname='수'>21</span></td><td><span class='date-num' data-dayname='목'>22</span></td><td><span class='date-num' data-dayname='금'>23</span></td><td class='sat'><span class='date-num' data-dayname='토'>24</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>25</span></td><td><span class='date-num' data-dayname='월'>26</span></td><td><span class='date-num' data-dayname='화'>27</span></td><td><span class='date-num' data-dayname='수'>28</span></td><td><span class='date-num' data-dayname='목'>29</span></td><td><span class='date-num' data-dayname='금'>30</span></td><td class='sat'><span class='date-num' data-dayname='토'>31</span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div id="page-1" class="calendar-page" data-title="2026년 2월" style="display: none;">
-                <table>
-                    <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
-                    <tbody>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>1</span></td><td><span class='date-num' data-dayname='월'>2</span></td><td><span class='date-num' data-dayname='화'>3</span></td><td><span class='date-num' data-dayname='수'>4</span></td><td><span class='date-num' data-dayname='목'>5</span></td><td><span class='date-num' data-dayname='금'>6</span></td><td class='sat'><span class='date-num' data-dayname='토'>7</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>8</span></td><td><span class='date-num' data-dayname='월'>9</span></td><td><span class='date-num' data-dayname='화'>10</span></td><td><span class='date-num' data-dayname='수'>11</span></td><td><span class='date-num' data-dayname='목'>12</span></td><td><span class='date-num' data-dayname='금'>13</span></td><td class='sat'><span class='date-num' data-dayname='토'>14</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>15</span></td><td><span class='date-num' data-dayname='월'>16</span></td><td><span class='date-num' data-dayname='화'>17</span></td><td><span class='date-num' data-dayname='수'>18</span></td><td><span class='date-num' data-dayname='목'>19</span></td><td><span class='date-num' data-dayname='금'>20</span></td><td class='sat'><span class='date-num' data-dayname='토'>21</span></td></tr>
-                        <tr><td class='sun'><span class='date-num' data-dayname='일'>22</span></td><td><span class='date-num' data-dayname='월'>23</span></td><td><span class='date-num' data-dayname='화'>24</span></td><td><span class='date-num' data-dayname='수'>25</span></td><td><span class='date-num' data-dayname='목'>26</span></td><td><span class='date-num' data-dayname='금'>27</span></td><td class='sat'><span class='date-num' data-dayname='토'>28</span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-    </div>
-    <div class="header-wrapper bottom-nav-container">
-        <div class="nav-row">
-            <div class="nav-btn" id="prev-btn-bottom">&lt;</div>
-            
-            <div class="sub-title" id="calendar-title-bottom">Loading...</div>
-            
-            <div class="nav-btn" id="next-btn-bottom">&gt;</div>
-        </div>
-    </div>
-
-    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-poster-area">
-                <img id="modalPoster" src="" alt="공연 포스터" style="display:none;" oncontextmenu="return false;">
-                <span id="noPosterText" class="no-poster-text" style="display:none;">이미지 없음</span>
-            </div>
-            <div class="modal-body">
-                <div id="modalTitle" class="modal-title"></div>
-                <div id="modalInfo" class="modal-info"></div>
-
-                <div id="modalTicketing" class="modal-ticketing"></div>
-                <div class="modal-btn-container" id="btnGroup"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: center; padding-top: 0;" onclick="closeConfirmModal(event)">
-        <div class="confirm-content" onclick="event.stopPropagation()">
-            <div class="confirm-text">
-                다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
-            </div>
-            <div class="confirm-btn-group">
-                <button onclick="realDownload()" class="confirm-btn btn-yes">확인</button>
-                <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="imageZoomOverlay" onclick="closeZoomOverlay()">
-        <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
-        <img id="zoomedImage" src="" oncontextmenu="return false;">
-    </div>
-    <div id="btn-go-today" class="btn-floating-today">오늘</div>
-    <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
-
-    <div id="mainNoticeModal" class="modal-overlay" style="z-index: 20000; display: flex;">
-        <div class="confirm-content notice-box" onclick="event.stopPropagation()">
-            <div class="notice-header">📢 알림</div>
-            
-            <div class="notice-list">
-                <div class="notice-item">
-                    <span class="notice-icon">🎫</span>
-                    <span class="notice-text">
-                        <b>선예매</b>가 있는 공연의<br>
-                        이후 예매 일정(일반예매)은<br>
-                        캘린더에 넣지 않습니다!
-                    </span>
-                </div>
-
-                <div id="pwa-msg" class="notice-item">
-                    <span class="notice-icon">👇</span>
-                    <span class="notice-text">
-                        스크롤을 내리면 로딩이 금방되니<br>
-                        몇초만 기다려주세요!
-                    </span>
-                </div>
-            </div>
-
-            <button onclick="closeMainNotice()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
-        </div>
-    </div>
-
-    <div id="btn-keyword-alert" onclick="openKeywordModal()">🔔</div>
-
-    <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 15px 15px;">
-            <div class="modal-header" style="margin-bottom: 10px; text-align: center;">
-                <span style="font-size: 22px; font-weight: 800;">🔔 공연 일정 알림</span>
-            </div>
-            
-            <div style="text-align: left; margin-bottom: 10px; color: #495057; line-height: 1.3; font-size: 18px; font-weight: 500; padding: 0 5px;">
-                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
-                일정이 추가되면 알림을 보내드릴게요.
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 성시경, 내한)" style="background-color: #f8f9fa;">
-            </div>
-
-            <div class="keyword-btn-row">
-                <button onclick="viewMyKeywords()" class="btn-white">내 키워드</button>
-                <button onclick="submitKeyword()" class="confirm-btn btn-red">키워드 등록</button>
-            </div>
-
-            <ul id="my-keyword-list">
-                </ul>
-        </div>
-    </div>
-
-    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()">
-        <div class="custom-alert-content" onclick="event.stopPropagation()">
-            <div id="customAlertMsg" class="custom-alert-msg">알림 메시지</div>
-            <button onclick="closeCustomAlert()" class="btn-alert-ok">확인</button>
-        </div>
-    </div>
-    </div>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCc1GvgMaWHZtAa_zTRqL0fj3l5B4zzg50",
-            authDomain: "showkok.firebaseapp.com",
-            projectId: "showkok",
-            storageBucket: "showkok.firebasestorage.app",
-            messagingSenderId: "42586284108",
-            appId: "1:42586284108:web:f2020d0452b02fa23554e9",
-            measurementId: "G-HXGN9LHRJT"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
-
-        // 다른 스크립트에서 쓸 수 있게 window에 저장
-        window.messaging = messaging;
-        window.getToken = getToken;
-        
-        // 예: '알림 받기' 버튼을 눌렀을 때 실행될 함수
-        // window. 을 붙여서 전역 변수로 만듭니다.
-        window.requestNotificationPermission = function() {
-            Notification.requestPermission().then((permission) => {
-                if (permission === 'granted') {
-                    alert("알림 권한이 허용되었습니다!");
-                } else {
-                    alert("알림 권한이 차단되었습니다. 앱 설정에서 권한을 허용해주세요.");
-                }
-            });
-        }
-        
-    </script>
-    <script>
-        const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
-        
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // [추가] 커스텀 알림창 띄우기 함수
-        function openCustomAlert(msg) {
-            document.getElementById('customAlertMsg').innerHTML = msg; // innerHTML로 줄바꿈 허용
-            document.getElementById('customAlertModal').style.display = 'flex';
-        }
-
-        function closeCustomAlert() {
-            document.getElementById('customAlertModal').style.display = 'none';
-        }
-
-        // [수정] 키워드 등록 함수 (Alert 대신 커스텀 알림 사용)
-        async function submitKeyword() {
-            const keywordInput = document.getElementById('input-keyword');
-            const keyword = keywordInput.value.trim();
-            
-            if (!keyword) {
-                openCustomAlert("키워드를 입력해주세요!");
-                return;
-            }
-
-            const btn = document.querySelector('#keywordModal .btn-red');
-            const originalText = btn.innerText;
-            btn.innerText = "저장 중...";
-            btn.disabled = true;
-
-            try {
-                // 1. 권한 확인
-                const permission = await Notification.requestPermission();
-                if (permission !== 'granted') {
-                    openCustomAlert("알림 권한을 허용해야<br>알림을 받을 수 있어요!");
-                    throw new Error("권한 거부됨");
-                }
-
-                // 2. 토큰 가져오기 (이미 있으면 캐시된 것 가져옴)
-                const token = await window.getToken(window.messaging, {
-                    vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
-                    serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
-                });
-
-                if (!token) throw new Error("토큰 생성 실패");
-
-                // 3. Supabase 저장
-                const { data, error } = await client
-                    .from('keyword_alerts')
-                    .insert([{ keyword: keyword, fcm_token: token }]);
-
-                if (error) throw error;
-
-                viewMyKeywords(true)
-
-                openCustomAlert(`알림 키워드로 등록되었어요🎉<br><b>${keyword}</b>에 대한 공연 일정이 추가되면<br>알림을 보내드릴게요`);
-                keywordInput.value = '';
-
-            } catch (err) {
-                console.error(err);
-                if (err.message !== "권한 거부됨") {
-                    openCustomAlert("오류가 발생했어요.<br>잠시 후 다시 시도해주세요.");
-                }
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        // [수정] 내가 등록한 키워드 조회 함수
-        async function viewMyKeywords(isRefresh = false) {
-            const listArea = document.getElementById('my-keyword-list');
-            const btn = document.querySelector('#keywordModal .btn-white');
-            
-            // 새로고침이 아니고, 이미 열려있으면 닫기
-            if (!isRefresh && listArea.style.display === 'block') {
-                listArea.style.display = 'none';
-                return;
-            }
-
-            const originalText = btn.innerText;
-            btn.innerText = "로딩 중...";
-            btn.disabled = true;
-
-            try {
-                const token = await window.getToken(window.messaging, {
-                    vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
-                    serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
-                });
-
-                if (!token) return;
-
-                const { data, error } = await client
-                    .from('keyword_alerts')
-                    .select('*')
-                    .eq('fcm_token', token)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                listArea.innerHTML = ''; 
-
-                if (data.length === 0) {
-                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
-                } else {
-                    data.forEach(item => {
-                        const li = document.createElement('li');
-                        li.className = 'my-keyword-item';
-                        
-                        // ▼▼▼ [핵심] 여기에 이름표(ID)를 꼭 붙여줘야 삭제할 때 찾을 수 있습니다! ▼▼▼
-                        li.id = `keyword-item-${item.id}`; 
-                        
-                        li.innerHTML = `
-                            <span>${item.keyword}</span>
-                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>
-                        `;
-                        listArea.appendChild(li);
-                    });
-                }
-                listArea.style.display = 'block';
-
-            } catch (err) {
-                console.error(err);
-                openCustomAlert("목록을 불러오지 못했어요.");
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        // [수정] "window."을 붙여서 브라우저 전체가 기억하게 만듭니다 (절대 안 까먹음)
-        window.targetDeleteId = null;
-
-        // 1. 삭제 버튼 클릭 (ID를 window에 문신처럼 새겨둠)
-        function deleteKeyword(id) {
-            console.log("삭제 요청 들어온 ID:", id); // F12 콘솔 확인용
-            window.targetDeleteId = id; 
-            
-            const modal = document.getElementById('keywordDeleteModal');
-            modal.style.display = 'flex';
-        }
-
-        // 2. 팝업 닫기
-        function closeKeywordDeleteModal() {
-            const modal = document.getElementById('keywordDeleteModal');
-            modal.style.display = 'none';
-            // 닫을 때는 ID를 비우지 않고 놔둡니다 (혹시 모를 오류 방지)
-        }
-
-        // [수정] 진짜 삭제 실행 (화면 즉시 반영)
-        async function realDeleteKeyword() {
-            // 팝업 닫기
-            closeKeywordDeleteModal(); 
-
-            // window에 저장해둔 ID 가져오기
-            const idToDelete = window.targetDeleteId;
-
-            if (!idToDelete) return;
-
-            try {
-                // 1. 서버(Supabase)에서 삭제
-                const { error } = await client
-                    .from('keyword_alerts')
-                    .delete()
-                    .eq('id', idToDelete);
-
-                if (error) throw error;
-
-                // 2. [핵심] 화면(HTML)에서 해당 줄 즉시 제거
-                // 아까 붙여둔 이름표(ID)를 찾아서 지웁니다.
-                const itemToRemove = document.getElementById(`keyword-item-${idToDelete}`);
-                if (itemToRemove) {
-                    itemToRemove.remove(); 
-                }
-
-                // 3. 만약 다 지워서 목록이 텅 비었으면 '없습니다' 메시지 띄우기
-                const listArea = document.getElementById('my-keyword-list');
-                if (listArea.children.length === 0) {
-                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
-                }
-
-                // ID 초기화
-                window.targetDeleteId = null;
-
-            } catch (err) {
-                console.error("삭제 에러:", err);
-                openCustomAlert("삭제 실패");
-            }
-        }
-
-        let events = [];
-
-        async function fetchEvents() {
-            titleEl.innerText = "데이터 불러오는 중...";
-            
-            const { data, error } = await client.from('events').select('*');
-            
-            if (error) {
-                console.error('Error:', error);
-                titleEl.innerText = "로딩 실패 (콘솔 확인)";
-                alert("Supabase 연결 오류: 키 설정을 확인하세요.");
-                return;
-            }
-            
-            events = data;
-            
-            events.sort((a, b) => {
-                const getTime = (str) => {
-                    const match = str.match(/\d{2}:\d{2}/);
-                    return match ? match[0] : '99:99';
-                };
-
-                const timeA = getTime(a.date);
-                const timeB = getTime(b.date);
-
-                if (timeA < timeB) return -1;
-                if (timeA > timeB) return 1;
-
-                if (a.title < b.title) return -1;
-                if (a.title > b.title) return 1;
-
-                return 0;
-            });
-            
-            console.log("Supabase 데이터:", events);
-            
-            renderEvents();
-            markPastDays();
-
-            showPage(0); 
-        }
-        // ▼▼▼ [추가] 키워드 알림 관련 로직 ▼▼▼
-        
-        const keywordModal = document.getElementById('keywordModal');
-        
-        // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
-        async function openKeywordModal() {
-            try {
-                // 1. 현재 권한 상태 확인
-                let permission = Notification.permission;
-
-                // 2. 이미 '차단(denied)'된 상태라면 -> 이건 설정 가서 풀어야 하므로 안내
-                if (permission === 'denied') {
-                    alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
-                    return; 
-                }
-
-                // 3. 아직 결정 안 함(default) 상태라면 -> 팝업 띄워서 물어보기
-                if (permission === 'default') {
-                    permission = await Notification.requestPermission();
-                }
-
-                // 4. 결과 확인
-                if (permission === 'granted') {
-                    // (1) 허용함: 토큰 발급 및 채널 생성 시도
-                    try {
-                        const registration = await navigator.serviceWorker.register('/sw.js');
-                        await window.getToken(window.messaging, {
-                            vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
-                            serviceWorkerRegistration: registration
-                        });
-                    } catch (e) {
-                        console.error("토큰 생성 실패(무시 가능):", e);
-                    }
-
-                    // (2) 모달 열기
-                    const keywordModal = document.getElementById('keywordModal');
-                    keywordModal.style.display = 'flex';
-                    document.body.classList.add('no-scroll');
-                } 
-                
-                // 5. 그냥 닫았을 때(default)는 아무 코드도 없으므로 조용히 함수 종료됨.
-                // -> 덕분에 다음에 버튼 누르면 다시 3번으로 가서 또 물어봅니다.
-
-            } catch (error) {
-                console.error("오류:", error);
-            }
-        }
-
-        function closeKeywordModal(e) {
-            keywordModal.style.display = 'none';
-            document.body.classList.remove('no-scroll');
-        }
-
-        const regionChks = document.querySelectorAll('.region-chk');
-        const genreChks = document.querySelectorAll('.genre-chk');
-        const btnReset = document.getElementById('btn-reset');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const titleEl = document.getElementById('calendar-title');
-        
-        const pages = document.querySelectorAll('.calendar-page');
-        let currentIndex = 0;
-        const totalPages = pages.length;
-
-        const modal = document.getElementById('eventModal');
-        const confirmModal = document.getElementById('confirmModal'); 
-        const modalPoster = document.getElementById('modalPoster');
-        const noPosterText = document.getElementById('noPosterText');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalInfo = document.getElementById('modalInfo');
-        const modalTicketing = document.getElementById('modalTicketing');
-        const btnGroup = document.getElementById('btnGroup'); 
-        
-        let currentEventData = {}; 
-        let isModalOpen = false; 
-
-        function renderEvents() {
-            document.querySelectorAll('.event-box').forEach(el => el.remove());
-            document.querySelectorAll('td').forEach(td => {
-                td.classList.remove('has-event');
-                td.classList.add('no-event'); 
-            });
-
-            events.forEach(evt => {
-                const nums = evt.date.match(/\d+/g); 
-                if (!nums || nums.length < 2) return;
-
-                const month = parseInt(nums[0], 10);
-                const day = parseInt(nums[1], 10);
-                const pageIndex = month - 1; 
-                const targetPage = document.getElementById(`page-${pageIndex}`);
-                if (!targetPage) return;
-
-                const dateSpans = targetPage.querySelectorAll('.date-num');
-                let targetTd = null;
-                for (let span of dateSpans) {
-                    if (parseInt(span.innerText, 10) === day) {
-                        targetTd = span.parentElement;
-                        break;
-                    }
-                }
-
-                if (targetTd) {
-                    const div = document.createElement('div');
-                    div.className = 'event-box';
-                    
-                    let regionGroup = '그 외'; 
-                    if (evt.region === '서울') regionGroup = '서울';
-                    else if (evt.region === '경기' || evt.region === '인천') regionGroup = '경기';
-                    
-                    div.dataset.regionGroup = regionGroup; 
-                    div.dataset.region = evt.region; 
-                    div.dataset.genre = evt.genre;
-                    div.dataset.title = evt.title;
-                    div.dataset.date = evt.date;
-                    div.dataset.place = evt.place;
-                    div.dataset.poster = evt.poster;
-                    div.dataset.link1 = evt.link1 || '';
-                    div.dataset.link2 = evt.link2 || '';
-                    div.dataset.link3 = evt.link3 || '';
-                    div.dataset.link4 = evt.link4 || '';
-                    div.dataset.link5 = evt.link5 || '';
-                    div.dataset.youtube = evt['youtube search'] || '';
-
-                    div.onclick = function() { openModal(this); };
-
-                    const timeStr = evt.date.split(' ')[1] || '';
-                    let rClass = 'txt-blue';
-                    if (['서울', '경기', '인천'].includes(evt.region)) rClass = 'txt-red';
-                    const rText = `(${evt.region})`;
-
-                    let posterHtml = '';
-                    if (evt.poster && evt.poster.trim() !== '') {
-                        // [수정 후] (복사해서 덮어쓰세요)
-                        // src에는 빈 이미지를 넣고, 진짜 주소는 data-src에 넣습니다.
-                        posterHtml = `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${evt.poster}" class="event-poster-thumb lazy-img" alt="${evt.title}" decoding="async" oncontextmenu="return false;">`;
-                    }
-                    
-                    const htmlContent = `
-                        ${posterHtml}
-                        <div class="event-header">
-                            <div><span style="color:#212529; font-weight:800;">${timeStr}</span></div>
-                            <div><span class="${rClass}">${rText}</span></div>
-                        </div>
-                        <span class="box-line2"><span style="color:#495057; font-weight:700; font-size: 18px;">${evt.title}</span></span>
-                    `;
-                    div.innerHTML = htmlContent;
-
-                    targetTd.appendChild(div);
-                    targetTd.classList.add('has-event');
-                    targetTd.classList.remove('no-event');
-                }
-            });
-            applyFilter();
-
-            // [renderEvents 함수 내부의 맨 끝부분에 추가]
-        
-        // 1. 이미지 로딩 관찰자 설정 (미리 로딩 기술)
-        const imgObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                // 화면에 보이기 800px 전부터 로딩 시작!
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    // 숨겨둔 진짜 주소(data-src)를 src로 옮김
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src'); // 처리 후 꼬리표 떼기
-                    }
-                    observer.unobserve(img); // 한 번 로딩했으면 감시 끝
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: '1500px 0px', // ★핵심★: 화면 아래 800px까지 미리 감지해라! (이 숫자를 늘리면 더 빨리 로딩함)
-            threshold: 0
-        });
-
-        // 2. 모든 이미지에게 관찰자 붙이기
-        const lazyImages = document.querySelectorAll('img.lazy-img');
-        lazyImages.forEach(img => {
-            imgObserver.observe(img);
-        });
-
-        }
-
-        function openModal(element) {
-            const ds = element.dataset;
-            currentEventData = {
-                title: ds.title,
-                date: ds.date,
-                place: ds.place
-            };
-
-            modalTitle.innerText = ds.title;
-            modalInfo.innerText = ds.place; 
-            // ▼▼▼ [추가] 예매일정 데이터 넣기 ▼▼▼
-            // ds.date에는 Supabase에서 가져온 날짜+시간 원본이 들어있습니다.
-            modalTicketing.innerText = `예매일정 : ${ds.date}`;
-            
-            if (ds.poster && ds.poster.trim() !== '') {
-                modalPoster.src = ds.poster;
-                modalPoster.style.display = 'block';
-                noPosterText.style.display = 'none';
-                
-                modalPoster.onclick = function() {
-                    openZoomOverlay(ds.poster);
-                };
-            } else {
-                modalPoster.style.display = 'none';
-                noPosterText.style.display = 'block';
-                modalPoster.onclick = null;
-            }
-
-            let htmlContent = '';
-
-            const links = [];
-            // [수정] 각 데이터 컬럼(link1~5)에 고정 색상을 매칭합니다.
-            // 데이터가 있는 경우에만 리스트에 담되, 색상 정보도 같이 담습니다.
-            if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1, color: '#4154FF'});
-            if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2, color: '#FF3804'});
-            if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3, color: '#00CD3C'});
-            if(ds.link4) links.push({name: '티켓링크', url: ds.link4, color: '#e03131'});
-            if(ds.link5) links.push({name: '예매처', url: ds.link5, color: '#e03131'});
-
-            // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
-            if (links.length > 0) {
-                htmlContent += `<div class="btn-row">`;
-                links.forEach(link => {
-                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
-                        style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
-                        oncontextmenu="return false" 
-                        draggable="false" ondragstart="return false;">${link.name}</a>`;
-                });
-                
-                htmlContent += `</div>`;
-            }
-
-            htmlContent += `<div class="btn-row">`;
-            // 예매일정 추가 버튼 (이건 원래 잘 되므로 그대로 유지)
-            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
-            
-            // [수정] 유튜브 버튼 생성 부분 (드래그 방지 속성 추가)
-            if (ds.youtube && ds.youtube.trim() !== '') {
-                const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
-                htmlContent += `
-                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom"
-                        oncontextmenu="return false" 
-                        draggable="false" ondragstart="return false;">
-                        <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
-                        유튜브 검색
-                    </a>`;
-            }
-            htmlContent += `</div>`;
-
-            btnGroup.innerHTML = htmlContent;
-
-            modal.style.display = 'flex';
-            document.body.classList.add('no-scroll');
-            
-            history.pushState({view: 'modal'}, '', '#modal');
-        }
-
-        function openConfirmModal() {
-            confirmModal.style.display = 'flex';
-            history.pushState({view: 'confirm'}, '', '#confirm');
-        }
-
-        window.onpopstate = function(event) {
-            const zoomOverlay = document.getElementById('imageZoomOverlay');
-            if (zoomOverlay.style.display === 'block') {
-                closeZoomOverlay();
-                return;
-            }
-
-            if (event.state && event.state.view === 'modal') {
-                confirmModal.style.display = 'none';
-                modal.style.display = 'flex';
-            } 
-            else {
-                confirmModal.style.display = 'none';
-                modal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-            }
-        };
-
-        function closeConfirmModal() {
-            if (confirmModal.style.display === 'flex') {
-                history.back();
-            }
-        }
-
-        function closeModal(e) {
-            if (modal.style.display === 'flex') {
-                history.back();
-            }
-        }
-
-        function openZoomOverlay(imgSrc) {
-            const overlay = document.getElementById('imageZoomOverlay');
-            const zoomedImg = document.getElementById('zoomedImage');
-            zoomedImg.src = imgSrc;
-            overlay.style.display = 'block';
-            document.body.classList.remove('no-scroll');
-            const viewport = document.getElementById('viewport-meta');
-            if(viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
-        }
-
-        function closeZoomOverlay() {
-            const overlay = document.getElementById('imageZoomOverlay');
-            overlay.style.display = 'none';
-            if (modal.style.display === 'flex') document.body.classList.add('no-scroll');
-            const viewport = document.getElementById('viewport-meta');
-            if(viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-        }
-
-        function realDownload() {
-            history.back(); 
-            const title = (currentEventData.title || "공연 관람") + " 예매";
-            const rawDate = currentEventData.date;
-            const nums = rawDate.match(/\d+/g); 
-            
-            let year = 2026; let month = '01'; let day = '01'; let hour = '12'; let min = '00';
-
-            if (nums) {
-                if (nums[0].length === 4) { 
-                    year = nums[0]; month = nums[1]; day = nums[2];
-                    if(nums.length >= 5) { hour = nums[3]; min = nums[4]; }
-                } else { 
-                    month = nums[0]; day = nums[1];
-                    if(nums.length >= 4) { hour = nums[2]; min = nums[3]; }
-                }
-            }
-            
-            const pad = (n) => n.toString().padStart(2, '0');
-            const startStr = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(min)}00`;
-            const endStr = `${year}${pad(month)}${pad(day)}T${pad(parseInt(hour)+2)}${pad(min)}00`; 
-
-            const icsContent = 
+  
+    <div class="top-logo">📌</div> 
+
+    <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">☰</div>
+    <div id="btn-keyword-alert" class="fixed-top-btn" onclick="openKeywordModal()">🔔</div>
+
+    <div id="sticky-header">
+        <div class="header-wrapper">
+            <div class="nav-row">
+                <div class="nav-btn" id="prev-btn">&lt;</div>
+                <div class="sub-title" id="calendar-title">Loading...</div>
+                <div class="nav-btn" id="next-btn">&gt;</div>
+            </div>
+        </div>
+    
+    <div class="control-bar">
+        <div class="filter-group">
+            <span class="group-title">지역 :</span>
+            <div class="chk-list">
+                <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
+            </div>
+        </div>
+        
+        <div class="filter-group">
+            <span class="group-title">장르 :</span>
+            <div class="chk-list">
+                <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label> 
+                <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
+                <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+                <button id="btn-reset" class="btn-reset">모두해제</button>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <div id="calendar-container">
+            <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
+                <table>
+                    <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
+                    <tbody>
+                        <tr><td class='sun'></td><td></td><td></td><td></td><td><span class='date-num' data-dayname='목'>1</span></td><td><span class='date-num' data-dayname='금'>2</span></td><td class='sat'><span class='date-num' data-dayname='토'>3</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>4</span></td><td><span class='date-num' data-dayname='월'>5</span></td><td><span class='date-num' data-dayname='화'>6</span></td><td><span class='date-num' data-dayname='수'>7</span></td><td><span class='date-num' data-dayname='목'>8</span></td><td><span class='date-num' data-dayname='금'>9</span></td><td class='sat'><span class='date-num' data-dayname='토'>10</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>11</span></td><td><span class='date-num' data-dayname='월'>12</span></td><td><span class='date-num' data-dayname='화'>13</span></td><td><span class='date-num' data-dayname='수'>14</span></td><td><span class='date-num' data-dayname='목'>15</span></td><td><span class='date-num' data-dayname='금'>16</span></td><td class='sat'><span class='date-num' data-dayname='토'>17</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>18</span></td><td><span class='date-num' data-dayname='월'>19</span></td><td><span class='date-num' data-dayname='화'>20</span></td><td><span class='date-num' data-dayname='수'>21</span></td><td><span class='date-num' data-dayname='목'>22</span></td><td><span class='date-num' data-dayname='금'>23</span></td><td class='sat'><span class='date-num' data-dayname='토'>24</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>25</span></td><td><span class='date-num' data-dayname='월'>26</span></td><td><span class='date-num' data-dayname='화'>27</span></td><td><span class='date-num' data-dayname='수'>28</span></td><td><span class='date-num' data-dayname='목'>29</span></td><td><span class='date-num' data-dayname='금'>30</span></td><td class='sat'><span class='date-num' data-dayname='토'>31</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="page-1" class="calendar-page" data-title="2026년 2월" style="display: none;">
+                <table>
+                    <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
+                    <tbody>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>1</span></td><td><span class='date-num' data-dayname='월'>2</span></td><td><span class='date-num' data-dayname='화'>3</span></td><td><span class='date-num' data-dayname='수'>4</span></td><td><span class='date-num' data-dayname='목'>5</span></td><td><span class='date-num' data-dayname='금'>6</span></td><td class='sat'><span class='date-num' data-dayname='토'>7</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>8</span></td><td><span class='date-num' data-dayname='월'>9</span></td><td><span class='date-num' data-dayname='화'>10</span></td><td><span class='date-num' data-dayname='수'>11</span></td><td><span class='date-num' data-dayname='목'>12</span></td><td><span class='date-num' data-dayname='금'>13</span></td><td class='sat'><span class='date-num' data-dayname='토'>14</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>15</span></td><td><span class='date-num' data-dayname='월'>16</span></td><td><span class='date-num' data-dayname='화'>17</span></td><td><span class='date-num' data-dayname='수'>18</span></td><td><span class='date-num' data-dayname='목'>19</span></td><td><span class='date-num' data-dayname='금'>20</span></td><td class='sat'><span class='date-num' data-dayname='토'>21</span></td></tr>
+                        <tr><td class='sun'><span class='date-num' data-dayname='일'>22</span></td><td><span class='date-num' data-dayname='월'>23</span></td><td><span class='date-num' data-dayname='화'>24</span></td><td><span class='date-num' data-dayname='수'>25</span></td><td><span class='date-num' data-dayname='목'>26</span></td><td><span class='date-num' data-dayname='금'>27</span></td><td class='sat'><span class='date-num' data-dayname='토'>28</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+
+    <div class="header-wrapper bottom-nav-container">
+        <div class="nav-row">
+            <div class="nav-btn" id="prev-btn-bottom">&lt;</div>
+            <div class="sub-title" id="calendar-title-bottom">Loading...</div>
+            <div class="nav-btn" id="next-btn-bottom">&gt;</div>
+        </div>
+    </div>
+
+    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-poster-area">
+                <img id="modalPoster" src="" alt="공연 포스터" style="display:none;" oncontextmenu="return false;">
+                <span id="noPosterText" class="no-poster-text" style="display:none;">이미지 없음</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalTitle" class="modal-title"></div>
+                <div id="modalInfo" class="modal-info"></div>
+
+                <div id="modalTicketing" class="modal-ticketing"></div>
+                <div class="modal-btn-container" id="btnGroup"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay" style="z-index: 10000; align-items: center; padding-top: 0;" onclick="closeConfirmModal(event)">
+        <div class="confirm-content" onclick="event.stopPropagation()">
+            <div class="confirm-text">
+                다운로드 되는 ics 파일을 열면<br>캘린더 앱에 일정 추가가 가능합니다.<br>다운로드하시겠습니까?
+            </div>
+            <div class="confirm-btn-group">
+                <button onclick="realDownload()" class="confirm-btn btn-yes">확인</button>
+                <button onclick="closeConfirmModal()" class="confirm-btn btn-no">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageZoomOverlay" onclick="closeZoomOverlay()">
+        <span class="close-zoom" onclick="closeZoomOverlay()">&times;</span>
+        <img id="zoomedImage" src="" oncontextmenu="return false;">
+    </div>
+    <div id="btn-go-today" class="btn-floating-today">오늘</div>
+    <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
+
+    <div id="mainNoticeModal" class="modal-overlay" style="z-index: 20000; display: flex;">
+        <div class="confirm-content notice-box" onclick="event.stopPropagation()">
+            <div class="notice-header">📢 알림</div>
+            
+            <div class="notice-list">
+                <div class="notice-item">
+                    <span class="notice-icon">🎫</span>
+                    <span class="notice-text">
+                        <b>선예매</b>가 있는 공연의<br>
+                        이후 예매 일정(일반예매)은<br>
+                        캘린더에 넣지 않습니다!
+                    </span>
+                </div>
+
+                <div id="pwa-msg" class="notice-item">
+                    <span class="notice-icon">👇</span>
+                    <span class="notice-text">
+                        스크롤을 내리면 로딩이 금방되니<br>
+                        몇초만 기다려주세요!
+                    </span>
+                </div>
+            </div>
+
+            <button onclick="closeMainNotice()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
+        </div>
+    </div>
+
+    <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 15px 15px;">
+            <div class="modal-header" style="margin-bottom: 10px; text-align: center;">
+                <span style="font-size: 22px; font-weight: 800;">🔔 공연 일정 알림</span>
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 10px; color: #495057; line-height: 1.3; font-size: 18px; font-weight: 500; padding: 0 5px;">
+                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
+                일정이 추가되면 알림을 보내드릴게요.
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="input-keyword" class="custom-input" placeholder="키워드 입력 (예: 지킬앤하이드, 성시경, 내한)" style="background-color: #f8f9fa;">
+            </div>
+
+            <div class="keyword-btn-row">
+                <button onclick="viewMyKeywords()" class="btn-white">내 키워드</button>
+                <button onclick="submitKeyword()" class="confirm-btn btn-red">키워드 등록</button>
+            </div>
+
+            <ul id="my-keyword-list">
+                </ul>
+        </div>
+    </div>
+
+    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()">
+        <div class="custom-alert-content" onclick="event.stopPropagation()">
+            <div id="customAlertMsg" class="custom-alert-msg">알림 메시지</div>
+            <button onclick="closeCustomAlert()" class="btn-alert-ok">확인</button>
+        </div>
+    </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCc1GvgMaWHZtAa_zTRqL0fj3l5B4zzg50",
+            authDomain: "showkok.firebaseapp.com",
+            projectId: "showkok",
+            storageBucket: "showkok.firebasestorage.app",
+            messagingSenderId: "42586284108",
+            appId: "1:42586284108:web:f2020d0452b02fa23554e9",
+            measurementId: "G-HXGN9LHRJT"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        // 다른 스크립트에서 쓸 수 있게 window에 저장
+        window.messaging = messaging;
+        window.getToken = getToken;
+        
+        // 예: '알림 받기' 버튼을 눌렀을 때 실행될 함수
+        // window. 을 붙여서 전역 변수로 만듭니다.
+        window.requestNotificationPermission = function() {
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    alert("알림 권한이 허용되었습니다!");
+                } else {
+                    alert("알림 권한이 차단되었습니다. 앱 설정에서 권한을 허용해주세요.");
+                }
+            });
+        }
+        
+    </script>
+    <script>
+        const SUPABASE_URL = 'https://btvwssnlrwvzgqdbcuti.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0dndzc25scnd2emdxZGJjdXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc1MjczMDIsImV4cCI6MjA4MzEwMzMwMn0.NF-nG9Dtwe__p5Xmzz4dmFT56B4XN77oBJlJxnPnDdM'; // 여기에 anon key 입력
+        
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // [추가] 커스텀 알림창 띄우기 함수
+        function openCustomAlert(msg) {
+            document.getElementById('customAlertMsg').innerHTML = msg; // innerHTML로 줄바꿈 허용
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').style.display = 'none';
+        }
+
+        // [수정] 키워드 등록 함수 (Alert 대신 커스텀 알림 사용)
+        async function submitKeyword() {
+            const keywordInput = document.getElementById('input-keyword');
+            const keyword = keywordInput.value.trim();
+            
+            if (!keyword) {
+                openCustomAlert("키워드를 입력해주세요!");
+                return;
+            }
+
+            const btn = document.querySelector('#keywordModal .btn-red');
+            const originalText = btn.innerText;
+            btn.innerText = "저장 중...";
+            btn.disabled = true;
+
+            try {
+                // 1. 권한 확인
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    openCustomAlert("알림 권한을 허용해야<br>알림을 받을 수 있어요!");
+                    throw new Error("권한 거부됨");
+                }
+
+                // 2. 토큰 가져오기 (이미 있으면 캐시된 것 가져옴)
+                const token = await window.getToken(window.messaging, {
+                    vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
+                    serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
+                });
+
+                if (!token) throw new Error("토큰 생성 실패");
+
+                // 3. Supabase 저장
+                const { data, error } = await client
+                    .from('keyword_alerts')
+                    .insert([{ keyword: keyword, fcm_token: token }]);
+
+                if (error) throw error;
+
+                viewMyKeywords(true)
+
+                openCustomAlert(`알림 키워드로 등록되었어요🎉<br><b>${keyword}</b>에 대한 공연 일정이 추가되면<br>알림을 보내드릴게요`);
+                keywordInput.value = '';
+
+            } catch (err) {
+                console.error(err);
+                if (err.message !== "권한 거부됨") {
+                    openCustomAlert("오류가 발생했어요.<br>잠시 후 다시 시도해주세요.");
+                }
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // [수정] 내가 등록한 키워드 조회 함수
+        async function viewMyKeywords(isRefresh = false) {
+            const listArea = document.getElementById('my-keyword-list');
+            const btn = document.querySelector('#keywordModal .btn-white');
+            
+            // 새로고침이 아니고, 이미 열려있으면 닫기
+            if (!isRefresh && listArea.style.display === 'block') {
+                listArea.style.display = 'none';
+                return;
+            }
+
+            const originalText = btn.innerText;
+            btn.innerText = "로딩 중...";
+            btn.disabled = true;
+
+            try {
+                const token = await window.getToken(window.messaging, {
+                    vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
+                    serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
+                });
+
+                if (!token) return;
+
+                const { data, error } = await client
+                    .from('keyword_alerts')
+                    .select('*')
+                    .eq('fcm_token', token)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                listArea.innerHTML = ''; 
+
+                if (data.length === 0) {
+                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                } else {
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'my-keyword-item';
+                        
+                        // ▼▼▼ [핵심] 여기에 이름표(ID)를 꼭 붙여줘야 삭제할 때 찾을 수 있습니다! ▼▼▼
+                        li.id = `keyword-item-${item.id}`; 
+                        
+                        li.innerHTML = `
+                            <span>${item.keyword}</span>
+                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>
+                        `;
+                        listArea.appendChild(li);
+                    });
+                }
+                listArea.style.display = 'block';
+
+            } catch (err) {
+                console.error(err);
+                openCustomAlert("목록을 불러오지 못했어요.");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // [수정] "window."을 붙여서 브라우저 전체가 기억하게 만듭니다 (절대 안 까먹음)
+        window.targetDeleteId = null;
+
+        // 1. 삭제 버튼 클릭 (ID를 window에 문신처럼 새겨둠)
+        function deleteKeyword(id) {
+            console.log("삭제 요청 들어온 ID:", id); // F12 콘솔 확인용
+            window.targetDeleteId = id; 
+            
+            const modal = document.getElementById('keywordDeleteModal');
+            modal.style.display = 'flex';
+        }
+
+        // 2. 팝업 닫기
+        function closeKeywordDeleteModal() {
+            const modal = document.getElementById('keywordDeleteModal');
+            modal.style.display = 'none';
+            // 닫을 때는 ID를 비우지 않고 놔둡니다 (혹시 모를 오류 방지)
+        }
+
+        // [수정] 진짜 삭제 실행 (화면 즉시 반영)
+        async function realDeleteKeyword() {
+            // 팝업 닫기
+            closeKeywordDeleteModal(); 
+
+            // window에 저장해둔 ID 가져오기
+            const idToDelete = window.targetDeleteId;
+
+            if (!idToDelete) return;
+
+            try {
+                // 1. 서버(Supabase)에서 삭제
+                const { error } = await client
+                    .from('keyword_alerts')
+                    .delete()
+                    .eq('id', idToDelete);
+
+                if (error) throw error;
+
+                // 2. [핵심] 화면(HTML)에서 해당 줄 즉시 제거
+                // 아까 붙여둔 이름표(ID)를 찾아서 지웁니다.
+                const itemToRemove = document.getElementById(`keyword-item-${idToDelete}`);
+                if (itemToRemove) {
+                    itemToRemove.remove(); 
+                }
+
+                // 3. 만약 다 지워서 목록이 텅 비었으면 '없습니다' 메시지 띄우기
+                const listArea = document.getElementById('my-keyword-list');
+                if (listArea.children.length === 0) {
+                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                }
+
+                // ID 초기화
+                window.targetDeleteId = null;
+
+            } catch (err) {
+                console.error("삭제 에러:", err);
+                openCustomAlert("삭제 실패");
+            }
+        }
+
+        let events = [];
+
+        async function fetchEvents() {
+            titleEl.innerText = "데이터 불러오는 중...";
+            
+            const { data, error } = await client.from('events').select('*');
+            
+            if (error) {
+                console.error('Error:', error);
+                titleEl.innerText = "로딩 실패 (콘솔 확인)";
+                alert("Supabase 연결 오류: 키 설정을 확인하세요.");
+                return;
+            }
+            
+            events = data;
+            
+            events.sort((a, b) => {
+                const getTime = (str) => {
+                    const match = str.match(/\d{2}:\d{2}/);
+                    return match ? match[0] : '99:99';
+                };
+
+                const timeA = getTime(a.date);
+                const timeB = getTime(b.date);
+
+                if (timeA < timeB) return -1;
+                if (timeA > timeB) return 1;
+
+                if (a.title < b.title) return -1;
+                if (a.title > b.title) return 1;
+
+                return 0;
+            });
+            
+            console.log("Supabase 데이터:", events);
+            
+            renderEvents();
+            markPastDays();
+
+            showPage(0); 
+        }
+        // ▼▼▼ [추가] 키워드 알림 관련 로직 ▼▼▼
+        
+        const keywordModal = document.getElementById('keywordModal');
+        
+        // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
+        async function openKeywordModal() {
+            try {
+                // 1. 현재 권한 상태 확인
+                let permission = Notification.permission;
+
+                // 2. 이미 '차단(denied)'된 상태라면 -> 이건 설정 가서 풀어야 하므로 안내
+                if (permission === 'denied') {
+                    alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
+                    return; 
+                }
+
+                // 3. 아직 결정 안 함(default) 상태라면 -> 팝업 띄워서 물어보기
+                if (permission === 'default') {
+                    permission = await Notification.requestPermission();
+                }
+
+                // 4. 결과 확인
+                if (permission === 'granted') {
+                    // (1) 허용함: 토큰 발급 및 채널 생성 시도
+                    try {
+                        const registration = await navigator.serviceWorker.register('/sw.js');
+                        await window.getToken(window.messaging, {
+                            vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8", 
+                            serviceWorkerRegistration: registration
+                        });
+                    } catch (e) {
+                        console.error("토큰 생성 실패(무시 가능):", e);
+                    }
+
+                    // (2) 모달 열기
+                    const keywordModal = document.getElementById('keywordModal');
+                    keywordModal.style.display = 'flex';
+                    document.body.classList.add('no-scroll');
+                } 
+                
+                // 5. 그냥 닫았을 때(default)는 아무 코드도 없으므로 조용히 함수 종료됨.
+                // -> 덕분에 다음에 버튼 누르면 다시 3번으로 가서 또 물어봅니다.
+
+            } catch (error) {
+                console.error("오류:", error);
+            }
+        }
+
+        // [추가] 필터 모달 제어 함수
+        const filterModal = document.getElementById('filterModal');
+
+        function openFilterModal() {
+            filterModal.style.display = 'flex';
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeFilterModal(e) {
+            // 확인 버튼을 누르거나 배경을 눌렀을 때 닫기
+            filterModal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            
+            // 닫을 때 필터가 적용된 상태이므로, '오늘 이동' 버튼 표시 여부 재확인
+            checkTodayButtonVisibility();
+        }
+
+        function closeKeywordModal(e) {
+            keywordModal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }
+
+        const regionChks = document.querySelectorAll('.region-chk');
+        const genreChks = document.querySelectorAll('.genre-chk');
+        const btnReset = document.getElementById('btn-reset');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const titleEl = document.getElementById('calendar-title');
+        
+        const pages = document.querySelectorAll('.calendar-page');
+        let currentIndex = 0;
+        const totalPages = pages.length;
+
+        const modal = document.getElementById('eventModal');
+        const confirmModal = document.getElementById('confirmModal'); 
+        const modalPoster = document.getElementById('modalPoster');
+        const noPosterText = document.getElementById('noPosterText');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalInfo = document.getElementById('modalInfo');
+        const modalTicketing = document.getElementById('modalTicketing');
+        const btnGroup = document.getElementById('btnGroup'); 
+        
+        let currentEventData = {}; 
+        let isModalOpen = false; 
+
+        function renderEvents() {
+            document.querySelectorAll('.event-box').forEach(el => el.remove());
+            document.querySelectorAll('td').forEach(td => {
+                td.classList.remove('has-event');
+                td.classList.add('no-event'); 
+            });
+
+            events.forEach(evt => {
+                const nums = evt.date.match(/\d+/g); 
+                if (!nums || nums.length < 2) return;
+
+                const month = parseInt(nums[0], 10);
+                const day = parseInt(nums[1], 10);
+                const pageIndex = month - 1; 
+                const targetPage = document.getElementById(`page-${pageIndex}`);
+                if (!targetPage) return;
+
+                const dateSpans = targetPage.querySelectorAll('.date-num');
+                let targetTd = null;
+                for (let span of dateSpans) {
+                    if (parseInt(span.innerText, 10) === day) {
+                        targetTd = span.parentElement;
+                        break;
+                    }
+                }
+
+                if (targetTd) {
+                    const div = document.createElement('div');
+                    div.className = 'event-box';
+                    
+                    let regionGroup = '그 외'; 
+                    if (evt.region === '서울') regionGroup = '서울';
+                    else if (evt.region === '경기' || evt.region === '인천') regionGroup = '경기';
+                    
+                    div.dataset.regionGroup = regionGroup; 
+                    div.dataset.region = evt.region; 
+                    div.dataset.genre = evt.genre;
+                    div.dataset.title = evt.title;
+                    div.dataset.date = evt.date;
+                    div.dataset.place = evt.place;
+                    div.dataset.poster = evt.poster;
+                    div.dataset.link1 = evt.link1 || '';
+                    div.dataset.link2 = evt.link2 || '';
+                    div.dataset.link3 = evt.link3 || '';
+                    div.dataset.link4 = evt.link4 || '';
+                    div.dataset.link5 = evt.link5 || '';
+                    div.dataset.youtube = evt['youtube search'] || '';
+
+                    div.onclick = function() { openModal(this); };
+
+                    const timeStr = evt.date.split(' ')[1] || '';
+                    let rClass = 'txt-blue';
+                    if (['서울', '경기', '인천'].includes(evt.region)) rClass = 'txt-red';
+                    const rText = `(${evt.region})`;
+
+                    let posterHtml = '';
+                    if (evt.poster && evt.poster.trim() !== '') {
+                        // [수정 후] (복사해서 덮어쓰세요)
+                        // src에는 빈 이미지를 넣고, 진짜 주소는 data-src에 넣습니다.
+                        posterHtml = `<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${evt.poster}" class="event-poster-thumb lazy-img" alt="${evt.title}" decoding="async" oncontextmenu="return false;">`;
+                    }
+                    
+                    const htmlContent = `
+                        ${posterHtml}
+                        <div class="event-header">
+                            <div><span style="color:#212529; font-weight:800;">${timeStr}</span></div>
+                            <div><span class="${rClass}">${rText}</span></div>
+                        </div>
+                        <span class="box-line2"><span style="color:#495057; font-weight:700; font-size: 18px;">${evt.title}</span></span>
+                    `;
+                    div.innerHTML = htmlContent;
+
+                    targetTd.appendChild(div);
+                    targetTd.classList.add('has-event');
+                    targetTd.classList.remove('no-event');
+                }
+            });
+            applyFilter();
+
+            // [renderEvents 함수 내부의 맨 끝부분에 추가]
+        
+        // 1. 이미지 로딩 관찰자 설정 (미리 로딩 기술)
+        const imgObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                // 화면에 보이기 800px 전부터 로딩 시작!
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    // 숨겨둔 진짜 주소(data-src)를 src로 옮김
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src'); // 처리 후 꼬리표 떼기
+                    }
+                    observer.unobserve(img); // 한 번 로딩했으면 감시 끝
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '1500px 0px', // ★핵심★: 화면 아래 800px까지 미리 감지해라! (이 숫자를 늘리면 더 빨리 로딩함)
+            threshold: 0
+        });
+
+        // 2. 모든 이미지에게 관찰자 붙이기
+        const lazyImages = document.querySelectorAll('img.lazy-img');
+        lazyImages.forEach(img => {
+            imgObserver.observe(img);
+        });
+
+        }
+
+        function openModal(element) {
+            const ds = element.dataset;
+            currentEventData = {
+                title: ds.title,
+                date: ds.date,
+                place: ds.place
+            };
+
+            modalTitle.innerText = ds.title;
+            modalInfo.innerText = ds.place; 
+            // ▼▼▼ [추가] 예매일정 데이터 넣기 ▼▼▼
+            // ds.date에는 Supabase에서 가져온 날짜+시간 원본이 들어있습니다.
+            modalTicketing.innerText = `예매일정 : ${ds.date}`;
+            
+            if (ds.poster && ds.poster.trim() !== '') {
+                modalPoster.src = ds.poster;
+                modalPoster.style.display = 'block';
+                noPosterText.style.display = 'none';
+                
+                modalPoster.onclick = function() {
+                    openZoomOverlay(ds.poster);
+                };
+            } else {
+                modalPoster.style.display = 'none';
+                noPosterText.style.display = 'block';
+                modalPoster.onclick = null;
+            }
+
+            let htmlContent = '';
+
+            const links = [];
+            // [수정] 각 데이터 컬럼(link1~5)에 고정 색상을 매칭합니다.
+            // 데이터가 있는 경우에만 리스트에 담되, 색상 정보도 같이 담습니다.
+            if(ds.link1) links.push({name: 'NOL 티켓', url: ds.link1, color: '#4154FF'});
+            if(ds.link2) links.push({name: 'yes24 티켓', url: ds.link2, color: '#FF3804'});
+            if(ds.link3) links.push({name: '멜론 티켓', url: ds.link3, color: '#00CD3C'});
+            if(ds.link4) links.push({name: '티켓링크', url: ds.link4, color: '#e03131'});
+            if(ds.link5) links.push({name: '예매처', url: ds.link5, color: '#e03131'});
+
+            // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
+            if (links.length > 0) {
+                htmlContent += `<div class="btn-row">`;
+                links.forEach(link => {
+                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
+                        style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
+                        oncontextmenu="return false" 
+                        draggable="false" ondragstart="return false;">${link.name}</a>`;
+                });
+                
+                htmlContent += `</div>`;
+            }
+
+            htmlContent += `<div class="btn-row">`;
+            // 예매일정 추가 버튼 (이건 원래 잘 되므로 그대로 유지)
+            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
+            
+            // [수정] 유튜브 버튼 생성 부분 (드래그 방지 속성 추가)
+            if (ds.youtube && ds.youtube.trim() !== '') {
+                const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
+                htmlContent += `
+                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom"
+                        oncontextmenu="return false" 
+                        draggable="false" ondragstart="return false;">
+                        <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
+                        유튜브 검색
+                    </a>`;
+            }
+            htmlContent += `</div>`;
+
+            btnGroup.innerHTML = htmlContent;
+
+            modal.style.display = 'flex';
+            document.body.classList.add('no-scroll');
+            
+            history.pushState({view: 'modal'}, '', '#modal');
+        }
+
+        function openConfirmModal() {
+            confirmModal.style.display = 'flex';
+            history.pushState({view: 'confirm'}, '', '#confirm');
+        }
+
+        window.onpopstate = function(event) {
+            const zoomOverlay = document.getElementById('imageZoomOverlay');
+            if (zoomOverlay.style.display === 'block') {
+                closeZoomOverlay();
+                return;
+            }
+
+            if (event.state && event.state.view === 'modal') {
+                confirmModal.style.display = 'none';
+                modal.style.display = 'flex';
+            } 
+            else {
+                confirmModal.style.display = 'none';
+                modal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+            }
+        };
+
+        function closeConfirmModal() {
+            if (confirmModal.style.display === 'flex') {
+                history.back();
+            }
+        }
+
+        function closeModal(e) {
+            if (modal.style.display === 'flex') {
+                history.back();
+            }
+        }
+
+        function openZoomOverlay(imgSrc) {
+            const overlay = document.getElementById('imageZoomOverlay');
+            const zoomedImg = document.getElementById('zoomedImage');
+            zoomedImg.src = imgSrc;
+            overlay.style.display = 'block';
+            document.body.classList.remove('no-scroll');
+            const viewport = document.getElementById('viewport-meta');
+            if(viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+        }
+
+        function closeZoomOverlay() {
+            const overlay = document.getElementById('imageZoomOverlay');
+            overlay.style.display = 'none';
+            if (modal.style.display === 'flex') document.body.classList.add('no-scroll');
+            const viewport = document.getElementById('viewport-meta');
+            if(viewport) viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        }
+
+        function realDownload() {
+            history.back(); 
+            const title = (currentEventData.title || "공연 관람") + " 예매";
+            const rawDate = currentEventData.date;
+            const nums = rawDate.match(/\d+/g); 
+            
+            let year = 2026; let month = '01'; let day = '01'; let hour = '12'; let min = '00';
+
+            if (nums) {
+                if (nums[0].length === 4) { 
+                    year = nums[0]; month = nums[1]; day = nums[2];
+                    if(nums.length >= 5) { hour = nums[3]; min = nums[4]; }
+                } else { 
+                    month = nums[0]; day = nums[1];
+                    if(nums.length >= 4) { hour = nums[2]; min = nums[3]; }
+                }
+            }
+            
+            const pad = (n) => n.toString().padStart(2, '0');
+            const startStr = `${year}${pad(month)}${pad(day)}T${pad(hour)}${pad(min)}00`;
+            const endStr = `${year}${pad(month)}${pad(day)}T${pad(parseInt(hour)+2)}${pad(min)}00`; 
+
+            const icsContent = 
 `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Show Calendar//KR
@@ -1532,334 +1544,450 @@ DTEND:${endStr}
 END:VEVENT
 END:VCALENDAR`;
 
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const linkElem = document.createElement('a');
-            linkElem.href = window.URL.createObjectURL(blob);
-            linkElem.setAttribute('download', `${title}.ics`);
-            document.body.appendChild(linkElem);
-            linkElem.click();
-            document.body.removeChild(linkElem);
-        }
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const linkElem = document.createElement('a');
+            linkElem.href = window.URL.createObjectURL(blob);
+            linkElem.setAttribute('download', `${title}.ics`);
+            document.body.appendChild(linkElem);
+            linkElem.click();
+            document.body.removeChild(linkElem);
+        }
 
-        function showPage(index) {
-            pages.forEach((page, idx) => {
-                if (idx === index) {
-                    page.style.display = 'block';
-                    titleEl.innerText = page.dataset.title;
-                    // 하단 연도/월 텍스트 동기화
-                    document.getElementById('calendar-title-bottom').innerText = page.dataset.title;
-                } else {
-                    page.style.display = 'none';
-                }
-            });
-            
-            // [상단] 버튼 상태 제어
-            if (index === 0) prevBtn.classList.add('disabled');
-            else prevBtn.classList.remove('disabled');
+        function showPage(index) {
+            pages.forEach((page, idx) => {
+                if (idx === index) {
+                    page.style.display = 'block';
+                    titleEl.innerText = page.dataset.title;
+                    // 하단 연도/월 텍스트 동기화
+                    document.getElementById('calendar-title-bottom').innerText = page.dataset.title;
+                } else {
+                    page.style.display = 'none';
+                }
+            });
+            
+            // [상단] 버튼 상태 제어
+            if (index === 0) prevBtn.classList.add('disabled');
+            else prevBtn.classList.remove('disabled');
 
-            if (index === totalPages - 1) nextBtn.classList.add('disabled');
-            else nextBtn.classList.remove('disabled');
+            if (index === totalPages - 1) nextBtn.classList.add('disabled');
+            else nextBtn.classList.remove('disabled');
 
-            // ▼▼▼ [추가] 하단 버튼도 상단과 똑같이 비활성화 처리 ▼▼▼
-            const prevBtnBottom = document.getElementById('prev-btn-bottom');
-            const nextBtnBottom = document.getElementById('next-btn-bottom');
+            // ▼▼▼ [추가] 하단 버튼도 상단과 똑같이 비활성화 처리 ▼▼▼
+            const prevBtnBottom = document.getElementById('prev-btn-bottom');
+            const nextBtnBottom = document.getElementById('next-btn-bottom');
 
-            if (index === 0) prevBtnBottom.classList.add('disabled');
-            else prevBtnBottom.classList.remove('disabled');
+            if (index === 0) prevBtnBottom.classList.add('disabled');
+            else prevBtnBottom.classList.remove('disabled');
 
-            if (index === totalPages - 1) nextBtnBottom.classList.add('disabled');
-            else nextBtnBottom.classList.remove('disabled');
-        
-            applyFilter();
-        }
+            if (index === totalPages - 1) nextBtnBottom.classList.add('disabled');
+            else nextBtnBottom.classList.remove('disabled');
+        
+            applyFilter();
+        }
 
-        function applyFilter() {
-            const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
-            const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
-            
-            const visiblePage = pages[currentIndex];
-            const tds = visiblePage.querySelectorAll('td');
+        function applyFilter() {
+            const selectedRegions = Array.from(regionChks).filter(c => c.checked).map(c => c.value);
+            const selectedGenres = Array.from(genreChks).filter(c => c.checked).map(c => c.value);
+            
+            const visiblePage = pages[currentIndex];
+            const tds = visiblePage.querySelectorAll('td');
 
-            // 1. 모든 필터가 꺼져있을 때 처리
-            if (selectedRegions.length === 0) {
-                document.body.classList.add('initial-mode');
-                visiblePage.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
-                tds.forEach(td => {
-                    td.classList.remove('day-active');
-                    td.classList.add('day-inactive');
-                });
-                
-                // [중요] 필터 다 꺼졌으니 버튼도 숨김 체크
-                checkTodayButtonVisibility(); 
-                return;
-            } else {
-                document.body.classList.remove('initial-mode');
-            }
+            // 1. 모든 필터가 꺼져있을 때 처리
+            if (selectedRegions.length === 0) {
+                document.body.classList.add('initial-mode');
+                visiblePage.querySelectorAll('.event-box').forEach(el => el.style.display = 'none');
+                tds.forEach(td => {
+                    td.classList.remove('day-active');
+                    td.classList.add('day-inactive');
+                });
+                
+                // [중요] 필터 다 꺼졌으니 버튼도 숨김 체크
+                checkTodayButtonVisibility(); 
+                return;
+            } else {
+                document.body.classList.remove('initial-mode');
+            }
 
-            // 2. 필터링 로직
-            tds.forEach(td => {
-                const boxes = td.querySelectorAll('.event-box');
-                let hasVisible = false;
-                
-                boxes.forEach(box => {
-                    if (selectedRegions.includes(box.dataset.regionGroup) && selectedGenres.includes(box.dataset.genre)) {
-                        box.style.display = 'block';
-                        hasVisible = true;
-                    } else {
-                        box.style.display = 'none';
-                    }
-                });
+            // 2. 필터링 로직
+            tds.forEach(td => {
+                const boxes = td.querySelectorAll('.event-box');
+                let hasVisible = false;
+                
+                boxes.forEach(box => {
+                    if (selectedRegions.includes(box.dataset.regionGroup) && selectedGenres.includes(box.dataset.genre)) {
+                        box.style.display = 'block';
+                        hasVisible = true;
+                    } else {
+                        box.style.display = 'none';
+                    }
+                });
 
-                if (hasVisible) {
-                    td.classList.add('day-active');
-                    td.classList.remove('day-inactive');
-                } else {
-                    td.classList.remove('day-active');
-                    td.classList.add('day-inactive');
-                }
-            });
+                if (hasVisible) {
+                    td.classList.add('day-active');
+                    td.classList.remove('day-inactive');
+                } else {
+                    td.classList.remove('day-active');
+                    td.classList.add('day-inactive');
+                }
+            });
 
-            // [중요] 필터 적용이 끝난 후, 버튼 표시 여부를 결정해야 정확함
-            checkTodayButtonVisibility();
-        }
+            // [중요] 필터 적용이 끝난 후, 버튼 표시 여부를 결정해야 정확함
+            checkTodayButtonVisibility();
+        }
 
-        prevBtn.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                showPage(currentIndex);
-            }
-        });
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showPage(currentIndex);
+            }
+        });
 
-        nextBtn.addEventListener('click', () => {
-            if (currentIndex < totalPages - 1) {
-                currentIndex++;
-                showPage(currentIndex);
-            }
-        });
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < totalPages - 1) {
+                currentIndex++;
+                showPage(currentIndex);
+            }
+        });
 
-        let isAllChecked = true;
-        btnReset.addEventListener('click', () => {
-            if (isAllChecked) {
-                genreChks.forEach(chk => chk.checked = false);
-                btnReset.innerText = "모두선택";
-                isAllChecked = false;
-            } else {
-                genreChks.forEach(chk => chk.checked = true);
-                btnReset.innerText = "모두해제";
-                isAllChecked = true;
-            }
-            applyFilter();
-        });
+        let isAllChecked = true;
+        btnReset.addEventListener('click', () => {
+            if (isAllChecked) {
+                genreChks.forEach(chk => chk.checked = false);
+                btnReset.innerText = "모두선택";
+                isAllChecked = false;
+            } else {
+                genreChks.forEach(chk => chk.checked = true);
+                btnReset.innerText = "모두해제";
+                isAllChecked = true;
+            }
+            applyFilter();
+        });
 
-        regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
-        genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        regionChks.forEach(c => c.checked = false);
-        genreChks.forEach(c => c.checked = true);
-        isAllChecked = true;
-        btnReset.innerText = "모두해제";
+        regionChks.forEach(c => c.checked = false);
+        genreChks.forEach(c => c.checked = true);
+        isAllChecked = true;
+        btnReset.innerText = "모두해제";
 
-        fetchEvents();
-        // [추가] 맨 위로 부드럽게 이동하는 함수
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }  
-        /* ▼ [추가] 스플래시 스크린 타이머 설정 */
-        /* window.onload = function() {
-             /*const splash = document.getElementById('splash-screen'); 
-        
-             // 1500ms (1.5초) 뒤에 사라지게 설정 (원하는 시간으로 숫자 변경 가능)
-             setTimeout(() => {
-                 splash.classList.add('hidden');
-             }, 1500); */
-             // [추가] 스크롤 이벤트 감지 (버튼 보이기/숨기기)
-             const topBtn = document.getElementById("btn-back-to-top");
-    
-             window.onscroll = function() {
-             // 스크롤을 200px 이상 내렸을 때만 버튼을 보여줌
-              if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-                   topBtn.style.display = "flex";
-                 } else {
-                  topBtn.style.display = "none";
-                 }
-               };
-         
-         // ▼▼▼ [추가] 하단 버튼 클릭 시 상단 버튼 동작 실행 ▼▼▼
-        document.getElementById('prev-btn-bottom').addEventListener('click', () => {
-            document.getElementById('prev-btn').click();
-        });
+        fetchEvents();
+        // [추가] 맨 위로 부드럽게 이동하는 함수
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }  
+        /* ▼ [추가] 스플래시 스크린 타이머 설정 */
+        /* window.onload = function() {
+             /*const splash = document.getElementById('splash-screen'); 
+        
+             // 1500ms (1.5초) 뒤에 사라지게 설정 (원하는 시간으로 숫자 변경 가능)
+             setTimeout(() => {
+                 splash.classList.add('hidden');
+             }, 1500); */
+             // [추가] 스크롤 이벤트 감지 (버튼 보이기/숨기기)
+             const topBtn = document.getElementById("btn-back-to-top");
+        
+             window.onscroll = function() {
+             // 스크롤을 200px 이상 내렸을 때만 버튼을 보여줌
+              if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                   topBtn.style.display = "flex";
+                 } else {
+                  topBtn.style.display = "none";
+                 }
+               };
+          
+         // ▼▼▼ [추가] 하단 버튼 클릭 시 상단 버튼 동작 실행 ▼▼▼
+        document.getElementById('prev-btn-bottom').addEventListener('click', () => {
+            document.getElementById('prev-btn').click();
+        });
 
-        document.getElementById('next-btn-bottom').addEventListener('click', () => {
-            document.getElementById('next-btn').click();
-        });
-        
-    // ==========================================
-    // [추가 기능] 오늘 날짜 이동 & 버튼 제어 로직
-    // ==========================================
+        document.getElementById('next-btn-bottom').addEventListener('click', () => {
+            document.getElementById('next-btn').click();
+        });
+        
+    // ==========================================
+    // [추가 기능] 오늘 날짜 이동 & 버튼 제어 로직
+    // ==========================================
 
-    const btnGoToday = document.getElementById('btn-go-today');
+    const btnGoToday = document.getElementById('btn-go-today');
 
-    // 1. 버튼 보이기/숨기기 결정 함수 (수정됨)
-    function checkTodayButtonVisibility() {
-        const visiblePage = pages[currentIndex]; // 현재 보이는 페이지 가져오기
-        const pageTitle = visiblePage.dataset.title; // 예: "2026년 1월"
+    // 1. 버튼 보이기/숨기기 결정 함수 (수정됨)
+    function checkTodayButtonVisibility() {
+        const visiblePage = pages[currentIndex]; // 현재 보이는 페이지 가져오기
+        const pageTitle = visiblePage.dataset.title; // 예: "2026년 1월"
 
-        // [조건 1] 날짜 확인: 이번 달이 맞는가?
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth() + 1;
-        const realTodayTitle = `${year}년 ${month}월`;
+        // [조건 1] 날짜 확인: 이번 달이 맞는가?
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const realTodayTitle = `${year}년 ${month}월`;
 
-        if (pageTitle !== realTodayTitle) {
-            // 이번 달이 아니면 무조건 숨김
-            btnGoToday.style.display = 'none';
-            return; 
-        }
+        if (pageTitle !== realTodayTitle) {
+            // 이번 달이 아니면 무조건 숨김
+            btnGoToday.style.display = 'none';
+            return; 
+        }
 
-        // [조건 2] 공연 확인: 활성화된(공연 있는) 날짜가 하나라도 있는가?
-        // applyFilter가 실행된 후, 공연이 있는 날은 'day-active' 클래스를 가집니다.
-        const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
+        // [조건 2] 공연 확인: 활성화된(공연 있는) 날짜가 하나라도 있는가?
+        // applyFilter가 실행된 후, 공연이 있는 날은 'day-active' 클래스를 가집니다.
+        const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
 
-        if (hasActiveEvents) {
-            btnGoToday.style.display = 'flex'; // 조건 만족 시 보임
-        } else {
-            btnGoToday.style.display = 'none'; // 공연 없으면 숨김
-        }
-    }
-    // [추가] 과거 날짜 흐리게 처리하는 함수
-    // [수정] 과거 날짜 처리 함수
-    function markPastDays() {
-        const now = new Date();
-        // 시간은 무시하고 '날짜'만 비교하기 위해 0시 0분으로 설정
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (hasActiveEvents) {
+            btnGoToday.style.display = 'flex'; // 조건 만족 시 보임
+        } else {
+            btnGoToday.style.display = 'none'; // 공연 없으면 숨김
+        }
+    }
+    // [추가] 과거 날짜 흐리게 처리하는 함수
+    // [수정] 과거 날짜 처리 함수
+    function markPastDays() {
+        const now = new Date();
+        // 시간은 무시하고 '날짜'만 비교하기 위해 0시 0분으로 설정
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-        pages.forEach(page => {
-            const title = page.dataset.title;
-            const matches = title.match(/(\d+)년 (\d+)월/);
-            if (!matches) return;
-            
-            const year = parseInt(matches[1], 10);
-            const month = parseInt(matches[2], 10) - 1; 
+        pages.forEach(page => {
+            const title = page.dataset.title;
+            const matches = title.match(/(\d+)년 (\d+)월/);
+            if (!matches) return;
+            
+            const year = parseInt(matches[1], 10);
+            const month = parseInt(matches[2], 10) - 1; 
 
-            const dateSpans = page.querySelectorAll('.date-num');
-            dateSpans.forEach(span => {
-                const day = parseInt(span.innerText, 10);
-                if (isNaN(day)) return;
+            const dateSpans = page.querySelectorAll('.date-num');
+            dateSpans.forEach(span => {
+                const day = parseInt(span.innerText, 10);
+                if (isNaN(day)) return;
 
-                const cellDate = new Date(year, month, day);
+                const cellDate = new Date(year, month, day);
 
-                // 오늘보다 날짜가 작으면(과거이면)
-                if (cellDate < todayStart) {
-                    const td = span.closest('td');
-                    if (td) {
-                        td.classList.add('day-past'); // 디자인용 클래스만 추가
-                        
-                        // [삭제됨] td.classList.remove('day-active'); 
-                        // -> 이 줄을 지웠으므로, 데이터 상으로는 여전히 '활성' 상태입니다.
-                        // -> 덕분에 CSS에서 디자인만 바꾸고 클릭 기능은 살아있게 됩니다.
-                    }
-                }
-            });
-        });
-    }
-    // 2. 버튼 클릭 시 스크롤 이동 함수
-    btnGoToday.addEventListener('click', () => {
-        const now = new Date();
-        const todayDate = now.getDate(); // 오늘 날짜 (숫자)
+                // 오늘보다 날짜가 작으면(과거이면)
+                if (cellDate < todayStart) {
+                    const td = span.closest('td');
+                    if (td) {
+                        td.classList.add('day-past'); // 디자인용 클래스만 추가
+                        
+                        // [삭제됨] td.classList.remove('day-active'); 
+                        // -> 이 줄을 지웠으므로, 데이터 상으로는 여전히 '활성' 상태입니다.
+                        // -> 덕분에 CSS에서 디자인만 바꾸고 클릭 기능은 살아있게 됩니다.
+                    }
+                }
+            });
+        });
+    }
+    // 2. 버튼 클릭 시 스크롤 이동 함수
+    btnGoToday.addEventListener('click', () => {
+        const now = new Date();
+        const todayDate = now.getDate(); // 오늘 날짜 (숫자)
 
-        // 현재 보이는 페이지에서 '오늘 날짜 숫자'를 가진 요소를 찾음
-        const visiblePage = pages[currentIndex];
-        const dateSpans = visiblePage.querySelectorAll('.date-num');
-        
-        let targetElement = null;
-        for (let span of dateSpans) {
-            if (parseInt(span.innerText, 10) === todayDate) {
-                // 숫자를 감싸고 있는 칸(td)을 타겟으로 잡음
-                targetElement = span.closest('td'); 
-                break;
-            }
-        }
+        // 현재 보이는 페이지에서 '오늘 날짜 숫자'를 가진 요소를 찾음
+        const visiblePage = pages[currentIndex];
+        const dateSpans = visiblePage.querySelectorAll('.date-num');
+        
+        let targetElement = null;
+        for (let span of dateSpans) {
+            if (parseInt(span.innerText, 10) === todayDate) {
+                // 숫자를 감싸고 있는 칸(td)을 타겟으로 잡음
+                targetElement = span.closest('td'); 
+                break;
+            }
+        }
 
-        if (targetElement) {
-            // 스티키 헤더의 높이를 구함 (이만큼 빼고 스크롤해야 안 가려짐)
-            const headerHeight = document.getElementById('sticky-header').offsetHeight;
-            
-            // 타겟 요소의 절대 위치 계산
-            const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
-            
-            // [계산] 요소 위치 - 헤더 높이 = 헤더 바로 아래에 딱 붙음
-            // (살짝 여유를 주고 싶다면 -10 정도 더 빼도 됨)
-            const offsetPosition = elementPosition - headerHeight;
+        if (targetElement) {
+            // 스티키 헤더의 높이를 구함 (이만큼 빼고 스크롤해야 안 가려짐)
+            const headerHeight = document.getElementById('sticky-header').offsetHeight;
+            
+            // 타겟 요소의 절대 위치 계산
+            const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+            
+            // [계산] 요소 위치 - 헤더 높이 = 헤더 바로 아래에 딱 붙음
+            // (살짝 여유를 주고 싶다면 -10 정도 더 빼도 됨)
+            const offsetPosition = elementPosition - headerHeight;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth' // 부드럽게 스크롤
-            });
-            
-            // (선택사항) 깜빡임 효과로 위치 알려주기
-            targetElement.style.transition = 'background-color 0.5s';
-            targetElement.style.backgroundColor = '#fff9db'; // 연한 노란색
-            setTimeout(() => {
-                targetElement.style.backgroundColor = ''; // 원래대로 복구
-            }, 1000);
-        } else {
-            alert("오늘 날짜를 찾을 수 없습니다.");
-        }
-    });
-        // ▼▼▼ [수정] 공지 팝업 및 스크롤 잠금 로직 ▼▼▼
-        
-        // 페이지가 로딩되자마자 스크롤 잠그기 (팝업이 떠 있으니까)
-        document.body.classList.add('no-scroll');
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth' // 부드럽게 스크롤
+            });
+            
+            // (선택사항) 깜빡임 효과로 위치 알려주기
+            targetElement.style.transition = 'background-color 0.5s';
+            targetElement.style.backgroundColor = '#fff9db'; // 연한 노란색
+            setTimeout(() => {
+                targetElement.style.backgroundColor = ''; // 원래대로 복구
+            }, 1000);
+        } else {
+            alert("오늘 날짜를 찾을 수 없습니다.");
+        }
+    });
+        // ▼▼▼ [수정] 공지 팝업 및 스크롤 잠금 로직 ▼▼▼
+        
+        // 페이지가 로딩되자마자 스크롤 잠그기 (팝업이 떠 있으니까)
+        document.body.classList.add('no-scroll');
 
-        // 1. 팝업 닫기 함수
-        function closeMainNotice() {
-            const modal = document.getElementById('mainNoticeModal');
-            modal.style.display = 'none';
-            
-            // 팝업 닫을 때 스크롤 잠금 해제!
-            document.body.classList.remove('no-scroll');
-        }
+        // 1. 팝업 닫기 함수
+        function closeMainNotice() {
+            const modal = document.getElementById('mainNoticeModal');
+            modal.style.display = 'none';
+            
+            // 팝업 닫을 때 스크롤 잠금 해제!
+            document.body.classList.remove('no-scroll');
+        }
 
-        // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
-        function checkDisplayMode() {
-            const pwaMsg = document.getElementById('pwa-msg');
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
+        function checkDisplayMode() {
+            const pwaMsg = document.getElementById('pwa-msg');
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
-            if (isStandalone) {
-                // 앱 모드: 설치 권유 메시지 숨김
-                console.log("앱 모드로 실행 중입니다.");
-            } else {
-                // 웹 모드: 설치 권유 메시지 보임
-                pwaMsg.style.display = 'flex';
-                console.log("브라우저 모드로 실행 중입니다.");
-            }
-        }
+            if (isStandalone) {
+                // 앱 모드: 설치 권유 메시지 숨김
+                console.log("앱 모드로 실행 중입니다.");
+            } else {
+                // 웹 모드: 설치 권유 메시지 보임
+                pwaMsg.style.display = 'flex';
+                console.log("브라우저 모드로 실행 중입니다.");
+            }
+        }
 
-        checkDisplayMode();
-        // ▼▼▼ [추가] 서비스 워커 등록 (앱으로 만들기 위한 필수 절차) ▼▼▼
-          if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        } 
-    </script>
-    <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
-        <div class="confirm-content" onclick="event.stopPropagation()">
-            <div class="confirm-text">
-                이 키워드 알림을<br>삭제하시겠습니까?
-            </div>
-            <div class="confirm-btn-group">
-                <button onclick="closeKeywordDeleteModal()" class="confirm-btn btn-no">취소</button>
-                <button onclick="realDeleteKeyword()" class="confirm-btn btn-yes">확인</button>
-            </div>
-        </div>
-    </div>
+        checkDisplayMode();
+        // ▼▼▼ [추가] 서비스 워커 등록 (앱으로 만들기 위한 필수 절차) ▼▼▼
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        } 
+        
+        /* --- [여기서부터 리셋된 자바스크립트입니다] --- */
+
+        /* 1. 알림 팝업 닫기 (최우선 기능) */
+        window.closeMainNotice = function() {
+            const noticeModal = document.getElementById('mainNoticeModal');
+            if (noticeModal) {
+                noticeModal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+            }
+        };
+
+        /* 2. 오늘 위치 계산 및 이동 (순수 로직) */
+        function moveFocusToToday(isInitial = false) {
+            const now = new Date();
+            const todayDate = now.getDate();
+            
+            if (!pages[currentIndex]) return;
+            const visiblePage = pages[currentIndex];
+            
+            // 오늘 날짜 찾기
+            let targetElement = null;
+            const dateSpans = visiblePage.querySelectorAll('.date-num');
+            for (let span of dateSpans) {
+                if (parseInt(span.innerText, 10) === todayDate) {
+                    targetElement = span.closest('td'); 
+                    break;
+                }
+            }
+
+            // 이동 실행
+            if (targetElement) {
+                const headerHeight = document.getElementById('sticky-header').offsetHeight;
+                const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - headerHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: isInitial ? 'auto' : 'smooth'
+                });
+                
+                // 버튼 클릭 시에만 깜빡임 효과
+                if (!isInitial) {
+                    targetElement.style.transition = 'background-color 0.5s';
+                    targetElement.style.backgroundColor = '#fff9db';
+                    setTimeout(() => { targetElement.style.backgroundColor = ''; }, 1000);
+                }
+            }
+        }
+
+        /* 3. 오늘 버튼 표시 여부 체크 */
+        function checkTodayButtonVisibility() {
+            const btnGoToday = document.getElementById('btn-go-today');
+            if (!btnGoToday || !pages[currentIndex]) return;
+
+            const visiblePage = pages[currentIndex];
+            const pageTitle = visiblePage.dataset.title;
+            const now = new Date();
+            const realTodayTitle = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
+            const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
+
+            // '이번 달'이고 '공연이 있을 때'만 보임
+            if (pageTitle === realTodayTitle && hasActiveEvents) {
+                btnGoToday.style.display = 'flex';
+            } else {
+                btnGoToday.style.display = 'none';
+            }
+        }
+
+        /* 4. 조건(필터) 팝업 기능 */
+        function openFilterModal() {
+            document.getElementById('filterModal').style.display = 'flex';
+            document.body.classList.add('no-scroll');
+        }
+        function closeFilterModal() {
+            document.getElementById('filterModal').style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            checkTodayButtonVisibility(); // 닫을 때 버튼 상태 갱신
+        }
+
+        /* 5. 버튼 이벤트 연결 (오늘 버튼) */
+        const btnGoTodayTag = document.getElementById('btn-go-today');
+        if(btnGoTodayTag) {
+            btnGoTodayTag.addEventListener('click', () => moveFocusToToday(false));
+        }
+
+        /* 6. 필터 및 초기화 로직 연결 */
+        const regionBoxes = document.querySelectorAll('.region-chk');
+        const genreBoxes = document.querySelectorAll('.genre-chk');
+        
+        if (typeof applyFilter === 'function') {
+            regionBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
+            genreBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
+        }
+
+        // 초기화 버튼 텍스트 설정
+        if (genreBoxes.length > 0) {
+            const unchecked = Array.from(genreBoxes).some(chk => !chk.checked);
+            const resetBtn = document.getElementById('btn-reset');
+            if (resetBtn) resetBtn.innerText = unchecked ? "모두선택" : "모두해제";
+        }
+
+        /* 7. 데이터 로딩 및 초기 실행 */
+        // fetchEvents 내부에서 데이터 로드 후 -> renderEvents -> markPastDays -> showPage 순으로 실행됨
+        // showPage 끝난 직후 오늘 날짜로 즉시 이동시킵니다.
+        
+        // fetchEvents 함수를 살짝 수정하여 로딩 직후 이동하게 함
+        // (기존 fetchEvents 함수가 위에 있다면, 여기서 호출만 하면 됩니다)
+        console.log("데이터 로딩 시작");
+        
+        // 데이터 로딩 호출
+        fetchEvents().then(() => {
+            // 로딩이 완료된 직후(Promise) 즉시 오늘 날짜 위치로 잡음
+            moveFocusToToday(true);
+        });
+
+    </script>
+    <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
+        <div class="confirm-content" onclick="event.stopPropagation()">
+            <div class="confirm-text">
+                이 키워드 알림을<br>삭제하시겠습니까?
+            </div>
+            <div class="confirm-btn-group">
+                <button onclick="closeKeywordDeleteModal()" class="confirm-btn btn-no">취소</button>
+                <button onclick="realDeleteKeyword()" class="confirm-btn btn-yes">확인</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
