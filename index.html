@@ -808,11 +808,19 @@
             opacity: 0.9;
         }
 
-        /* [추가] 키워드 알림 버튼 스타일 */
-        #btn-keyword-alert {
+        /* [수정됨] 우측 상단 플로팅 버튼 그룹 (조건 버튼 + 알림 버튼) */
+        #floating-group {
             position: fixed;
             top: 20px;
             right: 20px;
+            z-index: 1001; /* 헤더보다 위에 */
+            display: flex; /* 가로 배치 */
+            gap: 12px; /* 버튼 사이 간격 */
+            align-items: center;
+        }
+
+        /* 공통 원형 버튼 디자인 (기존 종 버튼 스타일) */
+        .round-btn {
             width: 40px;
             height: 40px;
             background-color: #ffffff;
@@ -823,16 +831,26 @@
             align-items: center;
             font-size: 20px;
             cursor: pointer;
-            z-index: 1001; /* 헤더보다 위에 */
             transition: transform 0.2s;
             -webkit-tap-highlight-color: transparent;
             outline: none;
+            border: none;
+            text-decoration: none;
         }
 
-        #btn-keyword-alert:active { transform: scale(0.9); }
+        .round-btn:active { transform: scale(0.9); }
 
+        /* 조건 버튼 텍스트 스타일 (작은 원 안에 글자가 들어가므로 크기 조절) */
+        .btn-txt-style {
+            font-size: 13px;
+            font-weight: 800;
+            color: #343a40;
+            line-height: 1;
+        }
+
+        /* PC 버전 위치 보정 (그룹 전체 이동) */
         @media (min-width: 768px) {
-            #btn-keyword-alert {
+            #floating-group {
                 /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
                 right: auto !important;
                 left: calc(50% + 240px + 24px) !important;
@@ -1113,7 +1131,15 @@
         </div>
     </div>
 
-    <div id="btn-keyword-alert" onclick="openKeywordModal()">🔔</div>
+    <div id="floating-group">
+        <button class="round-btn btn-txt-style" onclick="alert('조건 설정 기능은 준비 중입니다.')">
+            조건
+        </button>
+
+        <div class="round-btn" onclick="openKeywordModal()">
+            🔔
+        </div>
+    </div>
 
     <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 15px 15px;">
