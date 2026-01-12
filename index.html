@@ -506,7 +506,7 @@
 
      /* (중요) 캘린더 컨테이너의 불필요한 여백 제거 */
      #calendar-container {
-         padding-top: 50px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
+         padding-top: 25px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
      }
      /* [추가] 오늘 이동 버튼 (플로팅 스타일) */
         .btn-floating-today {
@@ -1897,36 +1897,28 @@ END:VCALENDAR`;
             });
         } 
                 
-        // [복구] 오늘 날짜 버튼 표시 여부 체크 함수 (이게 없어서 로딩이 멈췄습니다!)
-        function checkTodayButtonVisibility() {
-            const btnGoToday = document.getElementById('btn-go-today');
-            if (!btnGoToday || !pages[currentIndex]) return;
+        /* --- [여기서부터 리셋된 자바스크립트입니다] --- */
 
-            const visiblePage = pages[currentIndex];
-            const pageTitle = visiblePage.dataset.title;
-            const now = new Date();
-            const realTodayTitle = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
-
-            // 이번 달이고, 활성화된 공연이 있을 때만 버튼 보임
-            const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
-
-            if (pageTitle === realTodayTitle && hasActiveEvents) {
-                btnGoToday.style.display = 'flex';
-            } else {
-                btnGoToday.style.display = 'none';
+        /* 1. 알림 팝업 닫기 (최우선 기능) */
+        window.closeMainNotice = function() {
+            const noticeModal = document.getElementById('mainNoticeModal');
+            if (noticeModal) {
+                noticeModal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
             }
-        }
+        };
 
-        // [복구] 오늘 날짜로 이동하는 함수
+        /* 2. 오늘 위치 계산 및 이동 (순수 로직) */
         function moveFocusToToday(isInitial = false) {
             const now = new Date();
             const todayDate = now.getDate();
+            
+            if (!pages[currentIndex]) return;
             const visiblePage = pages[currentIndex];
-            if(!visiblePage) return;
             
-            const dateSpans = visiblePage.querySelectorAll('.date-num');
+            // 오늘 날짜 찾기
             let targetElement = null;
-            
+            const dateSpans = visiblePage.querySelectorAll('.date-num');
             for (let span of dateSpans) {
                 if (parseInt(span.innerText, 10) === todayDate) {
                     targetElement = span.closest('td'); 
@@ -1934,6 +1926,7 @@ END:VCALENDAR`;
                 }
             }
 
+            // 이동 실행
             if (targetElement) {
                 const headerHeight = document.getElementById('sticky-header').offsetHeight;
                 const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
@@ -1944,6 +1937,7 @@ END:VCALENDAR`;
                     behavior: isInitial ? 'auto' : 'smooth'
                 });
                 
+                // 버튼 클릭 시에만 깜빡임 효과
                 if (!isInitial) {
                     targetElement.style.transition = 'background-color 0.5s';
                     targetElement.style.backgroundColor = '#fff9db';
@@ -1952,67 +1946,71 @@ END:VCALENDAR`;
             }
         }
 
-        // [기존 로직 유지] 오늘 버튼 클릭 이벤트
-        const btnGoToday = document.getElementById('btn-go-today');
-        if(btnGoToday) {
-            btnGoToday.addEventListener('click', () => moveFocusToToday(false));
+        /* 3. 오늘 버튼 표시 여부 체크 */
+        function checkTodayButtonVisibility() {
+            const btnGoToday = document.getElementById('btn-go-today');
+            if (!btnGoToday || !pages[currentIndex]) return;
+
+            const visiblePage = pages[currentIndex];
+            const pageTitle = visiblePage.dataset.title;
+            const now = new Date();
+            const realTodayTitle = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
+            const hasActiveEvents = visiblePage.querySelector('td.day-active') !== null;
+
+            // '이번 달'이고 '공연이 있을 때'만 보임
+            if (pageTitle === realTodayTitle && hasActiveEvents) {
+                btnGoToday.style.display = 'flex';
+            } else {
+                btnGoToday.style.display = 'none';
+            }
         }
 
-        /* -------------------------------------------------------- */
-        /* 아래는 아까 드린 필수 코드들입니다 (다시 한 번 확인용) */
-        /* -------------------------------------------------------- */
-
-        // 1. 알림 팝업 닫기
-        window.closeMainNotice = function() {
-            const noticeModal = document.getElementById('mainNoticeModal');
-            if (noticeModal) {
-                noticeModal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-            }
-        };
-
-        // 2. 조건(필터) 팝업 제어
+        /* 4. 조건(필터) 팝업 기능 */
         function openFilterModal() {
-            const filterModal = document.getElementById('filterModal');
-            if(filterModal) {
-                filterModal.style.display = 'flex';
-                document.body.classList.add('no-scroll');
-            }
+            document.getElementById('filterModal').style.display = 'flex';
+            document.body.classList.add('no-scroll');
         }
-        function closeFilterModal(e) {
-            const filterModal = document.getElementById('filterModal');
-            if(filterModal) {
-                filterModal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-                checkTodayButtonVisibility(); // 닫을 때 버튼 체크
-            }
+        function closeFilterModal() {
+            document.getElementById('filterModal').style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            checkTodayButtonVisibility(); // 닫을 때 버튼 상태 갱신
         }
 
-        // 3. 필터 이벤트 연결
+        /* 5. 버튼 이벤트 연결 (오늘 버튼) */
+        const btnGoTodayTag = document.getElementById('btn-go-today');
+        if(btnGoTodayTag) {
+            btnGoTodayTag.addEventListener('click', () => moveFocusToToday(false));
+        }
+
+        /* 6. 필터 및 초기화 로직 연결 */
         const regionBoxes = document.querySelectorAll('.region-chk');
         const genreBoxes = document.querySelectorAll('.genre-chk');
+        
         if (typeof applyFilter === 'function') {
             regionBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
             genreBoxes.forEach(chk => chk.addEventListener('change', applyFilter));
         }
 
-        // 4. 초기화 버튼 텍스트
+        // 초기화 버튼 텍스트 설정
         if (genreBoxes.length > 0) {
             const unchecked = Array.from(genreBoxes).some(chk => !chk.checked);
             const resetBtn = document.getElementById('btn-reset');
-            if (resetBtn) {
-                resetBtn.innerText = unchecked ? "모두선택" : "모두해제";
-            }
+            if (resetBtn) resetBtn.innerText = unchecked ? "모두선택" : "모두해제";
         }
 
-        // 5. 데이터 로딩 시작
-        console.log("데이터 로딩 시작...");
-        fetchEvents(); 
-
-        // 6. 앱 시작 시 오늘 날짜로 자동 이동 (로딩 후 약간 딜레이)
-        setTimeout(() => {
+        /* 7. 데이터 로딩 및 초기 실행 */
+        // fetchEvents 내부에서 데이터 로드 후 -> renderEvents -> markPastDays -> showPage 순으로 실행됨
+        // showPage 끝난 직후 오늘 날짜로 즉시 이동시킵니다.
+        
+        // fetchEvents 함수를 살짝 수정하여 로딩 직후 이동하게 함
+        // (기존 fetchEvents 함수가 위에 있다면, 여기서 호출만 하면 됩니다)
+        console.log("데이터 로딩 시작");
+        
+        // 데이터 로딩 호출
+        fetchEvents().then(() => {
+            // 로딩이 완료된 직후(Promise) 즉시 오늘 날짜 위치로 잡음
             moveFocusToToday(true);
-        }, 300);
+        });
 
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
