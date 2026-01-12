@@ -811,7 +811,6 @@
     </style>
 </head>
 <body>
-    
     <div class="top-logo">📌</div> 
 
     <div id="btn-filter-mode" class="fixed-top-btn" onclick="openFilterModal()">☰</div>
@@ -2004,14 +2003,11 @@ END:VCALENDAR`;
         
         // fetchEvents 함수를 살짝 수정하여 로딩 직후 이동하게 함
         // (기존 fetchEvents 함수가 위에 있다면, 여기서 호출만 하면 됩니다)
-        console.log("데이터 로딩 시작");
-        
-        // 데이터 로딩 호출
-        fetchEvents().then(() => {
-            // 로딩이 완료된 직후(Promise) 즉시 오늘 날짜 위치로 잡음
-            moveFocusToToday(true);
-        });
-
+        // [필수] 데이터 로딩 시작
+        console.log("데이터 로딩 시작...");
+        if(typeof fetchEvents === 'function') {
+            fetchEvents(); 
+        }
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
