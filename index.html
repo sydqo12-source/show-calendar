@@ -1006,33 +1006,6 @@
                 <div class="nav-btn" id="next-btn">&gt;</div>
             </div>
         </div>
-
-    </div>
-        <div class="control-bar">
-            <div class="filter-group">
-                <span class="group-title">지역 :</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
-                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
-                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <span class="group-title">장르 :</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-                    <button id="btn-reset" class="btn-reset">모두해제</button>
-                </div>
-            </div>
-        </div>
-
     </div>
     <div id="calendar-container">
         <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
@@ -1133,7 +1106,7 @@
     </div>
 
     <div id="floating-group">
-        <button class="round-btn btn-txt-style" onclick="alert('조건 설정 기능은 준비 중입니다.')">
+        <button class="round-btn btn-txt-style" onclick="openConditionModal()">
             ☰
         </button>
 
@@ -1485,6 +1458,26 @@
             } catch (error) {
                 console.error("오류:", error);
             }
+        }
+
+        // [추가] 조건 설정 모달 열기
+        function openConditionModal() {
+            const modal = document.getElementById('conditionModal');
+            modal.style.display = 'flex';
+            document.body.classList.add('no-scroll'); // 뒷배경 스크롤 막기
+        }
+
+        // [추가] 조건 설정 모달 닫기
+        function closeConditionModal(e) {
+            // 배경을 클릭했거나 닫기 버튼을 눌렀을 때만 닫힘
+            if (e && e.target !== e.currentTarget && e.target.tagName !== 'BUTTON') return;
+    
+            const modal = document.getElementById('conditionModal');
+            modal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+    
+        // 닫을 때 필터 적용 한 번 더 확실하게 실행 (선택사항)
+         applyFilter();
         }
 
         function closeKeywordModal(e) {
@@ -2116,5 +2109,43 @@ END:VCALENDAR`;
             </div>
         </div>
     </div>
+    </div>
+    <div id="conditionModal" class="modal-overlay" onclick="closeConditionModal(event)">
+    <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
+        
+        <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
+            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
+        </div>
+
+        <div class="control-bar" style="margin: 0; padding: 0;">
+            <div class="filter-group">
+                <span class="group-title">지역 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="margin-top: 15px;">
+                <span class="group-title">장르 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+                    <button id="btn-reset" class="btn-reset">모두해제</button>
+                </div>
+            </div>
+        </div>
+        <div class="confirm-btn-group" style="margin-top: 25px;">
+            <button onclick="closeConditionModal()" class="confirm-btn btn-yes">적용하기</button>
+        </div>
+
+    </div>
+</div>
 </body>
 </html>
