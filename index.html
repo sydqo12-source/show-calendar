@@ -1130,7 +1130,7 @@
     <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
         
         <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
-            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
+            <span id="popTitle" style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
         </div>
 
         <div class="control-bar" style="margin: 0; padding: 0;">
@@ -2114,6 +2114,32 @@ END:VCALENDAR`;
                 });
             });
         }
+         window.onload = function() {
+             const modal = document.getElementById('conditionModal'); // 팝업 전체
+             const title = document.getElementById('popTitle');     // 제목 텍스트
+
+             // 1. 원래 제목 저장해두기 (나중을 위해 필수!)
+             const originalTitleText = title.innerText; 
+
+             // 2. 제목만 '환영 멘트'로 싹 바꾸기
+             title.innerText = "원하시는 공연을 보여드릴게요🎉"; 
+    
+             // 3. 팝업 띄우기
+             modal.style.display = 'block'; 
+
+             // 4. 닫을 때 '원상복구' 하는 로직 (닫기 버튼이나 확인 버튼에 연결)
+             // 기존 닫기 함수(closeModal) 안에 넣거나, 이벤트 리스너로 추가하세요.
+             const closeBtn = modal.querySelector('button'); 
+
+             closeBtn.addEventListener('click', function() {
+             // 팝업이 닫히고 나서(또는 동시에) 제목을 원래대로 돌려놓음
+             // setTimeout을 0으로 줘도 되고, 그냥 바로 실행해도 됩니다.
+             title.innerText = originalTitleText; 
+        
+             // (참고: 원래 닫기 기능은 기존 함수에서 처리될 테니 여기선 텍스트 복구만 신경 씀)
+    });
+};
+             
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
