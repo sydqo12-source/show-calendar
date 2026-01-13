@@ -1146,7 +1146,43 @@
             <button onclick="closeCustomAlert()" class="btn-alert-ok">확인</button>
         </div>
     </div>
+    <div id="conditionModal" class="modal-overlay" onclick="closeConditionModal(event)">
+    <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
+        
+        <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
+            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
+        </div>
+
+        <div class="control-bar" style="margin: 0; padding: 0;">
+            <div class="filter-group">
+                <span class="group-title">지역 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="margin-top: 15px;">
+                <span class="group-title">장르 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+                    <button id="btn-reset" class="btn-reset">모두해제</button>
+                </div>
+            </div>
+        </div>
+        <div class="confirm-btn-group" style="margin-top: 25px;">
+            <button onclick="closeConditionModal()" class="confirm-btn btn-yes">적용하기</button>
+        </div>
+
     </div>
+</div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
@@ -2040,7 +2076,7 @@ END:VCALENDAR`;
 
                 // [계산] 요소 위치 - 헤더 높이 = 헤더 바로 아래에 딱 붙음
                 // (살짝 여유를 주고 싶다면 -10 정도 더 빼도 됨)
-                const offsetPosition = elementPosition - headerHeight - 50;
+                const offsetPosition = elementPosition - headerHeight;
 
                 window.scrollTo({
                     top: offsetPosition,
@@ -2109,43 +2145,5 @@ END:VCALENDAR`;
             </div>
         </div>
     </div>
-    </div>
-    <div id="conditionModal" class="modal-overlay" onclick="closeConditionModal(event)">
-    <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
-        
-        <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
-            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
-        </div>
-
-        <div class="control-bar" style="margin: 0; padding: 0;">
-            <div class="filter-group">
-                <span class="group-title">지역 :</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
-                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
-                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
-                </div>
-            </div>
-
-            <div class="filter-group" style="margin-top: 15px;">
-                <span class="group-title">장르 :</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-                    <button id="btn-reset" class="btn-reset">모두해제</button>
-                </div>
-            </div>
-        </div>
-        <div class="confirm-btn-group" style="margin-top: 25px;">
-            <button onclick="closeConditionModal()" class="confirm-btn btn-yes">적용하기</button>
-        </div>
-
-    </div>
-</div>
 </body>
 </html>
