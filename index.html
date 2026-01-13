@@ -822,7 +822,7 @@
 
         /* 조건 버튼 텍스트 스타일 (작은 원 안에 글자가 들어가므로 크기 조절) */
         .btn-txt-style {
-            font-size: 13px;
+            font-size: 20px;
             font-weight: 800;
             color: #343a40;
             line-height: 1;
@@ -1157,8 +1157,8 @@
                 </div>
             </div>
         </div>
-        <div class="confirm-btn-group" style="margin-top: 10px;">
-            <button onclick="closeConditionModal()" class="confirm-btn btn-yes">적용하기</button>
+        <div class="confirm-btn-group" style="margin-top: 12px;">
+            <button onclick="applyAndClose()" class="confirm-btn btn-yes">적용하기</button>
         </div>
 
     </div>
@@ -1491,9 +1491,11 @@
             const modal = document.getElementById('conditionModal');
             modal.style.display = 'none';
             document.body.classList.remove('no-scroll');
-    
-        // 닫을 때 필터 적용 한 번 더 확실하게 실행 (선택사항)
-         applyFilter();
+        }
+        
+        function applyAndClose() {
+            applyFilter();          // 1. 필터를 적용하고
+            closeConditionModal();  // 2. 창을 닫는다
         }
 
         function closeKeywordModal(e) {
@@ -1912,11 +1914,10 @@ END:VCALENDAR`;
                 btnReset.innerText = "모두해제";
                 isAllChecked = true;
             }
-            applyFilter();
         });
 
-        regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
-        genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        // regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        // genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
