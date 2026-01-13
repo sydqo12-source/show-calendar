@@ -2047,7 +2047,7 @@ END:VCALENDAR`;
 
                 // [계산] 요소 위치 - 헤더 높이 = 헤더 바로 아래에 딱 붙음
                 // (살짝 여유를 주고 싶다면 -10 정도 더 빼도 됨)
-                const offsetPosition = elementPosition - headerHeight;
+                const offsetPosition = elementPosition - headerHeight - 50;
 
                 window.scrollTo({
                     top: offsetPosition,
