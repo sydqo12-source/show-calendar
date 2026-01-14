@@ -1016,7 +1016,12 @@
                     <label><input type="checkbox" class="intro-genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
                     <label><input type="checkbox" class="intro-genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
                     <label><input type="checkbox" class="intro-genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                    <label><input type="checkbox" class="intro-genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+                    <label style="cursor: not-allowed;">
+                        <input type="checkbox" class="intro-genre-chk" value="가족" disabled> 
+                        <span class="txt-black" style="color: #adb5bd;">가족</span>
+                    </label>
+
+                    <button id="btn-intro-reset" class="btn-reset" onclick="toggleIntroReset()">모두해제</button>
                 </div>
             </div>
         </div>
@@ -1034,7 +1039,7 @@
     z-index: 40000; 
     justify-content: center; align-items: center; flex-direction: column;">
     <div class="loading-spinner"></div>
-    <div style="font-size: 20px; font-weight: 700; color: #495057;">많은 공연을 보여드릴테니 잠시만 기다려주세요!</div>
+    <div style="font-size: 20px; font-weight: 700; color: #495057;">많은 공연을 보여드릴테니<br>잠시만 기다려주세요!</div>
 </div>
     <div class="top-logo">📌</div>
 
@@ -2311,7 +2316,26 @@ END:VCALENDAR`;
                
                document.body.classList.add('no-scroll');
           }, 100);
-     }    
+     } 
+     // [추가] 인트로 팝업용 '모두해제/모두선택' 기능
+     function toggleIntroReset() {
+          const btn = document.getElementById('btn-intro-reset');
+          // '가족'처럼 비활성화(disabled)된 건 제외하고 가져옵니다.
+          const chks = document.querySelectorAll('.intro-genre-chk:not(:disabled)');
+          
+          // 현재 활성화된 체크박스들이 전부 체크되어 있는지 확인
+          const isAllChecked = Array.from(chks).every(c => c.checked);
+
+          if (isAllChecked) {
+               // 전부 체크되어 있으면 -> 다 끕니다
+               chks.forEach(c => c.checked = false);
+               btn.innerText = "모두선택";
+          } else {
+               // 하나라도 꺼져 있으면 -> 다 켭니다
+               chks.forEach(c => c.checked = true);
+               btn.innerText = "모두해제";
+          }
+     }   
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
