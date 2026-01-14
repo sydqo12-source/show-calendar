@@ -1185,11 +1185,17 @@
         </div>
     </div>
 
-    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()">
-        <div class="custom-alert-content" onclick="event.stopPropagation()">
-            <div id="customAlertMsg" class="custom-alert-msg">알림 메시지</div>
-            <button onclick="closeCustomAlert()" class="btn-alert-ok">확인</button>
+    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()" style="z-index: 50000;">
+    <div class="confirm-content" onclick="event.stopPropagation()">
+        
+        <div id="customAlertMsg" class="confirm-text" style="text-align: center; margin-bottom: 20px;">
+            알림 메시지
         </div>
+
+        <div class="confirm-btn-group">
+            <button onclick="closeCustomAlert()" class="confirm-btn btn-yes">확인</button>
+        </div>
+    </div>
     </div>
     <div id="conditionModal" class="modal-overlay" onclick="closeConditionModal(event)">
     <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
@@ -2197,7 +2203,7 @@ END:VCALENDAR`;
           const checkedGenres = document.querySelectorAll('.intro-genre-chk:checked');
 
           if (checkedRegions.length === 0 || checkedGenres.length === 0) {
-               alert("지역과 장르를 최소 1개 이상 선택해주세요!");
+               openCustomAlert("지역과 장르를 선택해주세요!");
                return;
           }
 
