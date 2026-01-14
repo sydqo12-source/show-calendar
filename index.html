@@ -2159,119 +2159,143 @@ END:VCALENDAR`;
                 });
             });
         }
-     // [1] 시작 버튼 클릭 시 실행되는 메인 함수
+// [1] 시작 버튼 클릭 시 실행되는 메인 함수
      function startProcess() {
-         // 1. 선택 여부 검사
-         const checkedRegions = document.querySelectorAll('.intro-region-chk:checked');
-         const checkedGenres = document.querySelectorAll('.intro-genre-chk:checked');
+          // 1. 선택 여부 검사
+          const checkedRegions = document.querySelectorAll('.intro-region-chk:checked');
+          const checkedGenres = document.querySelectorAll('.intro-genre-chk:checked');
 
-         if (checkedRegions.length === 0 || checkedGenres.length === 0) {
-             alert("지역과 장르를 최소 1개 이상 선택해주세요!");
-             return;
-         }
+          if (checkedRegions.length === 0 || checkedGenres.length === 0) {
+               alert("지역과 장르를 최소 1개 이상 선택해주세요!");
+               return;
+          }
 
-         // 2. 인트로 닫고 -> 로딩 화면으로 덮기 (뒤는 안보임)
-         document.getElementById('introModal').style.display = 'none';
-         document.getElementById('loadingOverlay').style.display = 'flex';
+          // 2. 인트로 닫고 -> 로딩 화면으로 덮기
+          document.getElementById('introModal').style.display = 'none';
+          document.getElementById('loadingOverlay').style.display = 'flex';
 
-         // 3. 약간의 시간차를 두고 필터 적용 (화면 전환 부드럽게)
-         setTimeout(() => {
-             // 뒤에서 필터 적용 (공연 데이터 로딩)
-             syncAndApplyFilters(checkedRegions, checkedGenres);
-        
-             // 로딩된 상태에서 위치 잡기 (사용자는 로딩화면만 보고 있음)
-             alignCalendarPosition();
-         }, 100);
-      }
+          // 3. 필터 적용 및 전체 로딩 시작
+          // 브라우저 렌더링 타이밍 확보를 위해 requestAnimationFrame 사용
+          requestAnimationFrame(() => {
+               syncAndApplyFilters(checkedRegions, checkedGenres);
+               alignCalendarPosition();
+          });
+     }
 
      // [2] 필터 동기화 및 적용
      function syncAndApplyFilters(regions, genres) {
-         // 기존 체크박스 초기화
-         document.querySelectorAll('.region-chk').forEach(el => el.checked = false);
-         document.querySelectorAll('.genre-chk').forEach(el => el.checked = false);
-     
-         // 선택 값 동기화
-         regions.forEach(r => {
-             const target = document.querySelector(`.region-chk[value="${r.value}"]`);
-             if(target) target.checked = true;
-         });
-         genres.forEach(g => {
-             const target = document.querySelector(`.genre-chk[value="${g.value}"]`);
-             if(target) target.checked = true;
-         });
+          document.querySelectorAll('.region-chk').forEach(el => el.checked = false);
+          document.querySelectorAll('.genre-chk').forEach(el => el.checked = false);
 
-         // 실제 캘린더 다시 그리기 (여기서 day-active 클래스 등이 붙음)
-         applyFilter();
-      }
+          regions.forEach(r => {
+               const target = document.querySelector(`.region-chk[value="${r.value}"]`);
+               if(target) target.checked = true;
+          });
+          genres.forEach(g => {
+               const target = document.querySelector(`.genre-chk[value="${g.value}"]`);
+               if(target) target.checked = true;
+          });
 
-     // [3] 위치 정렬 및 화면 공개 (핵심 로직)
-      function alignCalendarPosition() {
-         // 렌더링이 확실히 끝난 뒤 실행하기 위해 setTimeout 한번 더 사용
-         setTimeout(() => {
-              const today = new Date().getDate();
-              const visiblePage = pages[currentIndex];
-             const dateSpans = visiblePage.querySelectorAll('.date-num');
-             let targetTd = null;
-
-             // 오늘 날짜 셀 찾기
-             for (let span of dateSpans) {
-                 if (parseInt(span.innerText, 10) === today) {
-                     targetTd = span.closest('td');
-                     break;
-                 }
-              }
-
-              if (targetTd) {
-                 // 헤더 높이 계산 (Sticky Box)
-                 const header = document.getElementById('sticky-header');
-                 const headerHeight = header.offsetHeight;
-
-                 // 좌표 계산
-                 // offsetTop은 문서 전체에서의 위치입니다.
-                 const tdTop = targetTd.offsetTop;
-                 const tdHeight = targetTd.offsetHeight;
-
-                 let scrollToY = 0;
-
-                 // [분기점 로직]
-                  if (targetTd.classList.contains('day-active')) {
-                     // 1) 공연 있음: Header 하단 == 오늘 위 경계선
-                     // 스크롤 위치 = (오늘 셀의 윗부분) - (헤더 높이)
-                     scrollToY = tdTop - headerHeight;
-                     console.log("공연 있음: 위쪽 정렬");
-                 } else {
-                     // 2) 공연 없음: Header 하단 == 오늘 아래 경계선
-                     // 스크롤 위치 = (오늘 셀의 윗부분 + 셀 높이) - (헤더 높이)
-                     // 이렇게 하면 오늘 셀은 헤더 뒤로 숨겨지고, 내일 날짜부터 보임
-                     scrollToY = tdTop + tdHeight - headerHeight;
-                     console.log("공연 없음: 아래쪽 정렬");
-                 }
-
-                 // [이동] 'instant'를 써서 애니메이션 없이 순간이동 (로딩화면 뒤에서)
-                 window.scrollTo({
-                     top: scrollToY,
-                     behavior: 'instant' 
-                 });
-             }
-
-             // 4. 모든 작업 완료 -> 로딩 끄고 알림 팝업 띄우기
-             finishLoading();
-
-         }, 200); // 렌더링 안정화 시간
+          applyFilter();
      }
 
-     // [4] 마무리 함수
-      function finishLoading() {
-          // 로딩 화면 제거
-          document.getElementById('loadingOverlay').style.display = 'none';
+     // [3] 전체 이미지 강제 로딩 및 위치 정렬 (핵심 수정됨)
+     function alignCalendarPosition() {
+          const visiblePage = pages[currentIndex];
+          
+          // [중요] '오늘 날짜' 셀만 찾는 게 아니라, '전체 이미지'를 찾습니다.
+          // 기존의 Lazy Loading(스크롤해야 로딩됨)을 무시하고 강제로 다 불러옵니다.
+          const allImages = visiblePage.querySelectorAll('img');
+          const promises = [];
 
-          // 알림 팝업 띄우기
-          const noticeModal = document.getElementById('mainNoticeModal');
-          noticeModal.style.display = 'flex';
+          allImages.forEach(img => {
+               // 1. 아직 로딩 안 된 이미지(data-src가 있는 경우) 강제 실행
+               if (img.dataset.src) {
+                    img.src = img.dataset.src; // 주소 주입
+                    img.removeAttribute('data-src'); // 꼬리표 제거
+                    img.classList.remove('lazy-img'); // 레이지 로딩 대상에서 제외
+               }
 
-         // 스크롤 잠금 유지 (알림 팝업 닫기 전까지)
-         document.body.classList.add('no-scroll');
-     }                  
+               // 2. 로딩 대기 리스트에 추가 (이미 완료된 건 패스)
+               if (!img.complete) {
+                    promises.push(new Promise(resolve => {
+                         img.onload = resolve;
+                         img.onerror = resolve; // 에러나도 멈추지 않게
+                    }));
+               }
+          });
+
+          console.log(`총 ${promises.length}개의 이미지를 로딩 대기 중...`);
+
+          // [대기] 모든 이미지가 다 뜰 때까지 기다림 (최대 5초 안전장치)
+          const timeout = new Promise(resolve => setTimeout(resolve, 5000));
+
+          Promise.race([Promise.all(promises), timeout]).then(() => {
+               console.log("모든 이미지 로딩 완료!");
+               // 로딩이 다 끝났으니 높이가 확정됨 -> 스크롤 이동 계산 시작
+               calculateAndScroll();
+          });
+     }
+
+     // [4] 스크롤 계산 및 이동 함수
+     function calculateAndScroll() {
+          const today = new Date().getDate();
+          const visiblePage = pages[currentIndex];
+          const dateSpans = visiblePage.querySelectorAll('.date-num');
+          let targetTd = null;
+
+          // 오늘 날짜 셀 찾기
+          for (let span of dateSpans) {
+               if (parseInt(span.innerText, 10) === today) {
+                    targetTd = span.closest('td');
+                    break;
+               }
+          }
+
+          if (targetTd) {
+               const header = document.getElementById('sticky-header');
+               const headerHeight = header.getBoundingClientRect().height;
+               
+               const rect = targetTd.getBoundingClientRect();
+               const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+               
+               // 이미지가 다 로딩되었으므로 이 높이 값은 '진짜'입니다.
+               const absoluteTop = rect.top + scrollTop;
+               const absoluteBottom = rect.bottom + scrollTop;
+
+               let scrollToY = 0;
+
+               if (targetTd.classList.contains('day-active')) {
+                    // 공연 있음: 위쪽 정렬
+                    scrollToY = absoluteTop - headerHeight;
+               } else {
+                    // 공연 없음: 아래쪽 정렬
+                    scrollToY = absoluteBottom - headerHeight;
+               }
+
+               // 순간이동
+               window.scrollTo({
+                    top: scrollToY,
+                    behavior: 'instant'
+               });
+          }
+
+          // 위치 잡았으면 로딩 해제
+          finishLoading();
+     }
+
+     // [5] 마무리 함수
+     function finishLoading() {
+          // 0.1초 뒤에 막을 걷어내서 깜빡임 방지
+          setTimeout(() => {
+               document.getElementById('loadingOverlay').style.display = 'none';
+               
+               const noticeModal = document.getElementById('mainNoticeModal');
+               noticeModal.style.display = 'flex';
+               
+               document.body.classList.add('no-scroll');
+          }, 100);
+     }    
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
