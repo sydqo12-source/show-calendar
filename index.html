@@ -1157,7 +1157,7 @@
                 </div>
             </div>
 
-            <button onclick="history.back()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
+            <button onclick="closeNoticePopup()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
         </div>
     </div>
 
@@ -2333,8 +2333,9 @@ END:VCALENDAR`;
      }
 
      // [5] 마무리 함수
+     // [1] 로딩 완료 후 처리 함수 (히스토리 기록 쌓기)
      function finishLoading() {
-          // 0.1초 뒤에 막을 걷어내서 깜빡임 방지
+          // 로딩 화면 0.1초 뒤에 제거
           setTimeout(() => {
                document.getElementById('loadingOverlay').style.display = 'none';
                
@@ -2343,13 +2344,56 @@ END:VCALENDAR`;
                
                document.body.classList.add('no-scroll');
 
-               // ▼ [핵심 추가] 뒤로가기 제어를 위한 '상태' 2개 추가
-               // 1. 캘린더 상태 (나중에 여기서 뒤로가면 '종료 팝업' 뜸)
-               history.pushState({ page: 'calendar' }, '', '');
-               // 2. 알림 팝업 상태 (여기서 뒤로가면 '팝업' 닫힘)
+               // [중요] 히스토리 강제 주입
+               // 순서: [빈 페이지] -> [캘린더(calendar)] -> [알림 팝업(notice)]
+               // 이렇게 해야 '뒤로가기'를 했을 때 'notice'가 빠지면서 'calendar' 상태가 됨
+               history.pushState({ page: 'calendar' }, '', ''); 
                history.pushState({ page: 'notice' }, '', '');
+
+               console.log("히스토리 기록 완료: notice 상태");
           }, 100);
-     } 
+     }
+
+     // [2] 뒤로가기 버튼 감지 및 UI 변경 로직 (이게 꼭 있어야 팝업이 닫힘!)
+     window.onpopstate = function(event) {
+          console.log("뒤로가기 감지됨. 현재 상태:", event.state);
+
+          // 1. 현재 상태가 'calendar'라면? (알림 팝업 닫기)
+          if (event.state && event.state.page === 'calendar') {
+               // 팝업을 안 보이게 처리
+               document.getElementById('mainNoticeModal').style.display = 'none';
+               // 스크롤 잠금 해제
+               document.body.classList.remove('no-scroll');
+          }
+          
+          // 2. 현재 상태가 null(맨 처음)이라면? (앱 종료 확인)
+          else if (event.state === null) {
+               // 종료 팝업 띄우기
+               document.getElementById('exitConfirmModal').style.display = 'flex';
+               
+               // 취소할 수 있으니까 다시 'calendar' 상태를 밀어넣어 둠
+               history.pushState({ page: 'calendar' }, '', '');
+          }
+     };
+
+     // [3] 알림 팝업의 '확인/닫기' 버튼용 함수
+     // (HTML 버튼에 onclick="history.back()" 대신 이걸 쓰세요)
+     function closeNoticePopup() {
+          // 뒤로가기를 프로그램이 대신 눌러주는 효과
+          // -> window.onpopstate가 실행되면서 팝업이 닫힘
+          history.back();
+     }
+
+     // [4] 종료 팝업 기능 - 취소
+     function cancelExitApp() {
+          document.getElementById('exitConfirmModal').style.display = 'none';
+     }
+
+     // [5] 종료 팝업 기능 - 확인(진짜 종료)
+     function confirmExitApp() {
+          // 진짜 종료 (두 칸 뒤로 가기)
+          history.go(-2);
+     }
      // [추가] 인트로 팝업용 '모두해제/모두선택' 기능
      function toggleIntroReset() {
           const btn = document.getElementById('btn-intro-reset');
