@@ -1218,7 +1218,10 @@
                     <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
                     <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
                     <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
+                    <label style="cursor: not-allowed;">
+                        <input type="checkbox" class="genre-chk" value="가족" disabled> 
+                        <span class="txt-black" style="color: #adb5bd;">가족</span>
+                    </label>
                     <button id="btn-reset" class="btn-reset">모두해제</button>
                 </div>
             </div>
@@ -1970,16 +1973,24 @@ END:VCALENDAR`;
         });
 
         let isAllChecked = true;
+        // [수정] 조건 팝업(햄버거)의 '모두해제' 버튼 로직
         btnReset.addEventListener('click', () => {
-            if (isAllChecked) {
-                genreChks.forEach(chk => chk.checked = false);
-                btnReset.innerText = "모두선택";
-                isAllChecked = false;
-            } else {
-                genreChks.forEach(chk => chk.checked = true);
-                btnReset.innerText = "모두해제";
-                isAllChecked = true;
-            }
+             // 1. 현재 화면에 있는 장르 체크박스 중 '비활성화(disabled)' 된 건 뺍니다.
+             const activeChks = document.querySelectorAll('.genre-chk:not(:disabled)');
+          
+             // 2. 활성화된 애들이 전부 체크되어 있는지 확인
+             // (Array.from을 써서 배열로 만든 뒤 every 함수 사용)
+             const isAllChecked = Array.from(activeChks).every(c => c.checked);
+
+             if (isAllChecked) {
+                  // 전부 켜져 있으면 -> 끈다
+                  activeChks.forEach(chk => chk.checked = false);
+                  btnReset.innerText = "모두선택";
+             } else {
+                  // 하나라도 꺼져 있으면 -> 켠다
+                  activeChks.forEach(chk => chk.checked = true);
+                  btnReset.innerText = "모두해제";
+             }
         });
 
         // regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
