@@ -2285,14 +2285,13 @@ END:VCALENDAR`;
           });
      }
 
-     // [4] 스크롤 계산 및 이동 함수
+     // [4] 스크롤 계산 및 이동 함수 (수정됨)
      function calculateAndScroll() {
           const today = new Date().getDate();
           const visiblePage = pages[currentIndex];
           const dateSpans = visiblePage.querySelectorAll('.date-num');
           let targetTd = null;
 
-          // 오늘 날짜 셀 찾기
           for (let span of dateSpans) {
                if (parseInt(span.innerText, 10) === today) {
                     targetTd = span.closest('td');
@@ -2307,18 +2306,27 @@ END:VCALENDAR`;
                const rect = targetTd.getBoundingClientRect();
                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                
-               // 이미지가 다 로딩되었으므로 이 높이 값은 '진짜'입니다.
+               // 타겟 셀의 절대 위치
                const absoluteTop = rect.top + scrollTop;
                const absoluteBottom = rect.bottom + scrollTop;
+               // 화면 전체 높이
+               const windowHeight = window.innerHeight;
 
                let scrollToY = 0;
 
                if (targetTd.classList.contains('day-active')) {
-                    // 공연 있음: 위쪽 정렬
+                    // 1) 공연 있음: Header 하단 == 오늘 위 경계선 (기존 유지)
                     scrollToY = absoluteTop - headerHeight;
+                    console.log("공연 있음: 상단 정렬");
                } else {
-                    // 공연 없음: 아래쪽 정렬
-                    scrollToY = absoluteBottom - headerHeight;
+                    // 2) 공연 없음: 화면 최하단 == 오늘 아래 경계선
+                    // (오늘 날짜가 화면 바닥에 딱 걸치게 됨)
+                    scrollToY = absoluteBottom - windowHeight;
+                    
+                    // 혹시 계산값이 0보다 작으면 맨 위로 보냄 (안전장치)
+                    if (scrollToY < 0) scrollToY = 0;
+                    
+                    console.log("공연 없음: 화면 최하단 정렬");
                }
 
                // 순간이동
@@ -2328,7 +2336,6 @@ END:VCALENDAR`;
                });
           }
 
-          // 위치 잡았으면 로딩 해제
           finishLoading();
      }
 
