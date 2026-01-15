@@ -1423,14 +1423,16 @@
 
             const modal = document.getElementById('keywordDeleteModal');
             modal.style.display = 'flex';
+            history.pushState({ view: 'deleteConfirm' }, '', '');
         }
 
-        // 2. 팝업 닫기
         function closeKeywordDeleteModal() {
-            const modal = document.getElementById('keywordDeleteModal');
-            modal.style.display = 'none';
-            // 닫을 때는 ID를 비우지 않고 놔둡니다 (혹시 모를 오류 방지)
-        }
+          // 화면에 떠 있을 때만 뒤로가기 실행
+          // (이렇게 해야 window.onpopstate가 작동해서 팝업을 닫고 이전 상태로 돌아갑니다)
+          if (document.getElementById('keywordDeleteModal').style.display === 'flex') {
+               history.back();
+          }
+     }
 
         // [수정] 진짜 삭제 실행 (화면 즉시 반영)
         async function realDeleteKeyword() {
@@ -2338,41 +2340,57 @@ END:VCALENDAR`;
              }, 100);
         }
 
-     // [수정] 뒤로가기 통합 관리자
      window.onpopstate = function(event) {
+          // 0. 모든 팝업 요소 변수화
           const exitModal = document.getElementById('exitConfirmModal');
           const alertModal = document.getElementById('customAlertModal');
           const eventModal = document.getElementById('eventModal');
           const confirmModal = document.getElementById('confirmModal');
           const noticeModal = document.getElementById('mainNoticeModal');
+          
           const conditionModal = document.getElementById('conditionModal');
           const keywordModal = document.getElementById('keywordModal');
           const keywordDeleteModal = document.getElementById('keywordDeleteModal');
-          
-          // 1. [상세 팝업] 상태에서 뒤로가기를 눌렀다? -> 상세 팝업 닫기
-          // (이전 상태인 'calendar'로 돌아왔으므로 팝업들을 끕니다)
-          if (event.state && event.state.page === 'calendar') {
-               eventModal.style.display = 'none';
-               confirmModal.style.display = 'none';
-               alertModal.style.display = 'none';
-               noticeModal.style.display = 'none';
-               conditionModal.style.display = 'none';
-               keywordModal.style.display = 'none';
-               keywordDeleteModal.style.display = 'none';
-               document.body.classList.remove('no-scroll');
-               return; // 종료
-          }
 
-          // 2. [ICS 팝업]에서 뒤로가기 -> 상세 팝업으로 돌아가기
-          if (event.state && event.state.view === 'modal') {
-               confirmModal.style.display = 'none';
-               eventModal.style.display = 'flex'; // 상세 팝업은 유지
+          // 2. [키워드 관리창] 상태로 돌아왔을 때 (★핵심 추가됨★)
+          // (키워드 창 위에 뜬 '알림창'이나 '삭제 확인창'을 닫고 키워드 창은 유지합니다)
+          if (event.state && event.state.view === 'keyword') {
+               if (alertModal) alertModal.style.display = 'none';       // 등록 완료/오류 알림 끄기
+               if (keywordDeleteModal) keywordDeleteModal.style.display = 'none'; // 삭제 확인창 끄기
+               
+               // 부모 창인 키워드 모달은 확실히 켜둡니다.
+               if (keywordModal) keywordModal.style.display = 'flex';
                return;
           }
 
-          // 3. [맨 처음/종료] 상태 (state가 null)
-          if (event.state === null) {
+          // 3. [상세 팝업] 상태 또는 [캘린더 기본] 상태로 돌아왔을 때
+          // -> 화면에 떠있는 모든 팝업들을 끕니다.
+          if ((event.state && event.state.page === 'calendar') || (event.state && event.state.view === 'modal')) {
                
+               // 하위 팝업들 닫기
+               if (confirmModal) confirmModal.style.display = 'none';
+               if (alertModal) alertModal.style.display = 'none';
+               if (noticeModal) noticeModal.style.display = 'none';
+               if (keywordDeleteModal) keywordDeleteModal.style.display = 'none';
+
+               // 1차 팝업들 닫기 (단, 현재 상태가 그 팝업인 경우는 제외)
+               if (event.state.page === 'calendar') {
+                    if (eventModal) eventModal.style.display = 'none';
+                    if (conditionModal) conditionModal.style.display = 'none';
+                    if (keywordModal) keywordModal.style.display = 'none';
+               }
+
+               // 'modal' 상태(공연상세)라면 걔는 켜둬야 함 (ICS 팝업 닫고 돌아온 경우)
+               if (event.state.view === 'modal') {
+                    if (eventModal) eventModal.style.display = 'flex';
+               }
+
+               document.body.classList.remove('no-scroll');
+               return; 
+          }
+
+          // 4. [맨 처음/종료] 상태 (state가 null)
+          if (event.state === null) {
                // A. 종료 팝업이 이미 켜져있다면? -> 끄고 달력으로 복귀 (취소 효과)
                if (exitModal.style.display === 'flex') {
                     exitModal.style.display = 'none';
@@ -2380,18 +2398,16 @@ END:VCALENDAR`;
                     return;
                }
 
-               // B. 알림창이 켜져있다면? -> 끄기 (인트로 등에서 사용)
-               if (alertModal.style.display === 'flex') {
+               // B. 혹시라도 알림창 같은 게 켜져있다면 -> 끄기 (인트로 등 예외 상황)
+               if (alertModal && alertModal.style.display === 'flex') {
                     alertModal.style.display = 'none';
                     return;
                }
 
-               // C. 아무것도 없다면? -> 종료 팝업 띄우기
-               // (단, 인트로 화면이 아닐 때만)
+               // C. 아무 팝업도 없다면? -> 종료 팝업 띄우기 (인트로 화면 아닐 때만)
                if (document.getElementById('introModal').style.display === 'none') {
                     exitModal.style.display = 'flex';
-                    // 종료 팝업 상태에서 다시 뒤로가기를 누르면 꺼지게 하기 위해
-                    // 'calendar' 상태를 다시 밀어넣어 둡니다.
+                    // 종료 팝업 상태에서 다시 뒤로가기를 누르면 꺼지게 하기 위해 'calendar' 상태 주입
                     history.pushState({ page: 'calendar' }, '', '');
                }
           }
