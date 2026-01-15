@@ -1552,6 +1552,7 @@
                     const keywordModal = document.getElementById('keywordModal');
                     keywordModal.style.display = 'flex';
                     document.body.classList.add('no-scroll');
+                    history.pushState({ view: 'keyword' }, '', '');
                 }
 
                 // 5. 그냥 닫았을 때(default)는 아무 코드도 없으므로 조용히 함수 종료됨.
@@ -1567,6 +1568,7 @@
             const modal = document.getElementById('conditionModal');
             modal.style.display = 'flex';
             document.body.classList.add('no-scroll'); // 뒷배경 스크롤 막기
+            history.pushState({ view: 'condition' }, '', '');
         }
 
         // [추가] 조건 설정 모달 닫기
@@ -1577,6 +1579,7 @@
             const modal = document.getElementById('conditionModal');
             modal.style.display = 'none';
             document.body.classList.remove('no-scroll');
+            history.back();
         }
         
         function applyAndClose() {
@@ -1587,6 +1590,7 @@
         function closeKeywordModal(e) {
             keywordModal.style.display = 'none';
             document.body.classList.remove('no-scroll');
+            history.back();
         }
 
         const regionChks = document.querySelectorAll('.region-chk');
@@ -2341,6 +2345,9 @@ END:VCALENDAR`;
           const eventModal = document.getElementById('eventModal');
           const confirmModal = document.getElementById('confirmModal');
           const noticeModal = document.getElementById('mainNoticeModal');
+          const conditionModal = document.getElementById('conditionModal');
+          const keywordModal = document.getElementById('keywordModal');
+          const keywordDeleteModal = document.getElementById('keywordDeleteModal');
           
           // 1. [상세 팝업] 상태에서 뒤로가기를 눌렀다? -> 상세 팝업 닫기
           // (이전 상태인 'calendar'로 돌아왔으므로 팝업들을 끕니다)
@@ -2349,6 +2356,9 @@ END:VCALENDAR`;
                confirmModal.style.display = 'none';
                alertModal.style.display = 'none';
                noticeModal.style.display = 'none';
+               conditionModal.style.display = 'none';
+               keywordModal.style.display = 'none';
+               keywordDeleteModal.style.display = 'none';
                document.body.classList.remove('no-scroll');
                return; // 종료
           }
