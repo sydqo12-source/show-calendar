@@ -1282,14 +1282,20 @@
 
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // [추가] 커스텀 알림창 띄우기 함수
+        // [수정] 커스텀 알림창 열기 (기록 추가)
         function openCustomAlert(msg) {
-            document.getElementById('customAlertMsg').innerHTML = msg; // innerHTML로 줄바꿈 허용
-            document.getElementById('customAlertModal').style.display = 'flex';
+             document.getElementById('customAlertMsg').innerHTML = msg;
+             document.getElementById('customAlertModal').style.display = 'flex';
+             // 알림창도 '뒤로가기'로 닫을 수 있게 기록을 남깁니다.
+             history.pushState({ view: 'alert' }, '', '');
         }
 
+        // [수정] 커스텀 알림창 닫기 (뒤로가기 실행)
         function closeCustomAlert() {
-            document.getElementById('customAlertModal').style.display = 'none';
+             // 화면에 떠 있다면 뒤로가기를 눌러서 닫습니다.
+             if (document.getElementById('customAlertModal').style.display === 'flex') {
+                  history.back();
+             }
         }
 
         // [수정] 키워드 등록 함수 (Alert 대신 커스텀 알림 사용)
@@ -1715,105 +1721,84 @@
 
         }
 
+          // [수정] 공연 상세 팝업 열기
         function openModal(element) {
-            const ds = element.dataset;
-            currentEventData = {
-                title: ds.title,
-                date: ds.date,
-                place: ds.place
-            };
+             const ds = element.dataset;
+             currentEventData = {
+                  title: ds.title,
+                  date: ds.date,
+                  place: ds.place
+             };
 
-            modalTitle.innerText = ds.title;
-            modalInfo.innerText = ds.place;
-            // ▼▼▼ [추가] 예매일정 데이터 넣기 ▼▼▼
-            // ds.date에는 Supabase에서 가져온 날짜+시간 원본이 들어있습니다.
-            modalTicketing.innerText = `예매일정 : ${ds.date}`;
+             modalTitle.innerText = ds.title;
+             modalInfo.innerText = ds.place;
+             modalTicketing.innerText = `예매일정 : ${ds.date}`;
 
-            if (ds.poster && ds.poster.trim() !== '') {
-                modalPoster.src = ds.poster;
-                modalPoster.style.display = 'block';
-                noPosterText.style.display = 'none';
+             if (ds.poster && ds.poster.trim() !== '') {
+                  modalPoster.src = ds.poster;
+                  modalPoster.style.display = 'block';
+                  noPosterText.style.display = 'none';
+                  modalPoster.onclick = function () {
+                       openZoomOverlay(ds.poster);
+                  };
+             } else {
+                  modalPoster.style.display = 'none';
+                  noPosterText.style.display = 'block';
+                  modalPoster.onclick = null;
+             }
 
-                modalPoster.onclick = function () {
-                    openZoomOverlay(ds.poster);
-                };
-            } else {
-                modalPoster.style.display = 'none';
-                noPosterText.style.display = 'block';
-                modalPoster.onclick = null;
-            }
+             let htmlContent = '';
+             const links = [];
+          
+             if (ds.link1) links.push({ name: 'NOL 티켓', url: ds.link1, color: '#4154FF' });
+             if (ds.link2) links.push({ name: 'yes24 티켓', url: ds.link2, color: '#FF3804' });
+             if (ds.link3) links.push({ name: '멜론 티켓', url: ds.link3, color: '#00CD3C' });
+             if (ds.link4) links.push({ name: '티켓링크', url: ds.link4, color: '#e03131' });
+             if (ds.link5) links.push({ name: '예매처', url: ds.link5, color: '#e03131' });
 
-            let htmlContent = '';
+             if (links.length > 0) {
+                  htmlContent += `<div class="btn-row">`;
+                  links.forEach(link => {
+                       htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
+                            style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
+                            oncontextmenu="return false" 
+                            draggable="false" ondragstart="return false;">${link.name}</a>`;
+                  });
+                  htmlContent += `</div>`;
+             }
 
-            const links = [];
-            // [수정] 각 데이터 컬럼(link1~5)에 고정 색상을 매칭합니다.
-            // 데이터가 있는 경우에만 리스트에 담되, 색상 정보도 같이 담습니다.
-            if (ds.link1) links.push({ name: 'NOL 티켓', url: ds.link1, color: '#4154FF' });
-            if (ds.link2) links.push({ name: 'yes24 티켓', url: ds.link2, color: '#FF3804' });
-            if (ds.link3) links.push({ name: '멜론 티켓', url: ds.link3, color: '#00CD3C' });
-            if (ds.link4) links.push({ name: '티켓링크', url: ds.link4, color: '#e03131' });
-            if (ds.link5) links.push({ name: '예매처', url: ds.link5, color: '#e03131' });
+             htmlContent += `<div class="btn-row">`;
+             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
 
-            // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
-            if (links.length > 0) {
-                htmlContent += `<div class="btn-row">`;
-                links.forEach(link => {
-                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
-                        style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
-                        oncontextmenu="return false" 
-                        draggable="false" ondragstart="return false;">${link.name}</a>`;
-                });
+             if (ds.youtube && ds.youtube.trim() !== '') {
+                  const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
+                  htmlContent += `
+                       <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom"
+                            oncontextmenu="return false" 
+                            draggable="false" ondragstart="return false;">
+                            <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
+                            유튜브 검색
+                       </a>`;
+             }
+             htmlContent += `</div>`;
 
-                htmlContent += `</div>`;
-            }
+             btnGroup.innerHTML = htmlContent;
 
-            htmlContent += `<div class="btn-row">`;
-            // 예매일정 추가 버튼 (이건 원래 잘 되므로 그대로 유지)
-            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
+             modal.style.display = 'flex';
+             document.body.classList.add('no-scroll');
 
-            // [수정] 유튜브 버튼 생성 부분 (드래그 방지 속성 추가)
-            if (ds.youtube && ds.youtube.trim() !== '') {
-                const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
-                htmlContent += `
-                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom"
-                        oncontextmenu="return false" 
-                        draggable="false" ondragstart="return false;">
-                        <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
-                        유튜브 검색
-                    </a>`;
-            }
-            htmlContent += `</div>`;
-
-            btnGroup.innerHTML = htmlContent;
-
-            modal.style.display = 'flex';
-            document.body.classList.add('no-scroll');
-
-            history.pushState({ view: 'modal' }, '', '#modal');
+             // ▼▼▼ [핵심 수정] 공연 팝업 상태 기록 (URL에 #modal 안 붙게 깔끔하게 처리)
+             history.pushState({ view: 'modal' }, '', '');
         }
 
+              // [수정] 예매일정 추가(ICS) 팝업 열기
         function openConfirmModal() {
-            confirmModal.style.display = 'flex';
-            history.pushState({ view: 'confirm' }, '', '#confirm');
+             const confirmModal = document.getElementById('confirmModal');
+             confirmModal.style.display = 'flex';
+          
+             // ▼▼▼ [핵심 수정] ICS 팝업 상태 기록 (이게 있어야 뒤로가기 시 이 팝업만 닫힘)
+             history.pushState({ view: 'confirm' }, '', '');
         }
-
-        window.onpopstate = function (event) {
-            const zoomOverlay = document.getElementById('imageZoomOverlay');
-            if (zoomOverlay.style.display === 'block') {
-                closeZoomOverlay();
-                return;
-            }
-
-            if (event.state && event.state.view === 'modal') {
-                confirmModal.style.display = 'none';
-                modal.style.display = 'flex';
-            }
-            else {
-                confirmModal.style.display = 'none';
-                modal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-            }
-        };
 
         function closeConfirmModal() {
             if (confirmModal.style.display === 'flex') {
@@ -2334,55 +2319,80 @@ END:VCALENDAR`;
           finishLoading();
      }
 
-     // [5] 마무리 함수
-     // [1] 로딩 완료 후 처리 함수 (히스토리 기록 쌓기)
-     function finishLoading() {
-          // 로딩 화면 0.1초 뒤에 제거
-          setTimeout(() => {
-               document.getElementById('loadingOverlay').style.display = 'none';
+        // [수정] 로딩 완료 (기본 상태 1개만 설정)
+        function finishLoading() {
+             setTimeout(() => {
+                  document.getElementById('loadingOverlay').style.display = 'none';
                
-               const noticeModal = document.getElementById('mainNoticeModal');
-               noticeModal.style.display = 'flex';
+                  const noticeModal = document.getElementById('mainNoticeModal');
+                  noticeModal.style.display = 'flex';
                
-               document.body.classList.add('no-scroll');
+                  document.body.classList.add('no-scroll');
 
-               // [수정됨] 복잡한 단계를 없애고, '캘린더' 상태 딱 하나만 쌓습니다.
-               // 이제 [빈 페이지] -> [캘린더] 상태가 됩니다.
-               history.pushState({ page: 'calendar' }, '', '');
-          }, 100);
-     }
+                  // 기본 상태: 캘린더
+                  history.pushState({ page: 'calendar' }, '', '');
+             }, 100);
+        }
 
-     // [2] 뒤로가기 버튼 감지 로직 (통합 처리)
+     // [수정] 뒤로가기 통합 관리자
      window.onpopstate = function(event) {
-          // 상태가 null(맨 처음)로 돌아왔을 때 실행
+          const exitModal = document.getElementById('exitConfirmModal');
+          const alertModal = document.getElementById('customAlertModal');
+          const eventModal = document.getElementById('eventModal');
+          const confirmModal = document.getElementById('confirmModal');
+          const noticeModal = document.getElementById('mainNoticeModal');
+          
+          // 1. [상세 팝업] 상태에서 뒤로가기를 눌렀다? -> 상세 팝업 닫기
+          // (이전 상태인 'calendar'로 돌아왔으므로 팝업들을 끕니다)
+          if (event.state && event.state.page === 'calendar') {
+               eventModal.style.display = 'none';
+               confirmModal.style.display = 'none';
+               alertModal.style.display = 'none';
+               noticeModal.style.display = 'none';
+               document.body.classList.remove('no-scroll');
+               return; // 종료
+          }
+
+          // 2. [ICS 팝업]에서 뒤로가기 -> 상세 팝업으로 돌아가기
+          if (event.state && event.state.view === 'modal') {
+               confirmModal.style.display = 'none';
+               eventModal.style.display = 'flex'; // 상세 팝업은 유지
+               return;
+          }
+
+          // 3. [맨 처음/종료] 상태 (state가 null)
           if (event.state === null) {
-               const noticeModal = document.getElementById('mainNoticeModal');
                
-               // 1. 만약 알림 팝업이 켜져 있다면? -> 팝업만 닫기
-               if (noticeModal.style.display === 'flex') {
-                    noticeModal.style.display = 'none';
-                    document.body.classList.remove('no-scroll');
-                    
-                    // [중요] 팝업은 닫았지만 앱은 안 꺼지게 다시 '캘린더' 상태를 밀어넣음
-                    history.pushState({ page: 'calendar' }, '', '');
-               } 
-               // 2. 알림 팝업이 꺼져 있다면? -> 종료 팝업 띄우기 (1번만 눌러도 됨)
-               else {
-                    document.getElementById('exitConfirmModal').style.display = 'flex';
-                    
-                    // 취소할 수 있으니까 다시 '캘린더' 상태를 밀어넣어 둠
+               // A. 종료 팝업이 이미 켜져있다면? -> 끄고 달력으로 복귀 (취소 효과)
+               if (exitModal.style.display === 'flex') {
+                    exitModal.style.display = 'none';
+                    history.pushState({ page: 'calendar' }, '', ''); 
+                    return;
+               }
+
+               // B. 알림창이 켜져있다면? -> 끄기 (인트로 등에서 사용)
+               if (alertModal.style.display === 'flex') {
+                    alertModal.style.display = 'none';
+                    return;
+               }
+
+               // C. 아무것도 없다면? -> 종료 팝업 띄우기
+               // (단, 인트로 화면이 아닐 때만)
+               if (document.getElementById('introModal').style.display === 'none') {
+                    exitModal.style.display = 'flex';
+                    // 종료 팝업 상태에서 다시 뒤로가기를 누르면 꺼지게 하기 위해
+                    // 'calendar' 상태를 다시 밀어넣어 둡니다.
                     history.pushState({ page: 'calendar' }, '', '');
                }
           }
      };
 
-     // [3] 알림 팝업의 '확인' 버튼용 함수 (수정됨)
      function closeNoticePopup() {
-          // 뒤로가기(history)를 건드리지 않고, 화면에서만 안 보이게 치웁니다.
-          // 이렇게 하면 현재 상태는 여전히 'calendar'이므로, 
-          // 휴대폰 뒤로가기 버튼을 누르면 바로 '종료 팝업'이 뜹니다.
-          document.getElementById('mainNoticeModal').style.display = 'none';
+          const noticeModal = document.getElementById('mainNoticeModal');
+          noticeModal.style.display = 'none';
           document.body.classList.remove('no-scroll');
+          // 알림 팝업은 별도 히스토리를 쌓지 않고 캘린더 위에 뜬 것이므로
+          // 그냥 닫기만 하면 됩니다. (state는 여전히 calendar)
      }
 
      // [4] 종료 팝업 기능 - 취소
