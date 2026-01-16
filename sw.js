@@ -26,7 +26,7 @@ messaging.onBackgroundMessage(function(payload) {
   const notificationOptions = {
     body: payload.notification.body,
     icon: 'https://showkok.com/icon-192.png', // ★중요: 이 경로에 실제 이미지 파일이 없으면 알림이 안 뜰 수 있습니다. 확인하세요!
-    badge: '/icon-192.png',
+    badge: 'https://showkok.com/icon.png',
     // data: payload.data // 클릭 시 이동할 URL 등을 담을 수 있습니다.
   };
 

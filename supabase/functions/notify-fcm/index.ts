@@ -60,6 +60,7 @@ serve(async (req: Request) => {
     const projectId = serviceAccount.project_id
     
     const sendPromises = tokens.map((t: any) => {
+      const displayKeyword = t.keyword || newEvent.title;
       return fetch(`https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`, {
         method: 'POST',
         headers: {
@@ -70,8 +71,8 @@ serve(async (req: Request) => {
           message: {
             token: t.fcm_token,
             notification: {
-              title: '쇼콕! 티켓팅 일정 알림 🎫',
-              body: `'${newEvent.title}'에 대한 공연 일정이 등록되었습니다`
+              title: '쇼콕! 일정 알림 🎫',
+              body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`
             },
             data: {
               url: `https://showkok.com/events/${newEvent.id}`
