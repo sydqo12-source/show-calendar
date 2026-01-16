@@ -1247,7 +1247,7 @@
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCc1GvgMaWHZtAa_zTRqL0fj3l5B4zzg50",
@@ -1265,7 +1265,31 @@
         // 다른 스크립트에서 쓸 수 있게 window에 저장
         window.messaging = messaging;
         window.getToken = getToken;
+        
+        // ▼▼▼ [추가할 코드] 앱을 보고 있을 때(Foreground) 알림 띄우기 ▼▼▼
+        onMessage(messaging, (payload) => {
+            console.log('포그라운드 메시지 수신:', payload);
 
+            // 서버에서 보낸 data나 notification 꺼내기
+            const data = payload.data || payload.notification;
+
+            if (data) {
+                const title = data.title;
+                const options = {
+                    body: data.body,
+                    icon: 'https://showkok.com/icon-192.png',
+                    badge: 'https://showkok.com/badge.png', // 투명 아이콘 경로 확인!
+                    data: {
+                        url: data.url
+                    }
+                };
+
+                // 브라우저 알림 강제 실행 (Service Worker 빌려오기)
+                navigator.serviceWorker.ready.then((registration) => {
+                    registration.showNotification(title, options);
+                });
+            }
+        });
         // 예: '알림 받기' 버튼을 눌렀을 때 실행될 함수
         // window. 을 붙여서 전역 변수로 만듭니다.
         window.requestNotificationPermission = function () {
