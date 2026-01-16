@@ -1378,20 +1378,24 @@
             }
         }
 
-        // [수정] 내가 등록한 키워드 조회 함수
-        async function viewMyKeywords(isRefresh = false) {
+        // [수정] 내가 등록한 키워드 조회 함수 (autoCheck 파라미터 추가)
+        async function viewMyKeywords(isRefresh = false, autoCheck = false) {
             const listArea = document.getElementById('my-keyword-list');
             const btn = document.querySelector('#keywordModal .btn-white');
 
-            // 새로고침이 아니고, 이미 열려있으면 닫기
-            if (!isRefresh && listArea.style.display === 'block') {
+            // 1. [수정] 버튼 클릭으로 닫는 기능 (자동 체크 모드가 아닐 때만 동작)
+            if (!isRefresh && !autoCheck && listArea.style.display === 'block') {
                 listArea.style.display = 'none';
                 return;
             }
 
-            const originalText = btn.innerText;
-            btn.innerText = "로딩 중...";
-            btn.disabled = true;
+            // 2. [수정] 자동 체크 모드일 때는 버튼 텍스트를 "로딩 중"으로 바꾸지 않음
+            let originalText = "";
+            if (!autoCheck) {
+                originalText = btn.innerText;
+                btn.innerText = "로딩 중...";
+                btn.disabled = true;
+            }
 
             try {
                 const token = await window.getToken(window.messaging, {
@@ -1411,31 +1415,40 @@
 
                 listArea.innerHTML = '';
 
+                // 3. [핵심 수정] 데이터 유무에 따른 처리 로직
                 if (data.length === 0) {
-                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                    // 데이터가 없을 때
+                    if (autoCheck) {
+                        // [자동 모드] -> 리스트를 아예 숨김 (접어두기)
+                        listArea.style.display = 'none';
+                    } else {
+                        // [직접 클릭] -> "없습니다" 메시지 보여주고 펼치기
+                        listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                        listArea.style.display = 'block';
+                    }
                 } else {
+                    // 데이터가 있을 때 -> 리스트 만들고 무조건 펼치기
                     data.forEach(item => {
                         const li = document.createElement('li');
                         li.className = 'my-keyword-item';
-
-                        // ▼▼▼ [핵심] 여기에 이름표(ID)를 꼭 붙여줘야 삭제할 때 찾을 수 있습니다! ▼▼▼
                         li.id = `keyword-item-${item.id}`;
-
                         li.innerHTML = `
                             <span>${item.keyword}</span>
-                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>
-                        `;
+                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>`;
                         listArea.appendChild(li);
                     });
+                    listArea.style.display = 'block'; 
                 }
-                listArea.style.display = 'block';
 
             } catch (err) {
                 console.error(err);
-                openCustomAlert("목록을 불러오지 못했어요.");
+                if (!autoCheck) openCustomAlert("목록을 불러오지 못했어요.");
             } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
+                // [수정] 버튼 상태 복구 (자동 모드가 아닐 때만)
+                if (!autoCheck) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
             }
         }
 
@@ -1584,6 +1597,8 @@
                     keywordModal.style.display = 'flex';
                     document.body.classList.add('no-scroll');
                     history.pushState({ view: 'keyword' }, '', '');
+
+                    viewMyKeywords(true, true);
                 } else {
             // 권한 요청을 거절했을 때
                     alert("알림 권한을 허용해야 키워드 알림을 받을 수 있어요!");
