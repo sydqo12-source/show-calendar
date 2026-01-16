@@ -70,8 +70,8 @@ serve(async (req: Request) => {
           message: {
             token: t.fcm_token,
             notification: {
-              title: '쇼콕! 키워드 알림 🎫',
-              body: `'${newEvent.title}' 티켓팅 정보가 등록되었어요!`
+              title: '쇼콕! 티켓팅 일정 알림 🎫',
+              body: `'${newEvent.title}'에 대한 공연 일정이 등록되었습니다`
             },
             data: {
               url: `https://showkok.com/events/${newEvent.id}`
