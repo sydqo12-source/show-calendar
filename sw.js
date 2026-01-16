@@ -21,12 +21,16 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] 백그라운드 메시지 수신 ', payload);
-  
+  const data = payload.data || payload.notification;
+
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
     icon: 'https://showkok.com/icon-192.png', // ★중요: 이 경로에 실제 이미지 파일이 없으면 알림이 안 뜰 수 있습니다. 확인하세요!
     badge: 'https://showkok.com/icon.png',
+    data: {
+      url: data.url 
+    }
     // data: payload.data // 클릭 시 이동할 URL 등을 담을 수 있습니다.
   };
 
@@ -35,11 +39,11 @@ messaging.onBackgroundMessage(function(payload) {
 
 // ★★★ [추가된 부분] 알림 클릭 이벤트 처리 ★★★
 self.addEventListener('notificationclick', function(event) {
-  console.log('[Service Worker] 알림 클릭됨');
-  
-  // 1. 알림 창 닫기
   event.notification.close();
-
+  // 알림에 심어둔 URL 꺼내기 (없으면 메인으로)
+  const targetUrl = event.notification.data && event.notification.data.url 
+                    ? event.notification.data.url 
+                    : 'https://showkok.com';
   // 2. 앱(창) 열기 또는 포커스 잡기
   event.waitUntil(
     clients.matchAll({type: 'window'}).then(function(clientList) {
@@ -47,7 +51,7 @@ self.addEventListener('notificationclick', function(event) {
       for (var i = 0; i < clientList.length; i++) {
         var client = clientList[i];
         if (client.url.includes('showkok.com') && 'focus' in client) {
-          return client.focus();
+          return client.focus().then(c => c.navigate(targetUrl)); // 열려있으면 거기로 이동
         }
       }
       // 열려있는 창이 없으면 새로 셤

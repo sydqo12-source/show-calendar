@@ -70,12 +70,11 @@ serve(async (req: Request) => {
         body: JSON.stringify({
           message: {
             token: t.fcm_token,
-            notification: {
-              title: '쇼콕! 일정 알림 🎫',
-              body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`
-            },
             data: {
-              url: `https://showkok.com/events/${newEvent.id}`
+              title: '쇼콕! 일정 알림 🎫',
+              body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`,
+              url: `https://showkok.com/events/${newEvent.id}`,
+              click_action: `https://showkok.com`
             }
           }
         })
