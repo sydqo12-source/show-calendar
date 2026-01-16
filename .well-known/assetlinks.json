@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "com.showkok.twa",
+        "package_name": "com.showkok.twa",d
         "sha256_cert_fingerprints": ["61:5F:78:5A:11:09:33:A7:2F:86:DF:FE:69:4F:EE:98:62:3E:D5:B5:5C:F5:BC:23:09:B5:61:4A:F5:15:71:FC"]
       }
     }]
