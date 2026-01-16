@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "com.showkok.twa",
-        "sha256_cert_fingerprints": ["B3:FE:FA:EC:B6:C5:C0:2D:29:E4:EB:55:CB:34:A8:A6:0C:65:CA:16:D2:9D:B6:EF:8A:FD:67:AC:17:EC:3D:F6"]
+        "sha256_cert_fingerprints": ["87:1E:85:80:65:9D:1C:09:70:D7:AE:EB:D3:12:32:B1:1E:25:9E:92:E3:0D:F7:90:72:35:89:28:BE:D2:4A:94"]
       }
     }]
