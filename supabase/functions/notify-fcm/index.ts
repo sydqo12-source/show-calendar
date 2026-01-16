@@ -73,7 +73,7 @@ serve(async (req: Request) => {
             data: {
               title: '쇼콕! 일정 알림 🎫',
               body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`,
-              url: `https://showkok.com/events/${newEvent.id}`,
+              url: `https://showkok.com`,
               click_action: `https://showkok.com`
             }
           }
