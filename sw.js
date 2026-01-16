@@ -23,9 +23,10 @@ messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] 백그라운드 메시지 수신 ', payload);
   const data = payload.data || payload.notification;
 
-  const notificationTitle = payload.notification.title;
+  if (data) {
+  const notificationTitle = data.title;
   const notificationOptions = {
-    body: payload.notification.body,
+    body: data.body,
     icon: 'https://showkok.com/icon-192.png', // ★중요: 이 경로에 실제 이미지 파일이 없으면 알림이 안 뜰 수 있습니다. 확인하세요!
     badge: 'https://showkok.com/icon.png',
     data: {
@@ -35,6 +36,7 @@ messaging.onBackgroundMessage(function(payload) {
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+  }
 });
 
 // ★★★ [추가된 부분] 알림 클릭 이벤트 처리 ★★★
@@ -56,7 +58,7 @@ self.addEventListener('notificationclick', function(event) {
       }
       // 열려있는 창이 없으면 새로 셤
       if (clients.openWindow) {
-        return clients.openWindow('https://showkok.com'); 
+        return clients.openWindow(targetUrl); 
       }
     })
   );
