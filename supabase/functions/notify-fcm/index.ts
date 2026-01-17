@@ -71,23 +71,41 @@ serve(async (req: Request) => {
           message: {
             token: t.fcm_token,
             
+            // 1. [안드로이드 전용 설정] 즉시 전송 강제
             android: {
-              priority: 'high'
-              ttl: '0s'
+              priority: 'high',
             },
-            // ▼▼▼ [추가 2] 웹 표준 방식의 긴급 설정 (절전모드 무시)
+
+            // 2. [웹푸시 표준 설정] ★여기가 핵심입니다★
+            // 이제 sw.js가 아니라 '크롬 브라우저'가 직접 알림을 만듭니다. (절전모드 무시)
             webpush: {
               headers: {
-                Urgency: 'high'
-                TTL: '0'
+                Urgency: 'high', // 긴급하다고 명시
+                TTL: '0'         // 대기 없이 즉시 전송
+              },
+              notification: {
+                title: '쇼콕! 일정 알림 🎫',
+                body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`,
+                icon: 'https://showkok.com/icon-192.png', // 아이콘 직접 지정
+                badge: 'https://showkok.com/icon.png',   // 투명 아이콘     
+                
+                // 클릭했을 때 이동할 주소 (sw.js가 이걸 읽어서 처리함)
+                data: {
+                  url: `https://showkok.com/events/${newEvent.id}`,
+                  click_action: `https://showkok.com/events/${newEvent.id}` 
+                }
+              },
+              // 3. [추가] 클릭 시 이동할 링크 (최신 브라우저용 백업)
+              fcm_options: {
+                link: `https://showkok.com/events/${newEvent.id}`
               }
             },
 
+            // 4. [포그라운드용 데이터] 앱 켜져있을 때 index.html이 받아서 처리
             data: {
               title: '쇼콕! 일정 알림 🎫',
               body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`,
-              url: `https://showkok.com`,
-              click_action: `https://showkok.com`
+              url: `https://showkok.com/events/${newEvent.id}`
             }
           }
         })
