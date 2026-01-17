@@ -1559,54 +1559,48 @@
 
         const keywordModal = document.getElementById('keywordModal');
 
-        // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
+        // [수정된 버전] 팝업 즉시 열림 + 중복 로직 제거
         async function openKeywordModal() {
-           try {
-        // 1. 현재 권한 상태 확인
+            try {
+                // 1. 현재 권한 상태 확인 (이건 금방 됩니다)
                 let permission = Notification.permission;
 
-        // A. 이미 '차단(denied)'된 상태 -> 설정 가서 풀라고 안내
+                // A. 차단됨
                 if (permission === 'denied') {
                     alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
                     return;
                 }
 
-        // B. 아직 결정 안 함(default) -> 권한 요청 팝업 띄우기
+                // B. 아직 결정 안 함 -> 권한 요청
                 if (permission === 'default') {
-            // 브라우저/앱의 네이티브 권한 요청 팝업이 뜹니다.
                     permission = await Notification.requestPermission();
                 }
 
-        // C. 권한이 '허용(granted)' 되었을 때만 실행
+                // C. 허용됨 (또는 방금 허용함)
                 if (permission === 'granted') {
-            // (1) 서비스 워커 등록 확인 및 토큰 미리 확보 (중요)
-            // 여기서 토큰을 한 번 받아두면, 나중에 '키워드 등록' 누를 때 딜레이가 없습니다.
-                    try {
-                        const registration = await navigator.serviceWorker.register('/sw.js');
-                        const token = await window.getToken(window.messaging, {
-                            vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8",
-                            serviceWorkerRegistration: registration
-                        });
-                        console.log("알림 토큰 확보 완료:", token); // 테스트용 로그
-                   } catch (e) {
-                        console.error("토큰 확보 실패 (무시 가능, 등록시 다시 시도함):", e);
-                   }
-
-            // (2) 키워드 모달 열기 (기존 코드)
+                    
+                    // ▼▼▼ [핵심 수정] 토큰 기다리지 말고, 팝업부터 즉시 엽니다! ▼▼▼
                     const keywordModal = document.getElementById('keywordModal');
                     keywordModal.style.display = 'flex';
                     document.body.classList.add('no-scroll');
                     history.pushState({ view: 'keyword' }, '', '');
 
-                    viewMyKeywords(true, true);
+                    // ▼▼▼ [수정] 데이터 로딩 시작 (토큰은 이 함수 안에서 알아서 가져옵니다) ▼▼▼
+                    // 여기서 await를 쓰지 않아야 팝업이 멈추지 않고, 로딩바가 돌아갑니다.
+                    viewMyKeywords(true, true); 
+
+                    // (삭제됨: 여기서 getToken을 또 호출하던 느린 코드를 삭제했습니다)
+                    
                 } else {
-            // 권한 요청을 거절했을 때
                     alert("알림 권한을 허용해야 키워드 알림을 받을 수 있어요!");
                 }
 
-                    } catch (error) {
+            } catch (error) {
                 console.error("오류:", error);
-                alert("알림 기능을 실행하는 중 오류가 발생했습니다.");
+                // 팝업이 안 떴을 경우에만 알림
+                if (document.getElementById('keywordModal').style.display === 'none') {
+                     alert("알림 기능을 실행하는 중 오류가 발생했습니다.");
+                }
             }
         }
 
@@ -2252,7 +2246,15 @@ END:VCALENDAR`;
           // 2. 인트로 닫고 -> 로딩 화면으로 덮기
           document.getElementById('introModal').style.display = 'none';
           document.getElementById('loadingOverlay').style.display = 'flex';
-
+          
+          if (Notification.permission === 'granted') {
+              navigator.serviceWorker.register('/sw.js').then(reg => {
+                  window.getToken(window.messaging, {
+                      vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8",
+                      serviceWorkerRegistration: reg
+                  }).catch(e => console.log("미리 로딩 실패(괜찮음)"));
+              });
+          }
           // 3. 필터 적용 및 전체 로딩 시작
           // 브라우저 렌더링 타이밍 확보를 위해 requestAnimationFrame 사용
           requestAnimationFrame(() => {
