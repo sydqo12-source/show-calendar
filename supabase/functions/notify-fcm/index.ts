@@ -91,13 +91,13 @@ serve(async (req: Request) => {
                 
                 // 클릭했을 때 이동할 주소 (sw.js가 이걸 읽어서 처리함)
                 data: {
-                  url: `https://showkok.com/events/${newEvent.id}`,
-                  click_action: `https://showkok.com/events/${newEvent.id}` 
+                  url: `https://showkok.com`,
+                  click_action: `https://showkok.com` 
                 }
               },
               // 3. [추가] 클릭 시 이동할 링크 (최신 브라우저용 백업)
               fcm_options: {
-                link: `https://showkok.com/events/${newEvent.id}`
+                link: `https://showkok.com`
               }
             },
 
@@ -105,7 +105,7 @@ serve(async (req: Request) => {
             data: {
               title: '쇼콕! 일정 알림 🎫',
               body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`,
-              url: `https://showkok.com/events/${newEvent.id}`
+              url: `https://showkok.com`
             }
           }
         })
