@@ -1264,6 +1264,37 @@
         const app = initializeApp(firebaseConfig);
         const messaging = getMessaging(app);
 
+        // ▼▼▼ [1단계] 여기에 추가하세요 ▼▼▼
+        let myKeywordsCache = null; // 데이터를 미리 저장해둘 변수
+
+        // 앱 켜지자마자 몰래 데이터 받아오는 함수
+        async function prefetchKeywords() {
+            // 권한이 없으면 미리 가져올 수 없으니 패스
+           if (Notification.permission !== 'granted') return;
+
+            try {
+                const token = await window.getToken(window.messaging, {
+                    vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8",
+                    serviceWorkerRegistration: await navigator.serviceWorker.register('/sw.js')
+                });
+
+                if (!token) return;
+
+                const { data, error } = await client
+                    .from('keyword_alerts')
+                    .select('*')
+                    .eq('fcm_token', token)
+                    .order('created_at', { ascending: false });
+
+                if (!error) {
+                    myKeywordsCache = data; // 변수에 저장 완료! (이제 로딩 없이 꺼내 쓰면 됨)
+                    console.log("키워드 데이터 미리 로딩 완료:", data);
+                }
+            } catch (e) {
+                console.log("미리 로딩 실패 (무시 가능)", e);
+            }
+        }
+
         // 다른 스크립트에서 쓸 수 있게 window에 저장
         window.messaging = messaging;
         window.getToken = getToken;
@@ -1364,7 +1395,9 @@
 
                 if (error) throw error;
 
-                viewMyKeywords(true)
+                myKeywordsCache = null;
+
+                viewMyKeywords(true);
 
                 openCustomAlert(`알림 키워드로 등록되었어요🎉<br><b>${keyword}</b>에 대한 공연 일정이 추가되면<br>알림을 보내드릴게요`);
                 keywordInput.value = '';
@@ -1381,17 +1414,25 @@
         }
 
         // [수정] 내가 등록한 키워드 조회 함수 (autoCheck 파라미터 추가)
+        // [수정] 내가 등록한 키워드 조회 함수 (캐시 사용 버전)
         async function viewMyKeywords(isRefresh = false, autoCheck = false) {
             const listArea = document.getElementById('my-keyword-list');
             const btn = document.querySelector('#keywordModal .btn-white');
 
-            // 1. [수정] 버튼 클릭으로 닫는 기능 (자동 체크 모드가 아닐 때만 동작)
+        // 1. 닫기 기능
             if (!isRefresh && !autoCheck && listArea.style.display === 'block') {
                 listArea.style.display = 'none';
                 return;
             }
 
-            // 2. [수정] 자동 체크 모드일 때는 버튼 텍스트를 "로딩 중"으로 바꾸지 않음
+        // 2. ★ 핵심 ★ 이미 받아둔 데이터(캐시)가 있으면 즉시 보여줌 (로딩 0초)
+            if (!isRefresh && myKeywordsCache !== null) {
+                renderKeywordList(myKeywordsCache);
+                listArea.style.display = 'block';
+                return; // 서버 통신 안 하고 끝냄!
+            }
+
+        // 3. 캐시가 없으면(처음이거나 새로고침) 로딩 띄우고 서버 통신
             let originalText = "";
             if (!autoCheck) {
                 originalText = btn.innerText;
@@ -1415,42 +1456,41 @@
 
                 if (error) throw error;
 
-                listArea.innerHTML = '';
-
-                // 3. [핵심 수정] 데이터 유무에 따른 처리 로직
-                if (data.length === 0) {
-                    // 데이터가 없을 때
-                    if (autoCheck) {
-                        // [자동 모드] -> 리스트를 아예 숨김 (접어두기)
-                        listArea.style.display = 'none';
-                    } else {
-                        // [직접 클릭] -> "없습니다" 메시지 보여주고 펼치기
-                        listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
-                        listArea.style.display = 'block';
-                    }
-                } else {
-                    // 데이터가 있을 때 -> 리스트 만들고 무조건 펼치기
-                    data.forEach(item => {
-                        const li = document.createElement('li');
-                        li.className = 'my-keyword-item';
-                        li.id = `keyword-item-${item.id}`;
-                        li.innerHTML = `
-                            <span>${item.keyword}</span>
-                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>`;
-                        listArea.appendChild(li);
-                    });
-                    listArea.style.display = 'block'; 
-                }
+            // 데이터 받아왔으면 캐시에 저장해둠
+                myKeywordsCache = data;
+            
+            // 화면 그리기
+                renderKeywordList(data);
+                listArea.style.display = 'block'; 
 
             } catch (err) {
                 console.error(err);
                 if (!autoCheck) openCustomAlert("목록을 불러오지 못했어요.");
             } finally {
-                // [수정] 버튼 상태 복구 (자동 모드가 아닐 때만)
                 if (!autoCheck) {
                     btn.innerText = originalText;
                     btn.disabled = false;
                 }
+            }
+        }
+
+       // [보조 함수] 리스트 그리기 (코드 중복 제거용)
+        function renderKeywordList(data) {
+                const listArea = document.getElementById('my-keyword-list');
+            listArea.innerHTML = '';
+
+            if (data.length === 0) {
+                listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+            } else {
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'my-keyword-item';
+                    li.id = `keyword-item-${item.id}`;
+                    li.innerHTML = `
+                        <span>${item.keyword}</span>
+                        <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>`;
+                    listArea.appendChild(li);
+                });
             }
         }
 
@@ -1499,6 +1539,9 @@
                 const itemToRemove = document.getElementById(`keyword-item-${idToDelete}`);
                 if (itemToRemove) {
                     itemToRemove.remove();
+                }
+                if (myKeywordsCache) {
+                myKeywordsCache = myKeywordsCache.filter(item => item.id !== idToDelete);
                 }
 
                 // 3. 만약 다 지워서 목록이 텅 비었으면 '없습니다' 메시지 띄우기
@@ -2250,6 +2293,7 @@ END:VCALENDAR`;
                openCustomAlert("지역과 장르를 선택해주세요!");
                return;
           }
+          prefetchKeywords(); // 백그라운드에서 키워드 데이터 미리 가져오기
 
           // 2. 인트로 닫고 -> 로딩 화면으로 덮기
           document.getElementById('introModal').style.display = 'none';
