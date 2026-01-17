@@ -712,7 +712,7 @@
         /* [추가] PC 버전 레이아웃 보정 (모바일 앱처럼 가운데 정렬) */
         @media (min-width: 768px) {
             body {
-                max-width: 480px; /* 너비 제한 (너무 넓어지지 않게) */
+                max-width: 680px; /* 너비 제한 (너무 넓어지지 않게) */
                 margin: 0 auto; /* 화면 중앙 정렬 */
                 box-shadow: 0 0 30px rgba(0, 0, 0, 0.1); /* 양옆에 그림자 줘서 고급스럽게 */
                 min-height: 100vh; /* 화면 꽉 채우기 */
@@ -722,7 +722,7 @@
 
             /* 2. 스티키 헤더 위치 교정 (왼쪽 튀어나옴 해결) */
             #sticky-header {
-                max-width: 480px; /* 몸통 크기와 똑같이 */
+                max-width: 680px; /* 몸통 크기와 똑같이 */
                 width: 100% !important;
                 box-sizing: border-box !important;
                 /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
@@ -739,7 +739,7 @@
             .btn-floating-today {
                 right: auto !important; /* 기존 오른쪽 기준 위치 무시 */
                 /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
-                left: calc(50% + 240px + 22px) !important;
+                left: calc(50% + 340px + 22px) !important;
             }
         }
 
@@ -844,7 +844,7 @@
             #floating-group {
                 /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
                 right: auto !important;
-                left: calc(50% + 240px + 24px) !important;
+                left: calc(50% + 340px + 24px) !important;
                 top: 20px;
             }
         }
@@ -1804,10 +1804,10 @@
              if (links.length > 0) {
                   htmlContent += `<div class="btn-row">`;
                   links.forEach(link => {
-                       htmlContent += `<a href="${link.url}" target="_self" class="modal-btn" 
-                           style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
-                           oncontextmenu="return false" 
-                           draggable="false" ondragstart="return false;">${link.name}</a>`;
+                       htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
+                            style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
+                            oncontextmenu="return false" 
+                            draggable="false" ondragstart="return false;">${link.name}</a>`;
                   });
                   htmlContent += `</div>`;
              }
