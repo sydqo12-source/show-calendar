@@ -1816,10 +1816,10 @@
              if (links.length > 0) {
                   htmlContent += `<div class="btn-row">`;
                   links.forEach(link => {
-                       htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
-                            style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
-                            oncontextmenu="return false" 
-                            draggable="false" ondragstart="return false;">${link.name}</a>`;
+                       htmlContent += `<a href="${link.url}" target="_self" class="modal-btn" 
+                           style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
+                           oncontextmenu="return false" 
+                           draggable="false" ondragstart="return false;">${link.name}</a>`;
                   });
                   htmlContent += `</div>`;
              }
