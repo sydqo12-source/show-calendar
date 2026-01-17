@@ -73,11 +73,13 @@ serve(async (req: Request) => {
             
             android: {
               priority: 'high'
+              ttl: '0s'
             },
             // ▼▼▼ [추가 2] 웹 표준 방식의 긴급 설정 (절전모드 무시)
             webpush: {
               headers: {
                 Urgency: 'high'
+                TTL: '0'
               }
             },
 
