@@ -70,6 +70,17 @@ serve(async (req: Request) => {
         body: JSON.stringify({
           message: {
             token: t.fcm_token,
+            
+            android: {
+              priority: 'high'
+            },
+            // ▼▼▼ [추가 2] 웹 표준 방식의 긴급 설정 (절전모드 무시)
+            webpush: {
+              headers: {
+                Urgency: 'high'
+              }
+            },
+
             data: {
               title: '쇼콕! 일정 알림 🎫',
               body: `'${displayKeyword}'에 대한 공연 일정이 등록되었습니다`,
