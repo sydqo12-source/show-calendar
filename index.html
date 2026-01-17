@@ -724,11 +724,11 @@
                 /* 왼쪽 기준점을 '화면 중앙'으로 변경 */
                 left: calc(50% - 340px + 20px) !important;
                 /* 설명: 중앙(50%) - 캘린더절반(340px) + 왼쪽여백(20px) */
-                
+                font-size: 30px;
                 top: 20px !important; /* 위쪽 여백 20px */
                 position: absolute !important;
             }
-            
+
             /* 2. 스티키 헤더 위치 교정 (왼쪽 튀어나옴 해결) */
             #sticky-header {
                 max-width: 680px; /* 몸통 크기와 똑같이 */
@@ -737,6 +737,8 @@
                 /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
                 margin-left: 0 !important;
                 margin-right: 0 !important;
+                padding-top: 20px !important;
+                margin-top: 0 !important;
                 padding-left: 20px !important; /* 내부 여백 재조정 */
                 padding-right: 20px !important;
                 left: auto !important;
