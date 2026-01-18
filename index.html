@@ -1297,36 +1297,53 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
-
-        // 다른 스크립트에서 쓸 수 있게 window에 저장
-        window.messaging = messaging;
-        window.getToken = getToken;
+        const app = initializeApp(firebaseConfig);
         
-        // ▼▼▼ [추가할 코드] 앱을 보고 있을 때(Foreground) 알림 띄우기 ▼▼▼
-        onMessage(messaging, (payload) => {
-            console.log('포그라운드 메시지 수신:', payload);
+        // 1. 변수를 먼저 선언 (null로 초기화)
+        let messaging = null;
 
-            // 서버에서 보낸 data나 notification 꺼내기
-            const data = payload.data || payload.notification;
+        // 2. 안전장치 시작
+        try {
+            // "브라우저야, 너 알림(Notification)이랑 서비스워커 쓸 수 있어?" 하고 물어봄
+            if (typeof Notification !== 'undefined' && 'serviceWorker' in navigator) {
+                
+                // 쓸 수 있다고 하면 그제서야 기능 켜기
+                messaging = getMessaging(app);
+                window.messaging = messaging;
+                window.getToken = getToken;
 
-            if (data) {
-                const title = data.title;
-                const options = {
-                    body: data.body,
-                    icon: 'https://showkok.com/icon-192.png',
-                    badge: 'https://showkok.com/badge.png', // 투명 아이콘 경로 확인!
-                    data: {
-                        url: data.url
+                console.log("알림 기능이 활성화되었습니다.");
+
+                // 포그라운드 알림 처리
+                onMessage(messaging, (payload) => {
+                    console.log('포그라운드 메시지 수신:', payload);
+
+                    const data = payload.data || payload.notification;
+                    if (data) {
+                        const title = data.title;
+                        const options = {
+                            body: data.body,
+                            icon: 'https://showkok.com/icon-192.png',
+                            badge: 'https://showkok.com/badge.png',
+                            data: { url: data.url }
+                        };
+
+                        navigator.serviceWorker.ready.then((registration) => {
+                            registration.showNotification(title, options);
+                        });
                     }
-                };
-
-                // 브라우저 알림 강제 실행 (Service Worker 빌려오기)
-                navigator.serviceWorker.ready.then((registration) => {
-                    registration.showNotification(title, options);
                 });
+
+            } else {
+                console.log("이 브라우저(카톡 등)는 알림 기능을 지원하지 않습니다.");
+                // 지원 안 하면 window.messaging을 null로 둠
+                window.messaging = null;
+                window.getToken = null; 
             }
-        });
+        } catch (error) {
+            console.log("알림 초기화 중 에러 발생 (무시하고 진행):", error);
+            window.messaging = null;
+        }
         // 예: '알림 받기' 버튼을 눌렀을 때 실행될 함수
         // window. 을 붙여서 전역 변수로 만듭니다.
         window.requestNotificationPermission = function () {
@@ -2284,7 +2301,7 @@ END:VCALENDAR`;
           document.getElementById('introModal').style.display = 'none';
           document.getElementById('loadingOverlay').style.display = 'flex';
           
-          if (Notification.permission === 'granted') {
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && window.messaging) {
               navigator.serviceWorker.register('/sw.js').then(reg => {
                   window.getToken(window.messaging, {
                       vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8",
