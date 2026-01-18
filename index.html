@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="ko" role="application">
 <head>
+    <div id="error-console" style="display:none; position:fixed; top:0; left:0; width:100%; height:200px; background:rgba(0,0,0,0.9); color:yellow; z-index:99999; overflow:scroll; padding:10px; font-size:14px; pointer-events:none;"></div>
+
+    <script>
+      function logError(msg) {
+        var consoleDiv = document.getElementById('error-console');
+        consoleDiv.style.display = 'block';
+        consoleDiv.innerHTML += "🔴 " + msg + "<br><hr>";
+      }
+
+      // 1. 자바스크립트 문법 에러나 변수 에러 잡기
+      window.onerror = function(message, source, lineno, colno, error) {
+        logError("JS Error: " + message + " (Line: " + lineno + ")");
+       return false;
+      };
+
+      // 2. API 호출(Promise) 실패 잡기 (axios, fetch 등)
+      window.addEventListener("unhandledrejection", function(event) {
+        logError("API/Promise Fail: " + event.reason);
+      });
+    </script>
     <meta name="mobile-web-app-capable" content="yes">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJCTM7H6PT"></script>
     <script>
