@@ -1603,9 +1603,30 @@
             console.log("Supabase 데이터:", events);
 
             renderEvents();
+            generateJsonLd(events);
             markPastDays();
 
             showPage(0);
+
+            // ▼▼▼ [추가] 주소창에 ID가 있으면 자동으로 팝업 열기 ▼▼▼
+           const urlParams = new URLSearchParams(window.location.search);
+           const targetId = urlParams.get('id');
+
+           if (targetId) {
+                // 1. 해당 ID를 가진 공연 박스(div)를 찾습니다.
+                // (주의: 현재 페이지(page-0)에 없을 수도 있으니 전체에서 찾아야 함)
+                // 하지만 현재 구조상 DOM에 그려진 것 중에서 찾아야 하므로, 
+                // renderEvents가 모든 데이터를 DOM에 그렸다면 찾을 수 있습니다.
+                const targetBox = document.querySelector(`.event-box[data-id="${targetId}"]`);
+
+                if (targetBox) {
+                     // 2. 찾았으면 클릭한 것과 똑같이 실행!
+                     openModal(targetBox);
+                     
+                     // 3. (선택사항) 해당 공연이 있는 달력 페이지로 이동해주면 더 완벽함
+                     // (이건 복잡해지니 일단 팝업만 띄웁니다)
+                }
+           }
         }
         // ▼▼▼ [추가] 키워드 알림 관련 로직 ▼▼▼
 
@@ -1756,6 +1777,7 @@
                     div.dataset.link4 = evt.link4 || '';
                     div.dataset.link5 = evt.link5 || '';
                     div.dataset.youtube = evt['youtube search'] || '';
+                    div.dataset.id = evt.id;
 
                     div.onclick = function () { openModal(this); };
 
@@ -1884,8 +1906,12 @@
              modal.style.display = 'flex';
              document.body.classList.add('no-scroll');
 
-             // ▼▼▼ [핵심 수정] 공연 팝업 상태 기록 (URL에 #modal 안 붙게 깔끔하게 처리)
-             history.pushState({ view: 'modal' }, '', '');
+             // ▼▼▼ [수정] URL에 ID 파라미터 추가 (?id=123) ▼▼▼
+             const eventId = element.dataset.id;
+             const newUrl = eventId ? `?id=${eventId}` : ''; 
+           
+             // 3번째 인자에 newUrl을 넣으면 주소창이 바뀝니다!
+             history.pushState({ view: 'modal', id: eventId }, '', newUrl);
         }
 
               // [수정] 예매일정 추가(ICS) 팝업 열기

@@ -1,6 +1,26 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" role="application">
 <head>
+    <div id="error-console" style="display:none; position:fixed; top:0; left:0; width:100%; height:200px; background:rgba(0,0,0,0.9); color:yellow; z-index:99999; overflow:scroll; padding:10px; font-size:14px; pointer-events:none;"></div>
+
+    <script>
+      function logError(msg) {
+        var consoleDiv = document.getElementById('error-console');
+        consoleDiv.style.display = 'block';
+        consoleDiv.innerHTML += "🔴 " + msg + "<br><hr>";
+      }
+
+      // 1. 자바스크립트 문법 에러나 변수 에러 잡기
+      window.onerror = function(message, source, lineno, colno, error) {
+        logError("JS Error: " + message + " (Line: " + lineno + ")");
+       return false;
+      };
+
+      // 2. API 호출(Promise) 실패 잡기 (axios, fetch 등)
+      window.addEventListener("unhandledrejection", function(event) {
+        logError("API/Promise Fail: " + event.reason);
+      });
+    </script>
     <meta name="mobile-web-app-capable" content="yes">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJCTM7H6PT"></script>
     <script>
@@ -25,7 +45,6 @@
     <meta name="naver-site-verification" content="ce3acdb3f4cf9c86aa7822b6e7ddb75d6468776a" />
     <meta name="google-site-verification" content="pJOl-0RpSmzuXBOI20_1imrQvVjgeFC04NbXUYCz7ik" />
 
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -53,8 +72,8 @@
             font-family: 'Pretendard', sans-serif;
             background-color: #ffffff;
             padding: 15px;
-            user-select: none;
             -webkit-user-select: none;
+            user-select: none;
             touch-action: pan-y;
             overscroll-behavior: none;
         }
@@ -69,8 +88,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 25px;
-            margin-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 0;
             position: relative;
         }
 
@@ -101,7 +120,7 @@
             align-items: center;
             cursor: pointer;
             transition: all 0.2s;
-            -webkit-user-select: none; /* [추가] 아이폰용 */
+            -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
             outline: none;
@@ -118,21 +137,10 @@
             pointer-events: none;
         }
 
-        /* [컨트롤 바 (필터)] */
-        .control-bar {
-            margin-bottom: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-            padding-left: 0;
-            font-size: 18px;
-        }
-
         .filter-group {
             display: flex;
             align-items: flex-start;
-            gap: 4px;
+            gap: 0;
             width: 100%;
         }
 
@@ -555,39 +563,45 @@
         .close-zoom:hover, .close-zoom:focus { color: #bbb; text-decoration: none; cursor: pointer; }
         
         .top-logo {
-            /*position: absolute;    화면 흐름과 상관없이 위치 고정 */
-            top: 10px; /* 위에서 15px */
-            left: 5px; /* 왼쪽에서 15px */
+            position: absolute;
+            top: 20px; /* 위에서 15px */
+            left: 20px; /* 왼쪽에서 15px */
             font-size: 30px; /* 작게 (원하는 크기로 조절 가능) */
-            z-index: 10; /* 다른 요소보다 위에 표시 */
-            line-height: 1;
-            margin-bottom: 5px;
+            z-index: 2005; /* 다른 요소보다 위에 표시 */
         }
         
-        #splash-screen {
+        /* 로딩 스피너 디자인 */
+        .loading-spinner {
+           width: 50px;
+           height: 50px;
+           border: 5px solid #f3f3f3; /* 회색 테두리 (배경) */
+           border-top: 5px solid #343a40; /* 진한 회색 (돌아가는 부분) - 앱 테마색 */
+           border-radius: 50%; /* 원형으로 만들기 */
+           animation: spin 1s linear infinite; /* 1초마다 무한 회전 */
+           margin-bottom: 20px;
+        }
+
+         /* 회전 애니메이션 동작 */
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+         }
+    /*  #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: #ffffff;
-            z-index: 99999; /* 모든 화면(팝업 포함)보다 제일 위에 */
-            /* 중앙 정렬 */
+            z-index: 99999; 
             display: flex;
             justify-content: center;
             align-items: center;
-        }
+        } 
 
-        /* 중앙 이모지 스타일 */
         .splash-icon {
-            font-size: 50px; /* 적당히 큰 크기 */
-        }
-
-        /* 화면을 숨길 때 사용하는 클래스 */
-        #splash-screen.hidden {
-            opacity: 0;
-            visibility: hidden; /* 완전히 사라져서 클릭 방해 안 함 */
-        }
+            font-size: 50px;
+        } */
 
         /* 2. 끈적이는 헤더 (스크롤 하다가 천장에 닿으면 붙음) */
         #sticky-header {
@@ -600,13 +614,14 @@
             z-index: 1000;
             margin-left: -15px; /* 왼쪽 여백(15px) 무시하고 꽉 채우기 */
             margin-right: -15px; /* 오른쪽 여백(15px) 무시하고 꽉 채우기 */
-            padding: 10px 15px 5px 25px;
+            margin-top: -25px;
+            padding: 70px 15px 10px 25px;
         }
 
         /* 3. 헤더 내부 정렬 (기존 margin-top 제거) */
         .header-wrapper {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -617,13 +632,13 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 12px;
+            gap: 0;
             font-size: 18px;
         }
 
         /* (중요) 캘린더 컨테이너의 불필요한 여백 제거 */
         #calendar-container {
-            padding-top: 15px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
+            padding-top: 0px; /* 헤더랑 너무 딱 붙지 않게 약간만 띄움 */
         }
 
         /* [추가] 오늘 이동 버튼 (플로팅 스타일) */
@@ -716,22 +731,39 @@
         /* [추가] PC 버전 레이아웃 보정 (모바일 앱처럼 가운데 정렬) */
         @media (min-width: 768px) {
             body {
-                max-width: 480px; /* 너비 제한 (너무 넓어지지 않게) */
+                max-width: 680px; /* 너비 제한 (너무 넓어지지 않게) */
                 margin: 0 auto; /* 화면 중앙 정렬 */
                 box-shadow: 0 0 30px rgba(0, 0, 0, 0.1); /* 양옆에 그림자 줘서 고급스럽게 */
                 min-height: 100vh; /* 화면 꽉 채우기 */
                 border-left: 1px solid #f1f3f5; /* 양옆 테두리 */
                 border-right: 1px solid #f1f3f5;
             }
+            
+            .top-logo {
+                /* 왼쪽 기준점을 '화면 중앙'으로 변경 */
+                left: calc(50% - 340px + 20px) !important;
+                /* 설명: 중앙(50%) - 캘린더절반(340px) + 왼쪽여백(20px) */
+                font-size: 40px !important;
+                top: 20px !important; /* 위쪽 여백 20px */
+                position: absolute !important;
+            }
+            .confirm-content {
+                /* 기존 350px -> 460px로 확대 */
+                max-width: 370px !important; 
+                width: 100% !important;
+            }
 
             /* 2. 스티키 헤더 위치 교정 (왼쪽 튀어나옴 해결) */
             #sticky-header {
-                max-width: 480px; /* 몸통 크기와 똑같이 */
+                max-width: 680px; /* 몸통 크기와 똑같이 */
                 width: 100% !important;
                 box-sizing: border-box !important;
                 /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
                 margin-left: 0 !important;
                 margin-right: 0 !important;
+                padding-top: 20px !important;
+                padding-bottom: 20px !important;
+                margin-top: 0 !important;
                 padding-left: 20px !important; /* 내부 여백 재조정 */
                 padding-right: 20px !important;
                 left: auto !important;
@@ -743,7 +775,7 @@
             .btn-floating-today {
                 right: auto !important; /* 기존 오른쪽 기준 위치 무시 */
                 /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
-                left: calc(50% + 240px + 22px) !important;
+                left: calc(50% + 340px + 22px) !important;
             }
         }
 
@@ -784,11 +816,6 @@
             color: #495057;
             line-height: 1.3;
             font-weight: 500;
-        }
-
-        .notice-icon {
-            font-size: 22px;
-            padding-top: 2px; /* 아이콘 위치 미세 조정 */
         }
 
         .notice-text b {
@@ -838,12 +865,12 @@
             text-decoration: none;
         }
 
-        .round-btn:active { transform: scale(0.9); }
+        /*.round-btn:active { transform: scale(0.9); } */
 
         /* 조건 버튼 텍스트 스타일 (작은 원 안에 글자가 들어가므로 크기 조절) */
         .btn-txt-style {
-            font-size: 13px;
-            font-weight: 800;
+            font-size: 20px;
+            font-weight: 400;
             color: #343a40;
             line-height: 1;
         }
@@ -853,7 +880,7 @@
             #floating-group {
                 /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
                 right: auto !important;
-                left: calc(50% + 240px + 24px) !important;
+                left: calc(50% + 340px + 24px) !important;
                 top: 20px;
             }
         }
@@ -867,6 +894,8 @@
             font-size: 16px;
             outline: none;
             box-sizing: border-box;
+            -webkit-user-select: text !important;
+            user-select: text !important;
         }
 
         .custom-input:focus {
@@ -993,8 +1022,69 @@
         }
     </style>
 </head>
-<body class="initial-mode">
+<body class="initial-mode" role="application">
+<div id="exitConfirmModal" class="modal-overlay" style="display: none; z-index: 60000; background-color: rgba(0,0,0,0.5);">
+    <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: center; max-width: 300px;">
+        <div style="font-size: 20px; font-weight: 700; color: #343a40; margin-bottom: 20px;">
+            쇼콕을 종료하시겠습니까?
+        </div>
+        <div class="confirm-btn-group" style="display: flex; gap: 10px;">
+            <button onclick="confirmExitApp()" class="confirm-btn btn-yes" style="flex: 1;">확인</button>
+            <button onclick="cancelExitApp()" class="confirm-btn btn-no" style="flex: 1; background-color: #e9ecef; color: #495057;">취소</button>
+        </div>
+    </div>
+</div>    
+<div id="introModal" class="modal-overlay" style="display: flex; z-index: 30000; background-color: #ffffff;">
+    <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
+        
+        <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
+            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건을 선택해주세요🎉</span>
+        </div>
 
+        <div class="control-bar" style="margin: 0; padding: 0;">
+            <div class="filter-group">
+                <span class="group-title">지역 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="intro-region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                    <label><input type="checkbox" class="intro-region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                    <label><input type="checkbox" class="intro-region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="margin-top: 8px;">
+                <span class="group-title">장르 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="intro-genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
+                    <label><input type="checkbox" class="intro-genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
+                    <label><input type="checkbox" class="intro-genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
+                    <label><input type="checkbox" class="intro-genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
+                    <label><input type="checkbox" class="intro-genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
+                    <label><input type="checkbox" class="intro-genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
+                    <label style="cursor: not-allowed;">
+                        <input type="checkbox" class="intro-genre-chk" value="가족" disabled> 
+                        <span class="txt-black" style="color: #adb5bd;">가족</span>
+                    </label>
+
+                    <button id="btn-intro-reset" class="btn-reset" onclick="toggleIntroReset()">모두해제</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="confirm-btn-group" style="margin-top: 12px;">
+            <button onclick="startProcess()" class="confirm-btn btn-yes">적용하기</button>
+        </div>
+    </div>
+</div>
+
+<div id="loadingOverlay" style="
+    display: none; 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(255,255,255,1); 
+    z-index: 40000; 
+    justify-content: center; align-items: center; flex-direction: column;">
+    <div class="loading-spinner"></div>
+    <div style="font-size: 20px; font-weight: 700; color: #495057; text-align: center; width: 100%; line-height: 1.5;">많은 공연을 보여드릴테니<br>잠시만 기다려주세요!</div>
+</div>
     <div class="top-logo">📌</div>
 
     <div id="sticky-header">
@@ -1006,32 +1096,6 @@
                 <div class="nav-btn" id="next-btn">&gt;</div>
             </div>
         </div>
-
-        <div class="control-bar">
-            <div class="filter-group">
-                <span class="group-title">지역 :</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
-                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
-                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
-                </div>
-            </div>
-
-            <div class="filter-group">
-                <span class="group-title">장르 :</span>
-                <div class="chk-list">
-                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
-                    <label><input type="checkbox" class="genre-chk" value="가족" checked> <span class="txt-black">가족</span></label>
-                    <button id="btn-reset" class="btn-reset">모두해제</button>
-                </div>
-            </div>
-        </div>
-
     </div>
     <div id="calendar-container">
         <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
@@ -1104,35 +1168,34 @@
     <div id="btn-go-today" class="btn-floating-today">오늘</div>
     <div id="btn-back-to-top" onclick="scrollToTop()">↑</div>
 
-    <div id="mainNoticeModal" class="modal-overlay" style="z-index: 20000; display: flex;">
+    <div id="mainNoticeModal" class="modal-overlay" style="z-index: 20000; display: none;">
         <div class="confirm-content notice-box" onclick="event.stopPropagation()">
             <div class="notice-header">📢 알림</div>
 
             <div class="notice-list">
                 <div class="notice-item">
-                    <span class="notice-icon">🎫</span>
+                    <span class="notice-icon" style="font-size: 22px; position: relative; top: -2px;">🎫</span>
                     <span class="notice-text">
                         <b>선예매</b>가 있는 공연의<br>
                         이후 예매 일정(일반예매)은<br>
-                        캘린더에 넣지 않습니다!
+                        캘린더에 없습니다(매진 가능성)
                     </span>
                 </div>
 
                 <div id="pwa-msg" class="notice-item">
-                    <span class="notice-icon">👇</span>
+                    <span class="notice-icon" style="font-size: 19px; margin-right: 3px;">🎤</span>
                     <span class="notice-text">
-                        스크롤을 내리면 로딩이 금방되니<br>
-                        몇초만 기다려주세요!
+                        팬미팅은 콘서트에 포함돼있습니다
                     </span>
                 </div>
             </div>
 
-            <button onclick="closeMainNotice()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
+            <button onclick="closeNoticePopup()" class="confirm-btn btn-yes" style="width: 100%; margin-top: 15px;">확인</button>
         </div>
     </div>
 
     <div id="floating-group">
-        <button class="round-btn btn-txt-style" onclick="alert('조건 설정 기능은 준비 중입니다.')">
+        <button class="round-btn btn-txt-style" onclick="openConditionModal()">
             ☰
         </button>
 
@@ -1148,8 +1211,8 @@
             </div>
 
             <div style="text-align: left; margin-bottom: 10px; color: #495057; line-height: 1.3; font-size: 18px; font-weight: 500; padding: 0 5px;">
-                보고싶은 공연의 키워드를 등록해주세요.(장르X)<br>
-                일정이 추가되면 알림을 보내드릴게요.
+                보고싶은 공연의 키워드를 등록해주세요(장르X)<br>
+                일정이 추가되면 알림을 보내드릴게요
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -1166,16 +1229,61 @@
         </div>
     </div>
 
-    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()">
-        <div class="custom-alert-content" onclick="event.stopPropagation()">
-            <div id="customAlertMsg" class="custom-alert-msg">알림 메시지</div>
-            <button onclick="closeCustomAlert()" class="btn-alert-ok">확인</button>
+    <div id="customAlertModal" class="modal-overlay" onclick="closeCustomAlert()" style="z-index: 50000;">
+    <div class="confirm-content" onclick="event.stopPropagation()">
+        
+        <div id="customAlertMsg" class="confirm-text" style="text-align: center; margin-bottom: 20px; font-size: 20px;">
+            알림 메시지
         </div>
+
+        <div class="confirm-btn-group">
+            <button onclick="closeCustomAlert()" class="confirm-btn btn-yes">확인</button>
+        </div>
+    </div>
+    </div>
+    <div id="conditionModal" class="modal-overlay" onclick="closeConditionModal(event)">
+    <div class="confirm-content" onclick="event.stopPropagation()" style="text-align: left; max-width: 350px;">
+        
+        <div class="modal-header" style="margin-bottom: 20px; text-align: center;">
+            <span style="font-size: 22px; font-weight: 800; color: #343a40;">조건 설정</span>
+        </div>
+
+        <div class="control-bar" style="margin: 0; padding: 0;">
+            <div class="filter-group">
+                <span class="group-title">지역 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="region-chk" value="서울"> <span class="txt-red">서울</span></label>
+                    <label><input type="checkbox" class="region-chk" value="경기"> <span class="txt-red">경기/인천</span></label>
+                    <label><input type="checkbox" class="region-chk" value="그 외"> <span class="txt-blue">그 외 지역</span></label>
+                </div>
+            </div>
+
+            <div class="filter-group" style="margin-top: 8px;">
+                <span class="group-title">장르 :</span>
+                <div class="chk-list">
+                    <label><input type="checkbox" class="genre-chk" value="콘서트" checked> <span class="txt-black">콘서트</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="뮤지컬" checked> <span class="txt-black">뮤지컬</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="연극" checked> <span class="txt-black">연극</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="클래식" checked> <span class="txt-black">클래식</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="행사(전시)" checked> <span class="txt-black">행사(전시)</span></label>
+                    <label><input type="checkbox" class="genre-chk" value="마술" checked> <span class="txt-black">마술</span></label>
+                    <label style="cursor: not-allowed;">
+                        <input type="checkbox" class="genre-chk" value="가족" disabled> 
+                        <span class="txt-black" style="color: #adb5bd;">가족</span>
+                    </label>
+                    <button id="btn-reset" class="btn-reset">모두해제</button>
+                </div>
+            </div>
+        </div>
+        <div class="confirm-btn-group" style="margin-top: 12px;">
+            <button onclick="applyAndClose()" class="confirm-btn btn-yes">적용하기</button>
+        </div>
+
     </div>
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCc1GvgMaWHZtAa_zTRqL0fj3l5B4zzg50",
@@ -1188,12 +1296,52 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
+        
+        // 1. 변수를 먼저 선언 (null로 초기화)
+        let messaging = null;
 
-        // 다른 스크립트에서 쓸 수 있게 window에 저장
-        window.messaging = messaging;
-        window.getToken = getToken;
+        // 2. 안전장치 시작
+        try {
+            // "브라우저야, 너 알림(Notification)이랑 서비스워커 쓸 수 있어?" 하고 물어봄
+            if (typeof Notification !== 'undefined' && 'serviceWorker' in navigator) {
+                
+                // 쓸 수 있다고 하면 그제서야 기능 켜기
+                messaging = getMessaging(app);
+                window.messaging = messaging;
+                window.getToken = getToken;
 
+                console.log("알림 기능이 활성화되었습니다.");
+
+                // 포그라운드 알림 처리
+                onMessage(messaging, (payload) => {
+                    console.log('포그라운드 메시지 수신:', payload);
+
+                    const data = payload.data || payload.notification;
+                    if (data) {
+                        const title = data.title;
+                        const options = {
+                            body: data.body,
+                            icon: 'https://showkok.com/icon-192.png',
+                            badge: 'https://showkok.com/icon.png',
+                            data: { url: data.url }
+                        };
+
+                        navigator.serviceWorker.ready.then((registration) => {
+                            registration.showNotification(title, options);
+                        });
+                    }
+                });
+
+            } else {
+                console.log("이 브라우저(카톡 등)는 알림 기능을 지원하지 않습니다.");
+                // 지원 안 하면 window.messaging을 null로 둠
+                window.messaging = null;
+                window.getToken = null; 
+            }
+        } catch (error) {
+            console.log("알림 초기화 중 에러 발생 (무시하고 진행):", error);
+            window.messaging = null;
+        }
         // 예: '알림 받기' 버튼을 눌렀을 때 실행될 함수
         // window. 을 붙여서 전역 변수로 만듭니다.
         window.requestNotificationPermission = function () {
@@ -1212,14 +1360,20 @@
 
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // [추가] 커스텀 알림창 띄우기 함수
+        // [수정] 커스텀 알림창 열기 (기록 추가)
         function openCustomAlert(msg) {
-            document.getElementById('customAlertMsg').innerHTML = msg; // innerHTML로 줄바꿈 허용
-            document.getElementById('customAlertModal').style.display = 'flex';
+             document.getElementById('customAlertMsg').innerHTML = msg;
+             document.getElementById('customAlertModal').style.display = 'flex';
+             // 알림창도 '뒤로가기'로 닫을 수 있게 기록을 남깁니다.
+             history.pushState({ view: 'alert' }, '', '');
         }
 
+        // [수정] 커스텀 알림창 닫기 (뒤로가기 실행)
         function closeCustomAlert() {
-            document.getElementById('customAlertModal').style.display = 'none';
+             // 화면에 떠 있다면 뒤로가기를 눌러서 닫습니다.
+             if (document.getElementById('customAlertModal').style.display === 'flex') {
+                  history.back();
+             }
         }
 
         // [수정] 키워드 등록 함수 (Alert 대신 커스텀 알림 사용)
@@ -1276,20 +1430,24 @@
             }
         }
 
-        // [수정] 내가 등록한 키워드 조회 함수
-        async function viewMyKeywords(isRefresh = false) {
+        // [수정] 내가 등록한 키워드 조회 함수 (autoCheck 파라미터 추가)
+        async function viewMyKeywords(isRefresh = false, autoCheck = false) {
             const listArea = document.getElementById('my-keyword-list');
             const btn = document.querySelector('#keywordModal .btn-white');
 
-            // 새로고침이 아니고, 이미 열려있으면 닫기
-            if (!isRefresh && listArea.style.display === 'block') {
+            // 1. [수정] 버튼 클릭으로 닫는 기능 (자동 체크 모드가 아닐 때만 동작)
+            if (!isRefresh && !autoCheck && listArea.style.display === 'block') {
                 listArea.style.display = 'none';
                 return;
             }
 
-            const originalText = btn.innerText;
-            btn.innerText = "로딩 중...";
-            btn.disabled = true;
+            // 2. [수정] 자동 체크 모드일 때는 버튼 텍스트를 "로딩 중"으로 바꾸지 않음
+            let originalText = "";
+            if (!autoCheck) {
+                originalText = btn.innerText;
+                btn.innerText = "로딩 중...";
+                btn.disabled = true;
+            }
 
             try {
                 const token = await window.getToken(window.messaging, {
@@ -1309,31 +1467,40 @@
 
                 listArea.innerHTML = '';
 
+                // 3. [핵심 수정] 데이터 유무에 따른 처리 로직
                 if (data.length === 0) {
-                    listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                    // 데이터가 없을 때
+                    if (autoCheck) {
+                        // [자동 모드] -> 리스트를 아예 숨김 (접어두기)
+                        listArea.style.display = 'none';
+                    } else {
+                        // [직접 클릭] -> "없습니다" 메시지 보여주고 펼치기
+                        listArea.innerHTML = '<li class="my-keyword-item" style="justify-content:center; color:#adb5bd;">등록된 키워드가 없습니다.</li>';
+                        listArea.style.display = 'block';
+                    }
                 } else {
+                    // 데이터가 있을 때 -> 리스트 만들고 무조건 펼치기
                     data.forEach(item => {
                         const li = document.createElement('li');
                         li.className = 'my-keyword-item';
-
-                        // ▼▼▼ [핵심] 여기에 이름표(ID)를 꼭 붙여줘야 삭제할 때 찾을 수 있습니다! ▼▼▼
                         li.id = `keyword-item-${item.id}`;
-
                         li.innerHTML = `
                             <span>${item.keyword}</span>
-                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>
-                        `;
+                            <button onclick="deleteKeyword(${item.id})" class="btn-delete-keyword">삭제</button>`;
                         listArea.appendChild(li);
                     });
+                    listArea.style.display = 'block'; 
                 }
-                listArea.style.display = 'block';
 
             } catch (err) {
                 console.error(err);
-                openCustomAlert("목록을 불러오지 못했어요.");
+                if (!autoCheck) openCustomAlert("목록을 불러오지 못했어요.");
             } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
+                // [수정] 버튼 상태 복구 (자동 모드가 아닐 때만)
+                if (!autoCheck) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
             }
         }
 
@@ -1347,14 +1514,16 @@
 
             const modal = document.getElementById('keywordDeleteModal');
             modal.style.display = 'flex';
+            history.pushState({ view: 'deleteConfirm' }, '', '');
         }
 
-        // 2. 팝업 닫기
         function closeKeywordDeleteModal() {
-            const modal = document.getElementById('keywordDeleteModal');
-            modal.style.display = 'none';
-            // 닫을 때는 ID를 비우지 않고 놔둡니다 (혹시 모를 오류 방지)
-        }
+          // 화면에 떠 있을 때만 뒤로가기 실행
+          // (이렇게 해야 window.onpopstate가 작동해서 팝업을 닫고 이전 상태로 돌아갑니다)
+          if (document.getElementById('keywordDeleteModal').style.display === 'flex') {
+               history.back();
+          }
+     }
 
         // [수정] 진짜 삭제 실행 (화면 즉시 반영)
         async function realDeleteKeyword() {
@@ -1442,53 +1611,79 @@
 
         const keywordModal = document.getElementById('keywordModal');
 
-        // [수정] 종 버튼(🔔) 클릭 시 실행되는 함수
+        // [수정된 버전] 팝업 즉시 열림 + 중복 로직 제거
         async function openKeywordModal() {
             try {
-                // 1. 현재 권한 상태 확인
+                // 1. 현재 권한 상태 확인 (이건 금방 됩니다)
                 let permission = Notification.permission;
 
-                // 2. 이미 '차단(denied)'된 상태라면 -> 이건 설정 가서 풀어야 하므로 안내
+                // A. 차단됨
                 if (permission === 'denied') {
                     alert("알림 권한이 차단되어 있습니다.\n휴대폰 설정 > 애플리케이션 > 쇼콕 > 알림에서 권한을 허용해주세요.");
                     return;
                 }
 
-                // 3. 아직 결정 안 함(default) 상태라면 -> 팝업 띄워서 물어보기
+                // B. 아직 결정 안 함 -> 권한 요청
                 if (permission === 'default') {
                     permission = await Notification.requestPermission();
                 }
 
-                // 4. 결과 확인
+                // C. 허용됨 (또는 방금 허용함)
                 if (permission === 'granted') {
-                    // (1) 허용함: 토큰 발급 및 채널 생성 시도
-                    try {
-                        const registration = await navigator.serviceWorker.register('/sw.js');
-                        await window.getToken(window.messaging, {
-                            vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8",
-                            serviceWorkerRegistration: registration
-                        });
-                    } catch (e) {
-                        console.error("토큰 생성 실패(무시 가능):", e);
-                    }
-
-                    // (2) 모달 열기
+                    
+                    // ▼▼▼ [핵심 수정] 토큰 기다리지 말고, 팝업부터 즉시 엽니다! ▼▼▼
                     const keywordModal = document.getElementById('keywordModal');
                     keywordModal.style.display = 'flex';
                     document.body.classList.add('no-scroll');
-                }
+                    history.pushState({ view: 'keyword' }, '', '');
 
-                // 5. 그냥 닫았을 때(default)는 아무 코드도 없으므로 조용히 함수 종료됨.
-                // -> 덕분에 다음에 버튼 누르면 다시 3번으로 가서 또 물어봅니다.
+                    // ▼▼▼ [수정] 데이터 로딩 시작 (토큰은 이 함수 안에서 알아서 가져옵니다) ▼▼▼
+                    // 여기서 await를 쓰지 않아야 팝업이 멈추지 않고, 로딩바가 돌아갑니다.
+                    viewMyKeywords(true, true); 
+
+                    // (삭제됨: 여기서 getToken을 또 호출하던 느린 코드를 삭제했습니다)
+                    
+                } else {
+                    alert("알림 권한을 허용해야 키워드 알림을 받을 수 있어요!");
+                }
 
             } catch (error) {
                 console.error("오류:", error);
+                // 팝업이 안 떴을 경우에만 알림
+                if (document.getElementById('keywordModal').style.display === 'none') {
+                     alert("알림 기능을 실행하는 중 오류가 발생했습니다.");
+                }
             }
+        }
+
+        // [추가] 조건 설정 모달 열기
+        function openConditionModal() {
+            const modal = document.getElementById('conditionModal');
+            modal.style.display = 'flex';
+            document.body.classList.add('no-scroll'); // 뒷배경 스크롤 막기
+            history.pushState({ view: 'condition' }, '', '');
+        }
+
+        // [추가] 조건 설정 모달 닫기
+        function closeConditionModal(e) {
+            // 배경을 클릭했거나 닫기 버튼을 눌렀을 때만 닫힘
+            if (e && e.target !== e.currentTarget && e.target.tagName !== 'BUTTON') return;
+    
+            const modal = document.getElementById('conditionModal');
+            modal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            history.back();
+        }
+        
+        function applyAndClose() {
+            applyFilter();          // 1. 필터를 적용하고
+            closeConditionModal();  // 2. 창을 닫는다
         }
 
         function closeKeywordModal(e) {
             keywordModal.style.display = 'none';
             document.body.classList.remove('no-scroll');
+            history.back();
         }
 
         const regionChks = document.querySelectorAll('.region-chk');
@@ -1623,105 +1818,84 @@
 
         }
 
+          // [수정] 공연 상세 팝업 열기
         function openModal(element) {
-            const ds = element.dataset;
-            currentEventData = {
-                title: ds.title,
-                date: ds.date,
-                place: ds.place
-            };
+             const ds = element.dataset;
+             currentEventData = {
+                  title: ds.title,
+                  date: ds.date,
+                  place: ds.place
+             };
 
-            modalTitle.innerText = ds.title;
-            modalInfo.innerText = ds.place;
-            // ▼▼▼ [추가] 예매일정 데이터 넣기 ▼▼▼
-            // ds.date에는 Supabase에서 가져온 날짜+시간 원본이 들어있습니다.
-            modalTicketing.innerText = `예매일정 : ${ds.date}`;
+             modalTitle.innerText = ds.title;
+             modalInfo.innerText = ds.place;
+             modalTicketing.innerText = `예매일정 : ${ds.date}`;
 
-            if (ds.poster && ds.poster.trim() !== '') {
-                modalPoster.src = ds.poster;
-                modalPoster.style.display = 'block';
-                noPosterText.style.display = 'none';
+             if (ds.poster && ds.poster.trim() !== '') {
+                  modalPoster.src = ds.poster;
+                  modalPoster.style.display = 'block';
+                  noPosterText.style.display = 'none';
+                  modalPoster.onclick = function () {
+                       openZoomOverlay(ds.poster);
+                  };
+             } else {
+                  modalPoster.style.display = 'none';
+                  noPosterText.style.display = 'block';
+                  modalPoster.onclick = null;
+             }
 
-                modalPoster.onclick = function () {
-                    openZoomOverlay(ds.poster);
-                };
-            } else {
-                modalPoster.style.display = 'none';
-                noPosterText.style.display = 'block';
-                modalPoster.onclick = null;
-            }
+             let htmlContent = '';
+             const links = [];
+          
+             if (ds.link1) links.push({ name: 'NOL 티켓', url: ds.link1, color: '#4154FF' });
+             if (ds.link2) links.push({ name: 'yes24 티켓', url: ds.link2, color: '#FF3804' });
+             if (ds.link3) links.push({ name: '멜론 티켓', url: ds.link3, color: '#00CD3C' });
+             if (ds.link4) links.push({ name: '티켓링크', url: ds.link4, color: '#e03131' });
+             if (ds.link5) links.push({ name: '예매처', url: ds.link5, color: '#e03131' });
 
-            let htmlContent = '';
+             if (links.length > 0) {
+                  htmlContent += `<div class="btn-row">`;
+                  links.forEach(link => {
+                       htmlContent += `<a href="${link.url}" target="_self" class="modal-btn" 
+                           style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
+                           oncontextmenu="return false" 
+                           draggable="false" ondragstart="return false;">${link.name}</a>`;
+                  });
+                  htmlContent += `</div>`;
+             }
 
-            const links = [];
-            // [수정] 각 데이터 컬럼(link1~5)에 고정 색상을 매칭합니다.
-            // 데이터가 있는 경우에만 리스트에 담되, 색상 정보도 같이 담습니다.
-            if (ds.link1) links.push({ name: 'NOL 티켓', url: ds.link1, color: '#4154FF' });
-            if (ds.link2) links.push({ name: 'yes24 티켓', url: ds.link2, color: '#FF3804' });
-            if (ds.link3) links.push({ name: '멜론 티켓', url: ds.link3, color: '#00CD3C' });
-            if (ds.link4) links.push({ name: '티켓링크', url: ds.link4, color: '#e03131' });
-            if (ds.link5) links.push({ name: '예매처', url: ds.link5, color: '#e03131' });
+             htmlContent += `<div class="btn-row">`;
+             htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
 
-            // [수정] 링크 버튼 생성 부분 (드래그 방지 속성 추가)
-            if (links.length > 0) {
-                htmlContent += `<div class="btn-row">`;
-                links.forEach(link => {
-                    htmlContent += `<a href="${link.url}" target="_blank" class="modal-btn" 
-                        style="background-color: #ffffff; color: ${link.color}; border: 1px solid ${link.color}; flex: 1;"
-                        oncontextmenu="return false" 
-                        draggable="false" ondragstart="return false;">${link.name}</a>`;
-                });
+             if (ds.youtube && ds.youtube.trim() !== '') {
+                  const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
+                  htmlContent += `
+                       <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom"
+                            oncontextmenu="return false" 
+                            draggable="false" ondragstart="return false;">
+                            <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
+                            유튜브 검색
+                       </a>`;
+             }
+             htmlContent += `</div>`;
 
-                htmlContent += `</div>`;
-            }
+             btnGroup.innerHTML = htmlContent;
 
-            htmlContent += `<div class="btn-row">`;
-            // 예매일정 추가 버튼 (이건 원래 잘 되므로 그대로 유지)
-            htmlContent += `<button onclick="openConfirmModal()" class="modal-btn btn-action-red" oncontextmenu="return false">예매일정 추가</button>`;
+             modal.style.display = 'flex';
+             document.body.classList.add('no-scroll');
 
-            // [수정] 유튜브 버튼 생성 부분 (드래그 방지 속성 추가)
-            if (ds.youtube && ds.youtube.trim() !== '') {
-                const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ds.youtube)}`;
-                htmlContent += `
-                    <a href="${ytUrl}" target="_blank" class="modal-btn btn-youtube-custom"
-                        oncontextmenu="return false" 
-                        draggable="false" ondragstart="return false;">
-                        <img src="yt.png" alt="Youtube" class="yt-icon" draggable="false" ondragstart="return false;">
-                        유튜브 검색
-                    </a>`;
-            }
-            htmlContent += `</div>`;
-
-            btnGroup.innerHTML = htmlContent;
-
-            modal.style.display = 'flex';
-            document.body.classList.add('no-scroll');
-
-            history.pushState({ view: 'modal' }, '', '#modal');
+             // ▼▼▼ [핵심 수정] 공연 팝업 상태 기록 (URL에 #modal 안 붙게 깔끔하게 처리)
+             history.pushState({ view: 'modal' }, '', '');
         }
 
+              // [수정] 예매일정 추가(ICS) 팝업 열기
         function openConfirmModal() {
-            confirmModal.style.display = 'flex';
-            history.pushState({ view: 'confirm' }, '', '#confirm');
+             const confirmModal = document.getElementById('confirmModal');
+             confirmModal.style.display = 'flex';
+          
+             // ▼▼▼ [핵심 수정] ICS 팝업 상태 기록 (이게 있어야 뒤로가기 시 이 팝업만 닫힘)
+             history.pushState({ view: 'confirm' }, '', '');
         }
-
-        window.onpopstate = function (event) {
-            const zoomOverlay = document.getElementById('imageZoomOverlay');
-            if (zoomOverlay.style.display === 'block') {
-                closeZoomOverlay();
-                return;
-            }
-
-            if (event.state && event.state.view === 'modal') {
-                confirmModal.style.display = 'none';
-                modal.style.display = 'flex';
-            }
-            else {
-                confirmModal.style.display = 'none';
-                modal.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-            }
-        };
 
         function closeConfirmModal() {
             if (confirmModal.style.display === 'flex') {
@@ -1892,21 +2066,28 @@ END:VCALENDAR`;
         });
 
         let isAllChecked = true;
+        // [수정] 조건 팝업(햄버거)의 '모두해제' 버튼 로직
         btnReset.addEventListener('click', () => {
-            if (isAllChecked) {
-                genreChks.forEach(chk => chk.checked = false);
-                btnReset.innerText = "모두선택";
-                isAllChecked = false;
-            } else {
-                genreChks.forEach(chk => chk.checked = true);
-                btnReset.innerText = "모두해제";
-                isAllChecked = true;
-            }
-            applyFilter();
+             // 1. 현재 화면에 있는 장르 체크박스 중 '비활성화(disabled)' 된 건 뺍니다.
+             const activeChks = document.querySelectorAll('.genre-chk:not(:disabled)');
+          
+             // 2. 활성화된 애들이 전부 체크되어 있는지 확인
+             // (Array.from을 써서 배열로 만든 뒤 every 함수 사용)
+             const isAllChecked = Array.from(activeChks).every(c => c.checked);
+
+             if (isAllChecked) {
+                  // 전부 켜져 있으면 -> 끈다
+                  activeChks.forEach(chk => chk.checked = false);
+                  btnReset.innerText = "모두선택";
+             } else {
+                  // 하나라도 꺼져 있으면 -> 켠다
+                  activeChks.forEach(chk => chk.checked = true);
+                  btnReset.innerText = "모두해제";
+             }
         });
 
-        regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
-        genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        // regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
+        // genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
         regionChks.forEach(c => c.checked = false);
         genreChks.forEach(c => c.checked = true);
@@ -2077,22 +2258,6 @@ END:VCALENDAR`;
             document.body.classList.remove('no-scroll');
         }
 
-        // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
-        function checkDisplayMode() {
-            const pwaMsg = document.getElementById('pwa-msg');
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-            if (isStandalone) {
-                // 앱 모드: 설치 권유 메시지 숨김
-                console.log("앱 모드로 실행 중입니다.");
-            } else {
-                // 웹 모드: 설치 권유 메시지 보임
-                pwaMsg.style.display = 'flex';
-                console.log("브라우저 모드로 실행 중입니다.");
-            }
-        }
-
-        checkDisplayMode();
         // ▼▼▼ [추가] 서비스 워커 등록 (앱으로 만들기 위한 필수 절차) ▼▼▼
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
@@ -2103,10 +2268,278 @@ END:VCALENDAR`;
                 });
             });
         }
+// [1] 시작 버튼 클릭 시 실행되는 메인 함수
+     function startProcess() {
+          // 1. 선택 여부 검사
+          const checkedRegions = document.querySelectorAll('.intro-region-chk:checked');
+          const checkedGenres = document.querySelectorAll('.intro-genre-chk:checked');
+
+          if (checkedRegions.length === 0 || checkedGenres.length === 0) {
+               openCustomAlert("지역과 장르를 선택해주세요!");
+               return;
+          }
+
+          // 2. 인트로 닫고 -> 로딩 화면으로 덮기
+          document.getElementById('introModal').style.display = 'none';
+          document.getElementById('loadingOverlay').style.display = 'flex';
+          
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && window.messaging) {
+              navigator.serviceWorker.register('/sw.js').then(reg => {
+                  window.getToken(window.messaging, {
+                      vapidKey: "BI7wflO-MlNm_zsb2KxNrKbszAWRxBnweRDOddyFqKvnpUvoA_cgPXKB1_IhoPymFN1Js0JOTq8CZ8__w5kqYp8",
+                      serviceWorkerRegistration: reg
+                  }).catch(e => console.log("미리 로딩 실패(괜찮음)"));
+              });
+          }
+          // 3. 필터 적용 및 전체 로딩 시작
+          // 브라우저 렌더링 타이밍 확보를 위해 requestAnimationFrame 사용
+          requestAnimationFrame(() => {
+               syncAndApplyFilters(checkedRegions, checkedGenres);
+               alignCalendarPosition();
+          });
+     }
+
+     // [2] 필터 동기화 및 적용
+     function syncAndApplyFilters(regions, genres) {
+          document.querySelectorAll('.region-chk').forEach(el => el.checked = false);
+          document.querySelectorAll('.genre-chk').forEach(el => el.checked = false);
+
+          regions.forEach(r => {
+               const target = document.querySelector(`.region-chk[value="${r.value}"]`);
+               if(target) target.checked = true;
+          });
+          genres.forEach(g => {
+               const target = document.querySelector(`.genre-chk[value="${g.value}"]`);
+               if(target) target.checked = true;
+          });
+
+          applyFilter();
+     }
+
+     // [3] 전체 이미지 강제 로딩 및 위치 정렬 (핵심 수정됨)
+     function alignCalendarPosition() {
+          const visiblePage = pages[currentIndex];
+          
+          // [중요] '오늘 날짜' 셀만 찾는 게 아니라, '전체 이미지'를 찾습니다.
+          // 기존의 Lazy Loading(스크롤해야 로딩됨)을 무시하고 강제로 다 불러옵니다.
+          const allImages = visiblePage.querySelectorAll('img');
+          const promises = [];
+
+          allImages.forEach(img => {
+               // 1. 아직 로딩 안 된 이미지(data-src가 있는 경우) 강제 실행
+               if (img.dataset.src) {
+                    img.src = img.dataset.src; // 주소 주입
+                    img.removeAttribute('data-src'); // 꼬리표 제거
+                    img.classList.remove('lazy-img'); // 레이지 로딩 대상에서 제외
+               }
+
+               // 2. 로딩 대기 리스트에 추가 (이미 완료된 건 패스)
+               if (!img.complete) {
+                    promises.push(new Promise(resolve => {
+                         img.onload = resolve;
+                         img.onerror = resolve; // 에러나도 멈추지 않게
+                    }));
+               }
+          });
+
+          console.log(`총 ${promises.length}개의 이미지를 로딩 대기 중...`);
+
+          // [대기] 모든 이미지가 다 뜰 때까지 기다림 (최대 5초 안전장치)
+          const timeout = new Promise(resolve => setTimeout(resolve, 5000));
+
+          Promise.race([Promise.all(promises), timeout]).then(() => {
+               console.log("모든 이미지 로딩 완료!");
+               // 로딩이 다 끝났으니 높이가 확정됨 -> 스크롤 이동 계산 시작
+               calculateAndScroll();
+          });
+     }
+
+     // [4] 스크롤 계산 및 이동 함수 (수정됨)
+     function calculateAndScroll() {
+          const today = new Date().getDate();
+          const visiblePage = pages[currentIndex];
+          const dateSpans = visiblePage.querySelectorAll('.date-num');
+          let targetTd = null;
+
+          for (let span of dateSpans) {
+               if (parseInt(span.innerText, 10) === today) {
+                    targetTd = span.closest('td');
+                    break;
+               }
+          }
+
+          if (targetTd) {
+               const header = document.getElementById('sticky-header');
+               const headerHeight = header.getBoundingClientRect().height;
+               
+               const rect = targetTd.getBoundingClientRect();
+               const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+               
+               // 타겟 셀의 절대 위치
+               const absoluteTop = rect.top + scrollTop;
+               const absoluteBottom = rect.bottom + scrollTop;
+               // 화면 전체 높이
+               const windowHeight = window.innerHeight;
+
+               let scrollToY = 0;
+
+               if (targetTd.classList.contains('day-active')) {
+                    // 1) 공연 있음: Header 하단 == 오늘 위 경계선 (기존 유지)
+                    scrollToY = absoluteTop - headerHeight;
+                    console.log("공연 있음: 상단 정렬");
+               } else {
+                    // 2) 공연 없음: 화면 최하단 == 오늘 아래 경계선
+                    // (오늘 날짜가 화면 바닥에 딱 걸치게 됨)
+                    scrollToY = absoluteBottom - windowHeight;
+                    
+                    // 혹시 계산값이 0보다 작으면 맨 위로 보냄 (안전장치)
+                    if (scrollToY < 0) scrollToY = 0;
+                    
+                    console.log("공연 없음: 화면 최하단 정렬");
+               }
+
+               // 순간이동
+               window.scrollTo({
+                    top: scrollToY,
+                    behavior: 'instant'
+               });
+          }
+
+          finishLoading();
+     }
+
+        // [수정] 로딩 완료 (기본 상태 1개만 설정)
+        function finishLoading() {
+          setTimeout(() => {
+               document.getElementById('loadingOverlay').style.display = 'none';
+               
+               const noticeModal = document.getElementById('mainNoticeModal');
+               noticeModal.style.display = 'flex';
+               
+               document.body.classList.add('no-scroll');
+
+               // 1. 바닥에 '캘린더' 상태 깔기
+               history.pushState({ page: 'calendar' }, '', '');
+               
+               // 2. 그 위에 '공지 팝업' 상태 쌓기
+               // (이렇게 해야 뒤로가기 누르면 2번이 빠지면서 1번(캘린더)으로 가고, 팝업이 닫힘)
+               history.pushState({ view: 'notice' }, '', '');
+          }, 100);
+     }
+
+     window.onpopstate = function(event) {
+          // 0. 모든 팝업 요소 변수화
+          const exitModal = document.getElementById('exitConfirmModal');
+          const alertModal = document.getElementById('customAlertModal');
+          const eventModal = document.getElementById('eventModal');
+          const confirmModal = document.getElementById('confirmModal');
+          const noticeModal = document.getElementById('mainNoticeModal');
+
+          const conditionModal = document.getElementById('conditionModal');
+          const keywordModal = document.getElementById('keywordModal');
+          const keywordDeleteModal = document.getElementById('keywordDeleteModal');
+
+          // 2. [키워드 관리창] 상태로 돌아왔을 때
+          if (event.state && event.state.view === 'keyword') {
+               if (alertModal) alertModal.style.display = 'none';       // 등록 완료/오류 알림 끄기
+               if (keywordDeleteModal) keywordDeleteModal.style.display = 'none'; // 삭제 확인창 끄기
+
+               // 부모 창인 키워드 모달은 확실히 켜둡니다.
+               if (keywordModal) keywordModal.style.display = 'flex';
+               return;
+          }
+
+          // 3. [상세 팝업] 상태 또는 [캘린더 기본] 상태로 돌아왔을 때
+          // -> 화면에 떠있는 모든 팝업들을 끕니다.
+          if ((event.state && event.state.page === 'calendar') || (event.state && event.state.view === 'modal')) {
+
+               // 하위 팝업들 닫기
+               if (confirmModal) confirmModal.style.display = 'none';
+               if (alertModal) alertModal.style.display = 'none';
+               if (noticeModal) noticeModal.style.display = 'none';
+               if (keywordDeleteModal) keywordDeleteModal.style.display = 'none';
+
+               // 1차 팝업들 닫기 (단, 현재 상태가 그 팝업인 경우는 제외)
+               if (event.state.page === 'calendar') {
+                    if (eventModal) eventModal.style.display = 'none';
+                    if (conditionModal) conditionModal.style.display = 'none';
+                    if (keywordModal) keywordModal.style.display = 'none';
+               }
+
+               // ▼▼▼ [수정된 부분] 상태에 따라 스크롤 잠금 여부 분기 처리 ▼▼▼
+               if (event.state.view === 'modal') {
+                    // 'modal' 상태(공연상세)라면 팝업을 켜고 스크롤 잠금을 강제로 유지합니다.
+                    if (eventModal) eventModal.style.display = 'flex';
+                    document.body.classList.add('no-scroll');
+               } else {
+                    // 캘린더 기본 화면으로 돌아왔을 때만 스크롤 잠금을 풉니다.
+                    document.body.classList.remove('no-scroll');
+               }
+
+               return;
+          }
+
+          // 4. [맨 처음/종료] 상태 (state가 null)
+          if (event.state === null) {
+               // A. 종료 팝업이 이미 켜져있다면? -> 끄고 달력으로 복귀 (취소 효과)
+               if (exitModal.style.display === 'flex') {
+                    exitModal.style.display = 'none';
+                    history.pushState({ page: 'calendar' }, '', '');
+                    return;
+               }
+
+               // B. 혹시라도 알림창 같은 게 켜져있다면 -> 끄기 (인트로 등 예외 상황)
+               if (alertModal && alertModal.style.display === 'flex') {
+                    alertModal.style.display = 'none';
+                    return;
+               }
+
+               // C. 아무 팝업도 없다면? -> 종료 팝업 띄우기 (인트로 화면 아닐 때만)
+               if (document.getElementById('introModal').style.display === 'none') {
+                    exitModal.style.display = 'flex';
+                    // 종료 팝업 상태에서 다시 뒤로가기를 누르면 꺼지게 하기 위해 'calendar' 상태 주입
+                    history.pushState({ page: 'calendar' }, '', '');
+               }
+          }
+     };
+
+     function closeNoticePopup() {
+          history.back();
+     }
+
+     // [4] 종료 팝업 기능 - 취소
+     function cancelExitApp() {
+          document.getElementById('exitConfirmModal').style.display = 'none';
+     }
+
+     // [5] 종료 팝업 기능 - 확인(진짜 종료)
+     function confirmExitApp() {
+          // 진짜 종료 (두 칸 뒤로 가기)
+          history.go(-2);
+     }
+     // [추가] 인트로 팝업용 '모두해제/모두선택' 기능
+     function toggleIntroReset() {
+          const btn = document.getElementById('btn-intro-reset');
+          // '가족'처럼 비활성화(disabled)된 건 제외하고 가져옵니다.
+          const chks = document.querySelectorAll('.intro-genre-chk:not(:disabled)');
+          
+          // 현재 활성화된 체크박스들이 전부 체크되어 있는지 확인
+          const isAllChecked = Array.from(chks).every(c => c.checked);
+
+          if (isAllChecked) {
+               // 전부 체크되어 있으면 -> 다 끕니다
+               chks.forEach(c => c.checked = false);
+               btn.innerText = "모두선택";
+          } else {
+               // 하나라도 꺼져 있으면 -> 다 켭니다
+               chks.forEach(c => c.checked = true);
+               btn.innerText = "모두해제";
+          }
+     }   
     </script>
     <div id="keywordDeleteModal" class="modal-overlay" style="z-index: 30001; align-items: center; padding-top: 0;" onclick="closeKeywordDeleteModal()">
         <div class="confirm-content" onclick="event.stopPropagation()">
-            <div class="confirm-text">
+            <div class="confirm-text" style="font-size: 20px;">
                 이 키워드 알림을<br>삭제하시겠습니까?
             </div>
             <div class="confirm-btn-group">
