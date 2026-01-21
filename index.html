@@ -2242,36 +2242,13 @@ END:VCALENDAR`;
         // regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         // genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        // ▼▼▼ [수정] 링크 접속 vs 일반 접속 분기 처리 ▼▼▼
-        const urlParams = new URLSearchParams(window.location.search);
-        const linkId = urlParams.get('id'); // URL에 id가 있는지 확인
+        regionChks.forEach(c => c.checked = false);
+        genreChks.forEach(c => c.checked = true);
+        isAllChecked = true;
+        btnReset.innerText = "모두해제";
 
-        if (linkId) {
-            // [CASE A] 외부 링크(?id=숫자)로 접속한 경우
-            console.log(`딥링킹 접속: ID ${linkId} - 조건 팝업 패스`);
-
-            // 1. 조건(인트로) 팝업 즉시 숨김
-            document.getElementById('introModal').style.display = 'none';
-            
-            // 2. 배경에 데이터가 다 보이도록 필터 '전체'로 강제 설정
-            regionChks.forEach(c => c.checked = true);
-            genreChks.forEach(c => c.checked = true);
-            btnReset.innerText = "모두해제";
-
-            // 3. 로딩 화면 띄우고 데이터 가져오기
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            fetchEvents(); 
-
-        } else {
-            // [CASE B] 그냥 접속한 경우 (기존 로직)
-            regionChks.forEach(c => c.checked = false);
-            genreChks.forEach(c => c.checked = true);
-            isAllChecked = true;
-            btnReset.innerText = "모두해제";
-
-            fetchEvents();
-        }
-
+        fetchEvents();
+        
         // [추가] 맨 위로 부드럽게 이동하는 함수
         function scrollToTop() {
             window.scrollTo({
@@ -2587,26 +2564,22 @@ END:VCALENDAR`;
 
         // [수정] 로딩 완료 (기본 상태 1개만 설정)
         function finishLoading() {
-             setTimeout(() => {
-                  document.getElementById('loadingOverlay').style.display = 'none';
-                  
-                  // ▼▼▼ [추가] 링크로 들어왔을 때는 공지 팝업 안 띄움 ▼▼▼
-                  const urlParams = new URLSearchParams(window.location.search);
-                  if (!urlParams.get('id')) {
-                       const noticeModal = document.getElementById('mainNoticeModal');
-                       noticeModal.style.display = 'flex';
-                       
-                       // 공지 팝업 상태 쌓기 (일반 접속일 때만)
-                       history.pushState({ view: 'notice' }, '', '');
-                  }
-                  
-                  // 스크롤 잠금 (팝업이 떠있거나, 링크로 들어와서 상세 팝업이 뜬 경우)
-                  document.body.classList.add('no-scroll');
+          setTimeout(() => {
+               document.getElementById('loadingOverlay').style.display = 'none';
+               
+               const noticeModal = document.getElementById('mainNoticeModal');
+               noticeModal.style.display = 'flex';
+               
+               document.body.classList.add('no-scroll');
 
-                  // 1. 바닥에 '캘린더' 상태 깔기
-                  history.pushState({ page: 'calendar' }, '', '');
-             }, 100);
-        }
+               // 1. 바닥에 '캘린더' 상태 깔기
+               history.pushState({ page: 'calendar' }, '', '');
+               
+               // 2. 그 위에 '공지 팝업' 상태 쌓기
+               // (이렇게 해야 뒤로가기 누르면 2번이 빠지면서 1번(캘린더)으로 가고, 팝업이 닫힘)
+               history.pushState({ view: 'notice' }, '', '');
+          }, 100);
+     }
 
      window.onpopstate = function(event) {
           // 0. 모든 팝업 요소 변수화
