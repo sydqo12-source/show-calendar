@@ -1568,6 +1568,82 @@
 
         let events = [];
 
+        // [추가] 구글 검색용 JSON-LD 자동 생성 함수 (최신 50개 + ID 주소 연동)
+        function generateJsonLd(events) {
+             // 1. 이미 생성된 JSON-LD가 있다면 삭제 (중복 방지)
+             const oldScript = document.getElementById('json-ld-script');
+             if (oldScript) oldScript.remove();
+             
+             const today = new Date();
+             today.setHours(0, 0, 0, 0); // 시간은 무시하고 오늘 0시 0분으로 설정
+
+             const upcomingEvents = events.filter(evt => {
+                  // 데이터의 날짜 문자열(2026.01.01)을 날짜 객체로 변환
+                  // (문자열에 마침표(.)가 있으면 하이픈(-)으로 바꿔야 Date 인식이 잘 됨)
+                  const dateStr = evt.date.split(' ')[0].replace(/\./g, '-');
+                  const evtDate = new Date(dateStr);
+               
+                  // "공연 날짜가 오늘보다 크거나 같으면" 통과
+                  return evtDate >= today;
+             });
+
+             // 2. 전체 데이터 중 날짜순으로 가장 빠른 50개만 자릅니다.
+             const recentEvents = events.slice(0, 50);
+
+             // 3. 구글이 좋아하는 '이벤트 스키마' 형식으로 변환
+             const schemaData = recentEvents.map(evt => {
+                  // ▼▼▼ [수정된 핵심 부분] ▼▼▼
+                  // 기본 주소 (예: https://showkok.com)
+                  const baseUrl = window.location.origin;
+                  // ID가 있으면 '?id=123' 주소를 만들고, 없으면 그냥 현재 주소를 씁니다.
+                  const eventUrl = evt.id ? `${baseUrl}/?id=${evt.id}` : window.location.href;
+
+                  return {
+                       "@type": "Event",
+                       "name": evt.title,
+                       // 날짜 형식 변환 (2026.01.01 -> 2026-01-01)
+                       "startDate": evt.date.replace(/\./g, '-'),
+                       "eventStatus": "https://schema.org/EventScheduled",
+                       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                       "location": {
+                            "@type": "Place",
+                            "name": evt.place,
+                            "address": {
+                                 "@type": "PostalAddress",
+                                 "addressCountry": "KR",
+                                 "addressRegion": evt.region || "KR"
+                            }
+                       },
+                       "image": [ evt.poster ],
+                       "description": `${evt.title} - ${evt.place} 공연 예매 정보`,
+                       "offers": {
+                            "@type": "Offer",
+                            "url": eventUrl, // ★ 여기가 'eventUrl'로 바뀐 것이 핵심입니다!
+                            "availability": "https://schema.org/InStock"
+                       }
+                  };
+             });
+
+             // 4. 'ItemList'라는 큰 보따리에 담기
+             const finalSchema = {
+                  "@context": "https://schema.org",
+                  "@type": "ItemList",
+                  "itemListElement": schemaData.map((item, index) => ({
+                       "@type": "ListItem",
+                       "position": index + 1,
+                       "item": item
+                  }))
+             };
+
+             // 5. HTML 머리(<head>) 부분에 스크립트 심기
+             const script = document.createElement('script');
+             script.id = 'json-ld-script';
+             script.type = 'application/ld+json';
+             script.text = JSON.stringify(finalSchema);
+             document.head.appendChild(script);
+
+             console.log(`구글 SEO용 JSON-LD 생성 완료! (상위 ${recentEvents.length}개)`);
+        }
         async function fetchEvents() {
             titleEl.innerText = "데이터 불러오는 중...";
 
@@ -1628,6 +1704,7 @@
                 }
            }
         }
+
         // ▼▼▼ [추가] 키워드 알림 관련 로직 ▼▼▼
 
         const keywordModal = document.getElementById('keywordModal');
