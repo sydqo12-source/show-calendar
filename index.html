@@ -45,7 +45,6 @@
     <meta name="naver-site-verification" content="ce3acdb3f4cf9c86aa7822b6e7ddb75d6468776a" />
     <meta name="google-site-verification" content="pJOl-0RpSmzuXBOI20_1imrQvVjgeFC04NbXUYCz7ik" />
 
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ffffff">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2259,22 +2258,6 @@ END:VCALENDAR`;
             document.body.classList.remove('no-scroll');
         }
 
-        // 2. 앱(PWA)인지 웹(브라우저)인지 확인하는 함수
-        function checkDisplayMode() {
-            const pwaMsg = document.getElementById('pwa-msg');
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-            if (isStandalone) {
-                // 앱 모드: 설치 권유 메시지 숨김
-                console.log("앱 모드로 실행 중입니다.");
-            } else {
-                // 웹 모드: 설치 권유 메시지 보임
-                pwaMsg.style.display = 'flex';
-                console.log("브라우저 모드로 실행 중입니다.");
-            }
-        }
-
-        checkDisplayMode();
         // ▼▼▼ [추가] 서비스 워커 등록 (앱으로 만들기 위한 필수 절차) ▼▼▼
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
@@ -2451,17 +2434,16 @@ END:VCALENDAR`;
           const eventModal = document.getElementById('eventModal');
           const confirmModal = document.getElementById('confirmModal');
           const noticeModal = document.getElementById('mainNoticeModal');
-          
+
           const conditionModal = document.getElementById('conditionModal');
           const keywordModal = document.getElementById('keywordModal');
           const keywordDeleteModal = document.getElementById('keywordDeleteModal');
 
-          // 2. [키워드 관리창] 상태로 돌아왔을 때 (★핵심 추가됨★)
-          // (키워드 창 위에 뜬 '알림창'이나 '삭제 확인창'을 닫고 키워드 창은 유지합니다)
+          // 2. [키워드 관리창] 상태로 돌아왔을 때
           if (event.state && event.state.view === 'keyword') {
                if (alertModal) alertModal.style.display = 'none';       // 등록 완료/오류 알림 끄기
                if (keywordDeleteModal) keywordDeleteModal.style.display = 'none'; // 삭제 확인창 끄기
-               
+
                // 부모 창인 키워드 모달은 확실히 켜둡니다.
                if (keywordModal) keywordModal.style.display = 'flex';
                return;
@@ -2470,7 +2452,7 @@ END:VCALENDAR`;
           // 3. [상세 팝업] 상태 또는 [캘린더 기본] 상태로 돌아왔을 때
           // -> 화면에 떠있는 모든 팝업들을 끕니다.
           if ((event.state && event.state.page === 'calendar') || (event.state && event.state.view === 'modal')) {
-               
+
                // 하위 팝업들 닫기
                if (confirmModal) confirmModal.style.display = 'none';
                if (alertModal) alertModal.style.display = 'none';
@@ -2484,13 +2466,17 @@ END:VCALENDAR`;
                     if (keywordModal) keywordModal.style.display = 'none';
                }
 
-               // 'modal' 상태(공연상세)라면 걔는 켜둬야 함 (ICS 팝업 닫고 돌아온 경우)
+               // ▼▼▼ [수정된 부분] 상태에 따라 스크롤 잠금 여부 분기 처리 ▼▼▼
                if (event.state.view === 'modal') {
+                    // 'modal' 상태(공연상세)라면 팝업을 켜고 스크롤 잠금을 강제로 유지합니다.
                     if (eventModal) eventModal.style.display = 'flex';
+                    document.body.classList.add('no-scroll');
+               } else {
+                    // 캘린더 기본 화면으로 돌아왔을 때만 스크롤 잠금을 풉니다.
+                    document.body.classList.remove('no-scroll');
                }
 
-               document.body.classList.remove('no-scroll');
-               return; 
+               return;
           }
 
           // 4. [맨 처음/종료] 상태 (state가 null)
@@ -2498,7 +2484,7 @@ END:VCALENDAR`;
                // A. 종료 팝업이 이미 켜져있다면? -> 끄고 달력으로 복귀 (취소 효과)
                if (exitModal.style.display === 'flex') {
                     exitModal.style.display = 'none';
-                    history.pushState({ page: 'calendar' }, '', ''); 
+                    history.pushState({ page: 'calendar' }, '', '');
                     return;
                }
 
