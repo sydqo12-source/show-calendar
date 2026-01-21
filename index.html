@@ -1568,8 +1568,7 @@
 
         let events = [];
 
-        // [수정] 구글 검색용 JSON-LD 자동 생성 함수 (날짜 포맷 오류 완벽 해결)
-        // [수정] 구글 검색용 JSON-LD 자동 생성 함수 (정직한 데이터 버전)
+        // [수정] 구글 검색용 JSON-LD 자동 생성 함수 (판매처별 링크 완벽 분리)
         function generateJsonLd(events) {
              // 1. 기존 스크립트 삭제
              const oldScript = document.getElementById('json-ld-script');
@@ -1605,17 +1604,59 @@
              // 4. 최신 50개 자르기
              const recentEvents = upcomingEvents.slice(0, 50);
 
-             // 5. 스키마 데이터 생성 (가짜 정보 제거됨)
+             // 5. 스키마 데이터 생성
              const schemaData = recentEvents.map(evt => {
                   const baseUrl = window.location.origin;
                   const eventUrl = evt.id ? `${baseUrl}/?id=${evt.id}` : window.location.href;
                   const isoDate = toIsoString(evt.date);
 
+                  // ▼▼▼ [핵심] 판매처별 링크 매핑 로직 ▼▼▼
+                  let ticketOffers = [];
+
+                  // 판매처 정의 (개발자님 요청사항 반영)
+                  const vendors = [
+                       { key: 'link1', name: '인터파크 티켓' }, // nol -> 인터파크
+                       { key: 'link2', name: '예스24 티켓' },
+                       { key: 'link3', name: '멜론티켓' },
+                       { key: 'link4', name: '티켓링크' }
+                       // link5는 현재 없으므로 제외
+                  ];
+
+                  // 데이터에 링크가 있으면 offers 리스트에 추가
+                  vendors.forEach(vendor => {
+                       if (evt[vendor.key] && evt[vendor.key].trim() !== '') {
+                            ticketOffers.push({
+                                 "@type": "Offer",
+                                 "url": eventUrl, 
+                                 "name": `${vendor.name} 예매 정보`, // 예: '인터파크 티켓 예매 정보'
+                                 "offeredBy": {
+                                      "@type": "Organization",
+                                      "name": vendor.name // 구글이 '인터파크' 키워드를 읽는 부분
+                                 },
+                                 "availability": "https://schema.org/InStock",
+                                 "validFrom": isoDate,
+                                 "description": "티켓 오픈 및 예매처 정보 확인"
+                            });
+                       }
+                  });
+
+                  // 만약 예매처 링크가 하나도 없다면? -> 쇼콕 내부 링크를 기본값으로 넣음
+                  if (ticketOffers.length === 0) {
+                       ticketOffers.push({
+                            "@type": "Offer",
+                            "url": eventUrl,
+                            "name": "Showkok 예매 정보",
+                            "availability": "https://schema.org/InStock",
+                            "validFrom": isoDate,
+                            "description": "티켓 오픈 일시"
+                       });
+                  }
+                  // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
                   return {
                        "@type": "Event",
                        "name": evt.title,
                        "startDate": isoDate,
-                       // "endDate": 삭제함 (정확하지 않으면 안 넣는 게 맞음)
                        "eventStatus": "https://schema.org/EventScheduled",
                        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                        "location": {
@@ -1628,14 +1669,9 @@
                             }
                        },
                        "image": [ evt.poster ],
-                       "description": `${evt.title} - ${evt.place} 공연 예매 정보`,
-                       "offers": {
-                            "@type": "Offer",
-                            "url": eventUrl,
-                            "availability": "https://schema.org/InStock"
-                            // "price": 삭제함 (0원으로 넣으면 무료로 오해함)
-                            // "priceCurrency": 삭제함
-                       }
+                       "description": `${evt.title} - ${evt.place} 공연 티켓 예매 정보 및 일정`,
+                       // offers에 위에서 만든 리스트(배열)를 넣어줍니다.
+                       "offers": ticketOffers
                   };
              });
 
@@ -1655,7 +1691,7 @@
              script.text = JSON.stringify(finalSchema);
              document.head.appendChild(script);
 
-             console.log(`구글 SEO용 JSON-LD 생성 완료! (정직한 데이터, ${recentEvents.length}개)`);
+             console.log(`구글 SEO용 JSON-LD 생성 완료! (판매처 정보 포함, ${recentEvents.length}개)`);
         }
 
         async function fetchEvents() {
@@ -2206,12 +2242,36 @@ END:VCALENDAR`;
         // regionChks.forEach(chk => chk.addEventListener('change', applyFilter));
         // genreChks.forEach(chk => chk.addEventListener('change', applyFilter));
 
-        regionChks.forEach(c => c.checked = false);
-        genreChks.forEach(c => c.checked = true);
-        isAllChecked = true;
-        btnReset.innerText = "모두해제";
+        // ▼▼▼ [수정] 링크 접속 vs 일반 접속 분기 처리 ▼▼▼
+        const urlParams = new URLSearchParams(window.location.search);
+        const linkId = urlParams.get('id'); // URL에 id가 있는지 확인
 
-        fetchEvents();
+        if (linkId) {
+            // [CASE A] 외부 링크(?id=숫자)로 접속한 경우
+            console.log(`딥링킹 접속: ID ${linkId} - 조건 팝업 패스`);
+
+            // 1. 조건(인트로) 팝업 즉시 숨김
+            document.getElementById('introModal').style.display = 'none';
+            
+            // 2. 배경에 데이터가 다 보이도록 필터 '전체'로 강제 설정
+            regionChks.forEach(c => c.checked = true);
+            genreChks.forEach(c => c.checked = true);
+            btnReset.innerText = "모두해제";
+
+            // 3. 로딩 화면 띄우고 데이터 가져오기
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            fetchEvents(); 
+
+        } else {
+            // [CASE B] 그냥 접속한 경우 (기존 로직)
+            regionChks.forEach(c => c.checked = false);
+            genreChks.forEach(c => c.checked = true);
+            isAllChecked = true;
+            btnReset.innerText = "모두해제";
+
+            fetchEvents();
+        }
+
         // [추가] 맨 위로 부드럽게 이동하는 함수
         function scrollToTop() {
             window.scrollTo({
@@ -2527,22 +2587,26 @@ END:VCALENDAR`;
 
         // [수정] 로딩 완료 (기본 상태 1개만 설정)
         function finishLoading() {
-          setTimeout(() => {
-               document.getElementById('loadingOverlay').style.display = 'none';
-               
-               const noticeModal = document.getElementById('mainNoticeModal');
-               noticeModal.style.display = 'flex';
-               
-               document.body.classList.add('no-scroll');
+             setTimeout(() => {
+                  document.getElementById('loadingOverlay').style.display = 'none';
+                  
+                  // ▼▼▼ [추가] 링크로 들어왔을 때는 공지 팝업 안 띄움 ▼▼▼
+                  const urlParams = new URLSearchParams(window.location.search);
+                  if (!urlParams.get('id')) {
+                       const noticeModal = document.getElementById('mainNoticeModal');
+                       noticeModal.style.display = 'flex';
+                       
+                       // 공지 팝업 상태 쌓기 (일반 접속일 때만)
+                       history.pushState({ view: 'notice' }, '', '');
+                  }
+                  
+                  // 스크롤 잠금 (팝업이 떠있거나, 링크로 들어와서 상세 팝업이 뜬 경우)
+                  document.body.classList.add('no-scroll');
 
-               // 1. 바닥에 '캘린더' 상태 깔기
-               history.pushState({ page: 'calendar' }, '', '');
-               
-               // 2. 그 위에 '공지 팝업' 상태 쌓기
-               // (이렇게 해야 뒤로가기 누르면 2번이 빠지면서 1번(캘린더)으로 가고, 팝업이 닫힘)
-               history.pushState({ view: 'notice' }, '', '');
-          }, 100);
-     }
+                  // 1. 바닥에 '캘린더' 상태 깔기
+                  history.pushState({ page: 'calendar' }, '', '');
+             }, 100);
+        }
 
      window.onpopstate = function(event) {
           // 0. 모든 팝업 요소 변수화
