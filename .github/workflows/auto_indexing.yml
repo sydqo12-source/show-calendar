@@ -1,0 +1,33 @@
+name: 구글 자동 색인 요청 (1시간마다)
+
+on:
+  schedule:
+    # 1시간마다 실행 (매시 0분)
+    - cron: '0 * * * *'
+  # 깃허브 웹에서 버튼 눌러서 수동 실행도 가능하게 함
+  workflow_dispatch:
+
+jobs:
+  google-indexing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v3
+
+      - name: 파이썬 설치
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 라이브러리 설치
+        run: |
+          pip install google-api-python-client google-auth supabase
+
+      - name: 구글 키 파일 생성
+        # 깃허브 금고에 넣어둔 키를 꺼내서 파일로 만듭니다
+        run: |
+          echo '${{ secrets.GOOGLE_JSON_KEY }}' > service_account.json
+
+      - name: 색인 요청 스크립트 실행
+        # utils.py를 실행합니다 (최신 10개 자동 조회 코드여야 함)
+        run: python utils.py
