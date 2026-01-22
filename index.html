@@ -1961,6 +1961,12 @@
                   place: ds.place
              };
 
+             document.title = `${ds.title} 티켓팅 일정 - 쇼콕(놀티켓, 예스24티켓, 멜론티켓)`;
+             const descMeta = document.querySelector('meta[name="description"]');
+             if (descMeta) {
+              descMeta.setAttribute("content", `${ds.title}의 예매 일정은 ${ds.date}입니다. 장소: ${ds.place}. 쇼콕에서 예매처 정보를 확인하세요.`);
+             }
+
              modalTitle.innerText = ds.title;
              modalInfo.innerText = ds.place;
              modalTicketing.innerText = `예매일정 : ${ds.date}`;
