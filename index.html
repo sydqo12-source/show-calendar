@@ -775,6 +775,17 @@
                 /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
                 left: calc(50% + 340px + 22px) !important;
             }
+            
+            #floating-group {
+                /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
+                right: auto !important;
+                left: calc(50% + 340px + 24px) !important;
+                top: 20px;
+                
+                /* [합쳐진 내용] 세로 배치 및 간격 조정 */
+                flex-direction: column; /* 세로로 쌓기 */
+                gap: 10px; /* 버튼 사이 간격 */
+            }
         }
 
         /* [추가] 공지 팝업 전용 스타일 */
@@ -871,16 +882,6 @@
             font-weight: 400;
             color: #343a40;
             line-height: 1;
-        }
-
-        /* PC 버전 위치 보정 (그룹 전체 이동) */
-        @media (min-width: 768px) {
-            #floating-group {
-                /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
-                right: auto !important;
-                left: calc(50% + 340px + 24px) !important;
-                top: 20px;
-            }
         }
 
         /* [추가] 입력창 스타일 */
