@@ -775,7 +775,7 @@
                 /* [계산식] 화면 중앙(50%) + 캘린더절반(240px) + 여백(20px) = 오른쪽 바깥 */
                 left: calc(50% + 340px + 22px) !important;
             }
-            
+
             #floating-group {
                 /* PC버전에서는 캘린더 오른쪽 바깥에 위치 */
                 right: auto !important;
@@ -786,6 +786,10 @@
                 flex-direction: column; /* 세로로 쌓기 */
                 gap: 10px; /* 버튼 사이 간격 */
             }
+            #btn-alarm {
+                cursor: not-allowed !important;  /* 금지 커서 */
+                opacity: 0.3 !important;         /* 흐리게 */
+                pointer-events: none !important; /* 클릭 아예 불가능하게 막음 */
         }
 
         /* [추가] 공지 팝업 전용 스타일 */
@@ -1199,7 +1203,7 @@
             ☰
         </button>
 
-        <div class="round-btn" onclick="openKeywordModal()">
+        <div id="btn-alarm" class="round-btn" onclick="openKeywordModal()">
             🔔
         </div>
     </div>
