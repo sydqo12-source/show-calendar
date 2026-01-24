@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" role="application">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <script>
@@ -1958,6 +1958,7 @@
                     }
 
                     const htmlContent = `
+                        <input type="checkbox" style="display:none" aria-hidden="true">
                         ${posterHtml}
                         <div class="event-header">
                             <div><span style="color:#212529; font-weight:800;">${timeStr}</span></div>
@@ -2765,7 +2766,7 @@ END:VCALENDAR`;
                     if (eventModal) eventModal.style.display = 'none';
                     if (conditionModal) conditionModal.style.display = 'none';
                     if (keywordModal) keywordModal.style.display = 'none';
-                    
+
                     document.querySelectorAll('.event-box.selected').forEach(el => el.classList.remove('selected'));
                }
 
