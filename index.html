@@ -376,7 +376,8 @@
             margin-bottom: 7;
         }
 
-        .event-box:hover {
+        .event-box:hover,
+        .event-box.selected {
             transform: translateY(-2px);
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
             border-color: #adb5bd;
@@ -1185,7 +1186,7 @@
         </div>
     </div>
 
-    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)" ontouchstart="event.stopPropagation()" style="-webkit-tap-highlight-color: transparent;">
+    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-poster-area">
                 <img id="modalPoster" src="" alt="공연 포스터" style="display:none;" oncontextmenu="return false;">
@@ -2006,6 +2007,7 @@
           // [수정] 공연 상세 팝업 열기
         function openModal(element) {
              const ds = element.dataset;
+             element.classList.add('selected');
              currentEventData = {
                   title: ds.title,
                   date: ds.date,
@@ -2763,6 +2765,8 @@ END:VCALENDAR`;
                     if (eventModal) eventModal.style.display = 'none';
                     if (conditionModal) conditionModal.style.display = 'none';
                     if (keywordModal) keywordModal.style.display = 'none';
+                    
+                    document.querySelectorAll('.event-box.selected').forEach(el => el.classList.remove('selected'));
                }
 
                // 스크롤 잠금 해제/설정 로직
