@@ -869,8 +869,14 @@
             right: 10px;
             z-index: 1001; /* 헤더보다 위에 */
             display: flex; /* 가로 배치 */
-            gap: 12px; /* 버튼 사이 간격 */
+            /*gap: 12px;  버튼 사이 간격 */
             align-items: center;
+
+            background-color: #ffffff;
+            border: 1px solid #e9ecef; /* 아주 연한 테두리 */
+            border-radius: 20px; /* 둥근 알약 모양 */
+            padding: 5px 10px;   /* 안쪽 여백 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 부드러운 그림자 */
         }
 
         /* 공통 원형 버튼 디자인 (기존 종 버튼 스타일) */
@@ -891,6 +897,30 @@
             border: none;
             text-decoration: none;
         }
+
+        /* 아이콘 버튼 공통 스타일 (배경/테두리 제거) */
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px 8px; /* 터치 영역 확보 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+    
+        /* 가운데 구분선 */
+       .vertical-divider {
+            width: 1px;
+            height: 16px;
+            background-color: #dee2e6; /* 연한 회색 선 */
+            margin: 0 2px;
+        }
+    
+        /* 기존 스타일 덮어쓰기 방지용 */
+        #btn-alarm { opacity: 1 !important; cursor: pointer !important; pointer-events: auto !important; }
 
         /*.round-btn:active { transform: scale(0.9); } */
 
@@ -1210,14 +1240,14 @@
         </div>
     </div>
 
-    <div id="floating-group">
-        <button class="round-btn btn-txt-style" onclick="openConditionModal()">
-            ☰
-        </button>
-
-        <div id="btn-alarm" class="round-btn" onclick="openKeywordModal()">
+    <div id="floating-group" class="pill-container">
+        <div id="btn-alarm" class="icon-btn" onclick="openKeywordModal()">
             🔔
         </div>
+        <div class="vertical-divider"></div>
+        <button class="icon-btn btn-txt-style" onclick="openConditionModal()">
+            ☰
+        </button>
     </div>
 
     <div id="keywordModal" class="modal-overlay" onclick="closeKeywordModal(event)">
