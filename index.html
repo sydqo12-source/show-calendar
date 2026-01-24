@@ -216,6 +216,29 @@
         .txt-blue { color: #1971c2; font-weight: 700; }
         .txt-black { color: #495057; font-weight: 500; }
 
+        /* ▼▼▼ [신규] 뱃지(알약 모양) 스타일 추가 ▼▼▼ */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;       /* 글자 주변 여백 (위아래 3px, 양옆 8px) */
+            border-radius: 6px;     /* 모서리 둥글게 */
+            font-size: 13px;        /* 글자 크기 살짝 작게 */
+            font-weight: 800;       /* 굵게 */
+            line-height: 1;         /* 높이 정렬 */
+            margin-left: 5px;       /* 시간과 뱃지 사이 간격 */
+        }
+
+        /* 서울/경기용 빨간 뱃지 */
+        .badge-red {
+            background-color: #ffe3e3; /* 연한 빨강 배경 */
+            color: #e03131;            /* 진한 빨강 글씨 */
+        }
+
+        /* 그 외 지역용 파란 뱃지 */
+        .badge-blue {
+            background-color: #e7f5ff; /* 연한 파랑 배경 */
+            color: #1971c2;            /* 진한 파랑 글씨 */
+        }
+
         /* ==========================================================================
            [중요] 리스트형 캘린더 스타일
            ========================================================================== */
@@ -334,7 +357,7 @@
             font-size: 16px !important;
             padding: 7px;
             margin-bottom: 7px;
-            border-radius: 10px;
+            border-radius: 12px;
             background-color: #fff;
             border: 1px solid #ced4da;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -815,7 +838,7 @@
             gap: 10px;
             background-color: #f8f9fa;
             padding: 10px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 18px;
             color: #495057;
             line-height: 1.3;
@@ -1882,9 +1905,13 @@
                     div.onclick = function () { openModal(this); };
 
                     const timeStr = evt.date.split(' ')[1] || '';
-                    let rClass = 'txt-blue';
-                    if (['서울', '경기', '인천'].includes(evt.region)) rClass = 'txt-red';
-                    const rText = `(${evt.region})`;
+                    // ▼▼▼ 뱃지 스타일 적용 로직으로 변경 ▼▼▼
+                    let rClass = 'badge badge-blue'; // 기본은 파란 뱃지
+                    if (['서울', '경기', '인천'].includes(evt.region)) {
+                        rClass = 'badge badge-red';  // 수도권은 빨간 뱃지
+                    }
+                    
+                    const rText = evt.region; // 👈 괄호( )를 제거했습니다!
 
                     let posterHtml = '';
                     if (evt.poster && evt.poster.trim() !== '') {
