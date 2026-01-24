@@ -91,7 +91,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            top: 20px;
+            top: 15px;
             left: 0;
             width: 100%;
             z-index: 2000;
@@ -227,7 +227,7 @@
             border-radius: 8px;     /* 모서리 둥글게 */
             font-size: 17px;        /* 글자 크기 살짝 작게 */
             font-weight: 700;       /* 굵게 */
-            line-height: 0;         /* 높이 정렬 */
+            line-height: 1;         /* 높이 정렬 */
             margin-left: 5px;       /* 시간과 뱃지 사이 간격 */
             vertical-align: text-bottom;
         }
@@ -592,8 +592,8 @@
         
         .top-logo {
             position: fixed;
-            top: 20px; /* 위에서 15px */
-            left: 20px; /* 왼쪽에서 15px */
+            top: 15px; /* 위에서 15px */
+            left: 15px; /* 왼쪽에서 15px */
             font-size: 25px; /* 작게 (원하는 크기로 조절 가능) */
             z-index: 2005; /* 다른 요소보다 위에 표시 */
         }
@@ -640,7 +640,7 @@
              /*background-color: rgba(255, 255, 255, 0.5); /* 살짝 투명하게 해서 고급스럽게 */
             /*-webkit-backdrop-filter: blur(1px);
             /*backdrop-filter: blur(1px); /* 뒤에 내용물 흐리게 비침 */
-            height: 70px;
+            height: 60px;
             z-index: 1000;
             margin-left: -15px; /* 왼쪽 여백(15px) 무시하고 꽉 채우기 */
             margin-right: -15px; /* 오른쪽 여백(15px) 무시하고 꽉 채우기 */
@@ -878,10 +878,10 @@
             align-items: center;
 
             background-color: #ffffff;
-            border: 1px solid #e9ecef; /* 아주 연한 테두리 */
+            border: none;  /* 1px solid #e9ecef; /* 아주 연한 테두리 */
             border-radius: 20px; /* 둥근 알약 모양 */
             padding: 5px 10px;   /* 안쪽 여백 */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 부드러운 그림자 */
+            /* box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 부드러운 그림자 */
         }
 
         /* 공통 원형 버튼 디자인 (기존 종 버튼 스타일) */
