@@ -86,9 +86,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 0;
-            margin-bottom: 0;
+            margin-top: 15px;
             position: relative;
+            z-index: 5;
         }
 
         /* .main-title { font-size: 36px; font-weight: 800; color: #343a40; margin-bottom: 25px; word-break: keep-all; text-align: center; } */
@@ -608,13 +608,14 @@
             top: 0; /* 천장에 딱 붙음 */
             background-color: #ffffff;
              /*background-color: rgba(255, 255, 255, 0.5); /* 살짝 투명하게 해서 고급스럽게 */
-            -webkit-backdrop-filter: blur(1px);
-            backdrop-filter: blur(1px); /* 뒤에 내용물 흐리게 비침 */
+            /*-webkit-backdrop-filter: blur(1px);
+            /*backdrop-filter: blur(1px); /* 뒤에 내용물 흐리게 비침 */
+            height: 20px; 
+            padding: 0;
             z-index: 1000;
             margin-left: -15px; /* 왼쪽 여백(15px) 무시하고 꽉 채우기 */
             margin-right: -15px; /* 오른쪽 여백(15px) 무시하고 꽉 채우기 */
-            margin-top: -25px;
-            padding: 10px 15px 10px 25px;
+            /*padding: 10px 15px 10px 25px;*/
         }
 
         /* 3. 헤더 내부 정렬 (기존 margin-top 제거) */
@@ -1092,16 +1093,14 @@
     <div style="font-size: 20px; font-weight: 700; color: #495057; text-align: center; width: 100%; line-height: 1.5;">많은 공연을 보여드릴테니<br>잠시만 기다려주세요!</div>
 </div>
     <div class="top-logo">📌</div>
-
-    <div id="sticky-header">
-
-        <div class="header-wrapper">
+    <div class="header-wrapper">
             <div class="nav-row">
                 <div class="nav-btn" id="prev-btn">&lt;</div>
                 <div class="sub-title" id="calendar-title">Loading...</div>
                 <div class="nav-btn" id="next-btn">&gt;</div>
             </div>
         </div>
+    <div id="sticky-header">
     </div>
     <div id="calendar-container">
         <div id="page-0" class="calendar-page" data-title="2026년 1월" style="display: block;">
