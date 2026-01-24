@@ -1185,7 +1185,7 @@
         </div>
     </div>
 
-    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)">
+    <div id="eventModal" class="modal-overlay" onclick="closeModal(event)" ontouchstart="event.stopPropagation()" style="-webkit-tap-highlight-color: transparent;">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-poster-area">
                 <img id="modalPoster" src="" alt="공연 포스터" style="display:none;" oncontextmenu="return false;">
