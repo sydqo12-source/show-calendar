@@ -876,7 +876,11 @@
             .mobile-br { display: none; } /* PC에선 모바일 줄바꿈 무시 */
     
             .pc-br { display: inline; }   /* PC에선 PC 줄바꿈 작동! */
-
+             
+            #introModal .confirm-content {
+                transform: scale(1.5);  /* 1.3배 확대 (원하는 만큼 숫자 조절) */
+                transform-origin: top center; /* 확대 기준점 (위쪽 중앙) */
+            }
         }
 
         /* [추가] 공지 팝업 전용 스타일 */
