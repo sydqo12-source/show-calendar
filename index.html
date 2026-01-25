@@ -780,6 +780,11 @@
         .txt-point-blue { color: #495057; }
         .txt-highlight { background: linear-gradient(to top, #ffe3e3 50%, transparent 50%); }
         
+        /* 1. 모바일용 줄바꿈 (기본: 보임) */
+        .mobile-br { display: inline; }
+
+        /* 2. PC용 줄바꿈 (기본: 숨김) */
+        .pc-br { display: none; }
         /* [추가] PC 버전 레이아웃 보정 (모바일 앱처럼 가운데 정렬) */
         @media (min-width: 768px) {
             body {
@@ -863,6 +868,10 @@
             .intro-desc {
                 font-size: 50px; /* ★ PC 설명 크기 (시원하게) */
             }
+
+            .mobile-br { display: none; } /* PC에선 모바일 줄바꿈 무시 */
+    
+            .pc-br { display: inline; }   /* PC에선 PC 줄바꿈 작동! */
 
         }
 
@@ -1146,11 +1155,11 @@
 <div id="introModal" class="modal-overlay" style="display: flex; z-index: 30000; background-color: #ffffff; flex-direction: column; justify-content: flex-start; padding-top: 3vh; height: 100%;">
     <header class="intro-header">
         <h1 class="intro-title">
-            2026년 공연<br>티켓팅 캘린더
+            2026년 공연<br class="mobile-br">티켓팅 캘린더
         </h1>
     
         <p class="intro-desc">
-            원하는 <strong class="txt-point-red">지역</strong>과 <strong class="txt-point-blue">콘서트, 뮤지컬, 연극, 클래식, 행사, 마술</strong> 등에 대한<br>
+            원하는 <strong class="txt-point-red">지역</strong>과 <strong class="txt-point-blue">콘서트, 뮤지컬, 연극, 클래식, 행사, 마술</strong> 등에 대한<br class="mobile-br">
             <span class="txt-highlight">예매 일정</span>을 한눈에 확인하세요.
         </p>
     </header>
