@@ -861,6 +861,9 @@
             .intro-header {
                 margin-bottom: 40px; /* PC에선 박스와의 간격을 더 넓게 (25px -> 40px) */
                 padding: 0; /* PC는 좌우 여백 굳이 필요 없어서 제거 */
+                -webkit-user-select: text; /* 사파리/크롬 호환 */
+                user-select: text;         /* 드래그 가능하게 */
+                cursor: text;
             }
 
             .intro-title {
