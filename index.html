@@ -815,8 +815,8 @@
 
             /* 2. 스티키 헤더 위치 교정 (왼쪽 튀어나옴 해결) */
             #sticky-header {
-                max-width: 680px; /* 몸통 크기와 똑같이 */
-                width: auto !important;
+                max-width: none !important;
+                width: calc(100% + 30px) !important;
                 box-sizing: border-box !important;
                 /* 모바일용 마이너스 마진 해제 (이게 왼쪽 쏠림의 원인) */
                 margin-left: -15px !important;
