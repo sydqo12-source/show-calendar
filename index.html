@@ -845,9 +845,16 @@
                 top: 20px;
                 
                 /* [합쳐진 내용] 세로 배치 및 간격 조정 */
-                flex-direction: column; /* 세로로 쌓기 */
+                flex-direction: column-reverse;
                 gap: 10px; /* 버튼 사이 간격 */
             }
+            
+            .vertical-divider {
+                width: 24px !important;   /* 가로 길이 늘림 */
+                height: 1px !important;   /* 세로 두께 줄임 */
+                margin: 2px 0 !important; /* 위아래 간격 */
+            }
+
             #btn-alarm {
                 cursor: not-allowed !important;  /* 금지 커서 */
                 opacity: 0.3 !important;         /* 흐리게 */
@@ -1747,23 +1754,14 @@
              const today = new Date();
              today.setHours(0, 0, 0, 0);
 
-             const upcomingEvents = events.filter(evt => {
-                  const isoDate = toIsoString(evt.date);
-                  if (!isoDate) return false;
-                  return new Date(isoDate) >= today;
-             });
+             const validEvents = events.filter(evt => {
+                 const iso = toIsoString(evt.date);
+                 return iso !== "" && new Date(iso) >= today; 
+             }).slice(0, 50);
 
-             // 4. 최신 50개 자르기
-             const recentEvents = upcomingEvents.slice(0, 50);
-
-             // 5. 스키마 데이터 생성
-             const schemaData = recentEvents.map(evt => {
-                  const baseUrl = window.location.origin;
-                  const eventUrl = evt.id ? `${baseUrl}/?id=${evt.id}` : window.location.href;
-                  const isoDate = toIsoString(evt.date);
-
-                  // ▼▼▼ [핵심] 판매처별 링크 매핑 로직 ▼▼▼
-                  let ticketOffers = [];
+             const schemaList = validEvents.map((evt, index) => {
+                 const isoDate = toIsoString(evt.date);
+                 const eventUrl = `${window.location.origin}/?id=${evt.id}`;
 
                   // 판매처 정의 (개발자님 요청사항 반영)
                   const vendors = [
@@ -1774,77 +1772,114 @@
                        // link5는 현재 없으므로 제외
                   ];
 
-                  // 데이터에 링크가 있으면 offers 리스트에 추가
-                  vendors.forEach(vendor => {
-                       if (evt[vendor.key] && evt[vendor.key].trim() !== '') {
-                            ticketOffers.push({
-                                 "@type": "Offer",
-                                 "url": eventUrl, 
-                                 "name": `${vendor.name} 예매 정보`, // 예: '인터파크 티켓 예매 정보'
-                                 "offeredBy": {
-                                      "@type": "Organization",
-                                      "name": vendor.name // 구글이 '인터파크' 키워드를 읽는 부분
-                                 },
-                                 "availability": "https://schema.org/InStock",
-                                 "validFrom": isoDate,
-                                 "description": "티켓 오픈 및 예매처 정보 확인"
-                            });
+                  let offers = [];
+                  vendors.forEach(v => {
+                      // 링크가 있는 경우에만 추가
+                      if(evt[v.key] && evt[v.key].trim() !== "") {
+                          offers.push({
+                              "@type": "Offer",
+                              "url": evt[v.key],
+                              "name": v.name, // 구글에 '인터파크 예매' 처럼 뜸
+                              "availability": "https://schema.org/InStock"
+                          });
                        }
                   });
 
-                  // 만약 예매처 링크가 하나도 없다면? -> 쇼콕 내부 링크를 기본값으로 넣음
-                  if (ticketOffers.length === 0) {
-                       ticketOffers.push({
-                            "@type": "Offer",
-                            "url": eventUrl,
-                            "name": "Showkok 예매 정보",
-                            "availability": "https://schema.org/InStock",
-                            "validFrom": isoDate,
-                            "description": "티켓 오픈 일시"
+                  // 예매처가 없으면 '일정 확인' 버튼으로 대체
+                  if(offers.length === 0) {
+                      offers.push({ 
+                          "@type": "Offer", 
+                          "url": eventUrl, 
+                          "name": "일정 확인",
+                          "availability": "https://schema.org/InStock"
                        });
-                  }
-                  // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+                   }
+
+                  const genreText = evt.genre ? `[${evt.genre}] ` : '';
 
                   return {
-                       "@type": "Event",
-                       "name": evt.title,
-                       "startDate": isoDate,
-                       "eventStatus": "https://schema.org/EventScheduled",
-                       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-                       "location": {
-                            "@type": "Place",
-                            "name": evt.place,
-                            "address": {
-                                 "@type": "PostalAddress",
-                                 "addressCountry": "KR",
-                                 "addressRegion": evt.region || "KR"
-                            }
-                       },
-                       "image": [ evt.poster ],
-                       "description": `${evt.title} - ${evt.place} 공연 티켓 예매 정보 및 일정`,
-                       // offers에 위에서 만든 리스트(배열)를 넣어줍니다.
-                       "offers": ticketOffers
+                      "@type": "ListItem",
+                      "position": index + 1,
+                      "item": {
+                        "@context": "https://schema.org",
+                        "@type": "Event",
+                        "name": evt.title,           // 공연 제목
+                        "startDate": isoDate,        // 날짜
+                        "eventStatus": "https://schema.org/EventScheduled",
+                        "location": {
+                          "@type": "Place",
+                          "name": evt.place,         // 장소
+                          "address": {
+                            "@type": "PostalAddress",
+                            "addressRegion": evt.region || "KR", // 지역
+                            "addressCountry": "KR"
+                          }
+                        },
+                        "image": [ evt.poster ],     // 포스터
+                        "description": `${genreText}${evt.title} - ${evt.place} 티켓팅 정보`, // 설명: [뮤지컬] 지킬앤하이드...
+                        "offers": offers,            // 예매처 링크
+                        "url": eventUrl              // 가상 페이지 주소
+                      }
                   };
-             });
+              });
 
-             const finalSchema = {
+              // 5. 최종 포장 및 주입
+              const finalSchema = {
                   "@context": "https://schema.org",
                   "@type": "ItemList",
-                  "itemListElement": schemaData.map((item, index) => ({
-                       "@type": "ListItem",
-                       "position": index + 1,
-                       "item": item
-                  }))
-             };
+                  "itemListElement": schemaList
+              };
 
-             const script = document.createElement('script');
-             script.id = 'json-ld-script';
-             script.type = 'application/ld+json';
-             script.text = JSON.stringify(finalSchema);
-             document.head.appendChild(script);
+              const script = document.createElement('script');
+              script.id = 'json-ld-script';
+              script.type = 'application/ld+json';
+              script.text = JSON.stringify(finalSchema);
+              document.head.appendChild(script);
+    
+              console.log(`✅ SEO 데이터 생성 완료: ${validEvents.length}개 공연`);
+          }
 
-             console.log(`구글 SEO용 JSON-LD 생성 완료! (판매처 정보 포함, ${recentEvents.length}개)`);
-        }
+        // [SEO 2,3,4] 장르/지역/월 검색 시 -> 메인 페이지(Showkok.com)가 걸리게 만드는 봇
+        function generateKeywordSummary(events) {
+         // 1. 현재 데이터베이스에 있는 장르와 지역을 싹 긁어모음 (중복 제거)
+            const allGenres = [...new Set(events.map(e => e.genre).filter(g => g))];
+            const allRegions = [...new Set(events.map(e => e.region).filter(r => r))];
+    
+            // 2. 검색어 조합 만들기 (봇이 좋아하는 문장)
+            const genreKeywords = allGenres.join(', '); // 예: 뮤지컬, 콘서트, 연극...
+            const regionKeywords = allRegions.join(', '); // 예: 서울, 부산, 대구...
+    
+            // 3. 숨겨진 텍스트 박스 생성
+            let seoDiv = document.getElementById('seo-hidden-text');
+            if (!seoDiv) {
+                seoDiv = document.createElement('div');
+                seoDiv.id = 'seo-hidden-text';
+                // 화면에서 숨기기 (디자인 영향 X, 봇은 읽음 O)
+                seoDiv.style.cssText = "position:absolute; width:1px; height:1px; overflow:hidden; opacity:0.01; z-index:-1;";
+                document.body.appendChild(seoDiv);
+            }
+
+            // 4. 실제로 텍스트 주입 (여기에 있는 단어로 검색하면 메인페이지가 뜸)
+            seoDiv.innerHTML = `
+                <h1>2026년 공연 티켓팅 일정 통합 캘린더 - 쇼콕</h1>
+        
+                <h2>장르별 예매 일정</h2>
+                <p>2026년 ${genreKeywords} 티켓팅 일정, 예매 날짜, 시간 정보를 확인하세요.</p>
+        
+                <h2>지역별 티켓 오픈</h2>
+                <p>2026년 ${regionKeywords} 및 전국 주요 도시 공연 정보 모음.</p>
+        
+                <h2>월별 스케줄</h2>
+                <p>2026년 1월, 2월, 3월, 4월, 5월, 6월, 7월, 8월, 9월, 10월, 11월, 12월 전체 공연 달력.</p>
+        
+                <h2>현재 등록된 주요 공연</h2>
+                <ul>
+                    ${events.slice(0, 30).map(e => `<li>2026년 ${e.title} (${e.genre}, ${e.region})</li>`).join('')}
+                </ul>
+            `;
+    
+            console.log("✅ 검색엔진용 요약 텍스트 생성 완료 (장르/지역/월 포함)");
+        }  
 
         async function fetchEvents() {
             titleEl.innerText = "데이터 불러오는 중...";
@@ -1882,6 +1917,7 @@
 
             renderEvents();
             generateJsonLd(events);
+            generateKeywordSummary(events);
             markPastDays();
 
             showPage(0);
@@ -2113,7 +2149,7 @@
                   place: ds.place
              };
 
-             document.title = `${ds.title} 티켓팅 일정 - 쇼콕(놀티켓, 예스24티켓, 멜론티켓)`;
+             document.title = `2026년 ${ds.title} 티켓팅(예매) 일정 - 쇼콕`;
              const descMeta = document.querySelector('meta[name="description"]');
              if (descMeta) {
               descMeta.setAttribute("content", `${ds.title}의 예매 일정은 ${ds.date}입니다. 장소: ${ds.place}. 쇼콕에서 예매처 정보를 확인하세요.`);
