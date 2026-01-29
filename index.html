@@ -1833,47 +1833,61 @@
               console.log(`✅ SEO 데이터 생성 완료: ${validEvents.length}개 공연`);
           }
 
-        // [SEO 2,3,4] 장르/지역/월 검색 시 -> 메인 페이지(Showkok.com)가 걸리게 만드는 봇
+        // [수정됨] 검색엔진용 텍스트 생성 (날짜 내림차순 정렬, 50개)
         function generateKeywordSummary(events) {
-         // 1. 현재 데이터베이스에 있는 장르와 지역을 싹 긁어모음 (중복 제거)
+            // 1. 장르/지역 모음
             const allGenres = [...new Set(events.map(e => e.genre).filter(g => g))];
             const allRegions = [...new Set(events.map(e => e.region).filter(r => r))];
-    
-            // 2. 검색어 조합 만들기 (봇이 좋아하는 문장)
-            const genreKeywords = allGenres.join(', '); // 예: 뮤지컬, 콘서트, 연극...
-            const regionKeywords = allRegions.join(', '); // 예: 서울, 부산, 대구...
-    
-            // 3. 숨겨진 텍스트 박스 생성
+            
+            const genreKeywords = allGenres.join(', '); 
+            const regionKeywords = allRegions.join(', ');
+
+            // 2. 날짜 파싱 헬퍼 함수 (YYYY.MM.DD 등을 비교 가능한 숫자로 변환)
+            const getTimestamp = (str) => {
+                const nums = str.match(/\d+/g);
+                if (!nums || nums.length < 3) return 0;
+                // 년, 월(0부터시작), 일 -> 타임스탬프 변환
+                return new Date(nums[0], nums[1] - 1, nums[2]).getTime();
+            };
+
+            // 3. [핵심 수정] 모든 공연을 '날짜가 늦은 순서(먼 미래)'로 정렬 후 50개 자르기
+            const recentEvents = events
+                .sort((a, b) => {
+                    return getTimestamp(b.date) - getTimestamp(a.date); // 내림차순 (큰 날짜가 먼저)
+                })
+                .slice(0, 50); // 50개로 설정
+
+            // 4. 숨겨진 텍스트 박스 생성 (없으면 만들기)
             let seoDiv = document.getElementById('seo-hidden-text');
             if (!seoDiv) {
                 seoDiv = document.createElement('div');
                 seoDiv.id = 'seo-hidden-text';
-                // 화면에서 숨기기 (디자인 영향 X, 봇은 읽음 O)
+                // 봇은 읽을 수 있게 하되, 화면에서는 안 보이게 처리
                 seoDiv.style.cssText = "position:absolute; width:1px; height:1px; overflow:hidden; opacity:0.01; z-index:-1;";
                 document.body.appendChild(seoDiv);
             }
 
-            // 4. 실제로 텍스트 주입 (여기에 있는 단어로 검색하면 메인페이지가 뜸)
+            // 5. 텍스트 주입
             seoDiv.innerHTML = `
                 <h1>2026년 공연 티켓팅 일정 통합 캘린더 - 쇼콕</h1>
-        
+                
                 <h2>장르별 예매 일정</h2>
                 <p>2026년 ${genreKeywords} 티켓팅 일정, 예매 날짜, 시간 정보를 확인하세요.</p>
-        
+                
                 <h2>지역별 티켓 오픈</h2>
                 <p>2026년 ${regionKeywords} 및 전국 주요 도시 공연 정보 모음.</p>
-        
+                
                 <h2>월별 스케줄</h2>
                 <p>2026년 1월, 2월, 3월, 4월, 5월, 6월, 7월, 8월, 9월, 10월, 11월, 12월 전체 공연 달력.</p>
-        
-                <h2>현재 등록된 주요 공연</h2>
+                
+                <h2>최신 등록 티켓팅 일정 (날짜순)</h2>
                 <ul>
-                    ${events.slice(0, 30).map(e => `<li>2026년 ${e.title} (${e.genre}, ${e.region})</li>`).join('')}
+                    ${recentEvents.map(e => `<li>${e.date} : ${e.title} (${e.place}) - [${e.genre}]</li>`).join('')}
                 </ul>
             `;
-    
-            console.log("✅ 검색엔진용 요약 텍스트 생성 완료 (장르/지역/월 포함)");
-        }  
+            
+            console.log(`✅ SEO 텍스트 업데이트: 날짜 역순(먼 미래부터) ${recentEvents.length}개 반영됨`);
+        }
 
         async function fetchEvents() {
             titleEl.innerText = "데이터 불러오는 중...";
